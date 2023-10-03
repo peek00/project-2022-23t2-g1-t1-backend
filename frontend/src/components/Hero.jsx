@@ -1,4 +1,4 @@
-import { CardMedia } from '@mui/material';
+
 
 
 export default function Hero() {
@@ -20,13 +20,13 @@ export default function Hero() {
               type="video/mp4"
             />
           </video>
-          <h1 className='font-bold text-[50px] absolute top-[65px] left-[25%] text-white cursor-pointer'>Accelerate your growth <br></br>with world-class rewards</h1>
+          <h1 className='font-bold md:text-[50px] text-[30px] absolute top-[65px] md:left-[25%] left-[15%]  text-white cursor-pointer'>Accelerate your growth <br></br>with world-class rewards</h1>
          
          <div className='container text-center pt-5 mx-auto'>
 
             <h3 className=' text-[#1C2434] text-4xl font-semibold'>Deliver “awesome,” effortlessly</h3>
             <p className='text-[#1C2434] font-extralight mt-5'>Ascenda equips banks and fintechs with plug & play APIs and UIs to deploy world-class rewards easily and rapidly</p>
-            <div className ="md:flex md:justify-between mt-5 grid-rows-3 gap-4 grid-flow-col">
+            <div className ="flex justify-around mt-5 gap-4 md:flex-row flex-col mx-auto ">
                
 <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-white dark:border-slate-100">
    
@@ -61,11 +61,52 @@ export default function Hero() {
 
 
          </div>
-         <div className='container flex justify-between bg-['>
+         <div className='container  bg-[#1C2434] text-white mt-5'>
+            <div className='ml-5 mb-5'>
+                <img src="/footerLogo.svg" className='w-30 h-30'/>
+
+                
+            </div>
+         <div className=' flex justify-around md:flex-row flex-col text-center gap-4 '>
+           
+           
+            <div>
+                <h1 className='font-bold'>Solutions</h1>
+                <p className='block  font-light'>End-to-End Rewards Program</p>
+                <p className='block  font-light'>Modular Rewards Content</p>
+                <p className='block  font-light'>Campaign Engine</p>
+            </div>
+            <div>
+                <h1 className='font-bold'>Rewards Marketplace</h1>
+                <p className='block  font-light'>Global Points Exchange</p>
+                <p className='block  font-light'>Shop with Points</p>
+                <p className='block  font-light'>Campaign Engine</p>
+                <p className='block  font-light'>Cryptocurrency</p>
+                <p className='block  font-light'>Carbon Offet</p>
+                <p className='block  font-light'>Cash-Back to Wallet</p>
+                <p className='block  font-light'>Merchant-Funded Offerst</p>
+
+            </div>
+            <div>
+            <h1 className='font-bold'>Company</h1>
+                <p className='block  font-light'>Our Philosophy</p>
+                <p className='block  font-light'>Clients</p>
+                <p className='block  font-light'>Careers</p>
+                <p className='block  font-light'>Partners</p>
+                <p className='block  font-light'>Events</p>
+
+            </div>
+            <div className='text-center '>
+            <h1 className='font-bold '>Follow Us</h1>
+            <a href ="https://www.linkedin.com/company/ascenda-loyalty">
+            <img alt="Linkedin Ascenda Loyalty" src="https://ascendaloyaltycorp.cdn.prismic.io/ascendaloyaltycorp/f95f3bdc-f1bc-4b6e-9479-cc032a2747cd_linkedin_white.svg" className='w-8 h-8 hover:opacity-40 cursor-pointer o'/>
+            </a>
+            </div>
 
 
 
 
+         </div>
          </div>
          
         

@@ -9,6 +9,7 @@ function Login(){
             <div className='container relative min-w-full'>
                 <NavBar/>
             <Hero/>
+            
 
             </div>
            
