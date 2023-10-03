@@ -6,7 +6,7 @@ function Login(){
 
     return(
         <div className='min-h-screen min-w-full'>
-            <div className='container relative'>
+            <div className='container relative min-w-full'>
                 <NavBar/>
             <Hero/>
 
