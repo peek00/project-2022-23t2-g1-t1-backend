@@ -2,10 +2,9 @@ import React from 'react';
 import Carousell from './CarousellTransition.jsx';
 
 
-export default function SignUpForm(props){
-
+export default function SignInForm(props){
     const loginUser=()=>{
-        props.updateRegister(false);
+        props.updateRegister(true);
      }
 
   
@@ -53,7 +52,7 @@ export default function SignUpForm(props){
                   </svg>
                 </div>
                 <span class="ml-4">
-                  Sign Up with Google
+                  Sign In with Google
                 </span>
               </button>
 
@@ -64,13 +63,13 @@ export default function SignUpForm(props){
               <div
                 class=" mt-3 leading-none px-2 inline-block text-sm text-white  font-medium border-b-2 "
               >
-                Or sign up with e-mail
+                Or Sign In with E-mail
               </div>
             </div>
 
             <div class="mx-auto max-w-xs">
             <p class="text-sm font-light text-gray-300 dark:text-gray-400 mb-2">
-                      Already have an account? <a href="#"  onClick={loginUser} className=" text-primary-600 hover:underline text-white font-extrabold">Login here</a>
+                      Don't have an account? <a href="#" onClick = {loginUser}className=" text-primary-600 hover:underline text-white font-extrabold">Sign up here</a>
                   </p>
               <input
                 class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
@@ -82,11 +81,7 @@ export default function SignUpForm(props){
                 type="password"
                 placeholder="Password"
               />
-               <input
-                class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                type="password"
-                placeholder="Confrim Password"
-              />
+             
               <button
                 class="mt-5 tracking-wide font-semibold bg-[#1C2434] text-white border border-white w-full py-4 rounded-lg  transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
               >
@@ -103,23 +98,13 @@ export default function SignUpForm(props){
                   <path d="M20 8v6M23 11h-6" />
                 </svg>
                 <span class="ml-3">
-                  Sign Up
+                  Sign In
                 </span>
               </button>
-              <p class="mt-6 text-xs text-white  text-center">
-                I agree to abide by Asecnda Loyalty's
-                <a href="#" class="border-b  border-dotted bold">
-                   Terms of Service
-                </a>
-                and its 
-                <a href="#" class="border-b  border-dotted">
-                    <span>    Privacy Policy</span>
-                </a>
-              </p>
+              
             </div>
           </div>
         </div>
-        
       </div>
       <div class="flex-1 bg-white text-center ">
         <Carousell/>
