@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function NavBar() {
   return (
@@ -8,15 +9,17 @@ export default function NavBar() {
         <nav className="bg-transparent absolute top-0 left-0 w-full group  hover:bg-[#1C2434] z-10 group">
           <div className="flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="https://www.ascendaloyalty.com/?utm_source=google&utm_medium=cpc&utm_campaign=1642666500&utm_adgroupid=62569077997&utm_term=%2Bascenda%20%2Bloyalty&utm_content=646225022808&gclid=CjwKCAjw9-6oBhBaEiwAHv1QvGEikrarramJ0U38WJ0jGZfYu1htkiKUnFZ6o0BlxzxibkV5D_US_RoC9IYQAvD_BwE" className="flex items-center">
-              <img src="/logo.svg" className="h-8 mr-3" alt="Flowbite Logo" />
+              <img src="/logo.svg" className="h-8 mr-3" alt="Ascenda Loyalty" />
             </a>
             <div className="flex md:order-2">
+            <Link to="/login">
               <button
                 type="button"
                 className="text-white border-[1.5px] border-[#1C2434] rounded-md bg-transparent  font-medium  text-sm px-4 py-2 text-center mr-3 md:mr-0 group-hover:border-white "
               >
                 Login
               </button>
+              </Link>
               <button
                 data-collapse-toggle="navbar-cta"
                 type="button"
