@@ -6,7 +6,10 @@ import cors from "cors";
 import { config } from "./config/config";
 import { errorHandler } from "./middleware/error/error";
 import router from "./routes";
-import { createProxyMiddleware, responseInterceptor } from "http-proxy-middleware";
+import {
+  createProxyMiddleware,
+  responseInterceptor,
+} from "http-proxy-middleware";
 import { userAuditLogger } from "./services/Logger";
 
 //For env File
@@ -37,24 +40,32 @@ app.use(
 
 // Add Proxy Middleware
 app.use(
-  createProxyMiddleware('/2',{
+  createProxyMiddleware("/2", {
     target: process.env.microservice1 || "http://localhost:3002",
     changeOrigin: true,
     pathRewrite: {
-      [`^/2`]: '',
+      [`^/2`]: "",
     },
     selfHandleResponse: true,
-    onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-      const response = responseBuffer.toString('utf8');
-      userAuditLogger.logRequest(proxyRes.statusCode || 500, response, req as any);
-      return responseBuffer;
-    }),
+    onProxyRes: responseInterceptor(
+      async (responseBuffer, proxyRes, req, res) => {
+        const response = responseBuffer.toString("utf8");
+        userAuditLogger.logRequest(
+          proxyRes.statusCode || 500,
+          response,
+          req as any,
+        );
+        return responseBuffer;
+      },
+    ),
     onError: (err, req, res) => {
       res.writeHead(500, {
-        'Content-Type': 'text/plain',
+        "Content-Type": "text/plain",
       });
-      res.end('Something went wrong. And we are reporting a custom error message.');
-    }
+      res.end(
+        "Something went wrong. And we are reporting a custom error message.",
+      );
+    },
   }),
 );
 

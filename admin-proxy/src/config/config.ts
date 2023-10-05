@@ -23,5 +23,5 @@ export const config = {
     User: 30, // 30 days
     Points: 30,
     MakerChecker: 30,
-  }
+  },
 };
