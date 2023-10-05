@@ -1,0 +1,20 @@
+version: '3.0'
+networks:
+  vpc:
+    driver: bridge
+services:
+  admin-proxy:
+    build: ./admin-proxy
+    ports:
+      - "8000:8000"
+    networks:
+      - vpc
+    env_file:
+      - ./admin-proxy/.env
+    environment:
+      - NODE_ENV=development
+      - microservice1=http://microservice1:3000
+  microservice1:
+    build: ./testMicroservice
+    networks:
+      - vpc
