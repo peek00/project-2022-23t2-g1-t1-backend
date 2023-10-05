@@ -1,4 +1,4 @@
-version: '3.0'
+version: '3.8'
 networks:
   vpc:
     driver: bridge
@@ -18,3 +18,7 @@ services:
     build: ./testMicroservice
     networks:
       - vpc
+    deploy: # Example of load balancing with service discovery using virtual ip address
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
