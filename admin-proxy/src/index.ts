@@ -3,7 +3,6 @@ import passport from "./middleware/auth/passport";
 import cookieSession from "cookie-session";
 import dotenv from "dotenv";
 import cors from "cors";
-// import requestIP from "request-ip";
 import { config } from "./config/config";
 import { errorHandler } from "./middleware/error/error";
 import router from "./routes";

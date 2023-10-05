@@ -8,7 +8,7 @@
     }
   },
   "lint-staged": {
-    "*": "prettier --write",
-    "*.test.{js,ts}": "bash ./scripts/no-only-in-tests.sh"
+    "*/*": "prettier --write",
+    "*/*.test.{js,ts}": "bash ./scripts/no-only-in-tests.sh"
   }
 }
