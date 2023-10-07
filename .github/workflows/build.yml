@@ -50,7 +50,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Trigger admin-proxy workflow
         if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
-        uses: ./.github/workflows/node-test.yml
+        uses: ./.github/workflows/node-test-runner
         with:
           name: 'admin-proxy test workflow'
           folder: '"admin-proxy/"'
