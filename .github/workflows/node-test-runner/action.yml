@@ -6,11 +6,18 @@ on:
       folder:
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      folder:
+        required: true
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: echo input
+        run: echo ${{ inputs.folder }}
       - name: cd into the repo
         run: cd ${{ inputs.folder }}
       - name: Set up node 16 environment
