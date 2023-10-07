@@ -1,6 +1,11 @@
 # This is a basic workflow to help you get started with Actions
 
 name: CI
+# Add permissions for workflow
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: read
 
 # Controls when the action will run. 
 on:
@@ -27,8 +32,9 @@ jobs:
         uses: 8BitJonny/gh-get-current-pr@2.2.0
         id: pr
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.pull_request.head.sha }}
           filterOutClosed: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - id: file_changes
         name: File Changes
