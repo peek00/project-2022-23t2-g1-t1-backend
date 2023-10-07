@@ -4,6 +4,7 @@ on:
   workflow_call:
     inputs:
       folder:
+        default: '"admin-proxy'
         required: true
         type: string
   workflow_dispatch:
@@ -16,9 +17,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/build.yml
-        with:
-          folder: ${{ inputs.folder }}
       - name: echo input
         run: echo ${{ inputs.folder }}
       - name: cd into the repo
