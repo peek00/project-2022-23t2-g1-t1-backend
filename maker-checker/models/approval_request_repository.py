@@ -5,20 +5,22 @@ from boto3.dynamodb.conditions import Key, Attr  # Import Key and Attr
 
 class ApprovalRequestRepository:
     def __init__(self, db: ServiceResource) -> None:
-        self.__db = db          # db resource will be injected when this repository is created in the main.py
+        # db resource will be injected when this repository is created in the main.py
+        self.__db = db
 
     def get_all_approval_requests(self):
-        table = self.__db.Table('approval_request')  # referencing the "approval_request" table
+        # referencing the "approval_request" table
+        table = self.__db.Table('approval_request')
         response = table.scan()
-        
+
         # Extract the items from the response
         items = response.get('Items', [])
-        
+
         return items  # return data
 
     def get_pending_approval_requests(self):
         try:
-            table = self.__db.Table('approval_request')  
+            table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('pending')
             )
@@ -29,7 +31,7 @@ class ApprovalRequestRepository:
 
     def get_approved_approval_requests(self):
         try:
-            table = self.__db.Table('approval_request')  
+            table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('approved')
             )
@@ -37,10 +39,10 @@ class ApprovalRequestRepository:
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
-        
+
     def get_rejected_approval_requests(self):
         try:
-            table = self.__db.Table('approval_request')  
+            table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('rejected')
             )
@@ -52,7 +54,7 @@ class ApprovalRequestRepository:
     def get_expired_approval_requests(self):
         pass
         # try:
-        #     table = self.__db.Table('approval_request')  
+        #     table = self.__db.Table('approval_request')
         #     response = table.scan(
         #         FilterExpression=Attr("status").eq('rejected')
         #     )
@@ -62,33 +64,30 @@ class ApprovalRequestRepository:
         #     raise ValueError(e.response['Error']['Message'])
 
     def create_approval_request(self, approval_request: dict):
-        table = self.__db.Table('approval_request')  # referencing to table Recipes
-        response = table.put_item(Item=approval_request.dict())  # create recipe
+        table = self.__db.Table('approval_request')
+        response = table.put_item(Item=approval_request.dict())
+        return response                         #
 
-        return response                         # return response from dynamodb
+    def update_approval_request(self,
+                       data: dict
+                       ):
+        """
+        Update function to be called only by requestor
+        """
+        # Retrieve the current data object from the database by UID
+        # Compare the requestor uuid with the one in the database
+        # make changes
+        table = self.__db.Table('approval_request')
+        item = table.get_item(Key={'uid': data.request_uid}).get('Item')
+        # Check if requestor is the same
+        assert item.get('requestor_id') == data.requestor_id, "Requestor is not the same as the original requestor!"
+        # Update the item
+        for key, value in data.dict().items():
+            # Can add additional validation before
+            item[key] = value
+        response = table.put_item(Item=item)
+        return response
 
-    # def update_recipe(self, recipe: dict):
-    #     table = self.__db.Table('Recipes')      # referencing to table Recipes
-    #     response = table.update_item(           # update single item
-    #         Key={'uid': recipe.get('uid')},     # using partition key specifying which attributes will get updated
-    #         UpdateExpression="""                
-    #             set
-    #                 author=:author,
-    #                 description=:description,
-    #                 ingredients=:ingredients,
-    #                 title=:title,
-    #                 steps=:steps
-    #         """,
-    #         ExpressionAttributeValues={         # values defined in here will get injected to update expression
-    #             ':author': recipe.get('author'),
-    #             ':description': recipe.get('description'),
-    #             ':ingredients': recipe.get('ingredients'),
-    #             ':title': recipe.get('title'),
-    #             ':steps': recipe.get('steps')
-    #         },
-    #         ReturnValues="UPDATED_NEW"          # return the newly updated data point
-    #     )
-    #     return response
 
     # def delete_recipe(self, uid: str):
     #     table = self.__db.Table('Recipes')      # referencing to table Recipes

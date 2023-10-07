@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from models.ApprovalRequest import ApprovalRequest
+from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse
 from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db
 
@@ -8,6 +8,10 @@ router = APIRouter(
   prefix = "/approval",
   tags = ["Approvals"],
 )
+
+def authorized_request():
+    # Pseudo function to check if the user is authenticated and authoriuzed
+    return True
 
 db = initialize_db()
 approval_request_repository = ApprovalRequestRepository(db)
@@ -27,7 +31,8 @@ async def get_all_approval_requests(
 def create_approval_requests(
     data: ApprovalRequest,
 ):
-    return approval_request_repository.create_approval_request(data)
+    if authorized_request():
+        return approval_request_repository.create_approval_request(data)
 
 @router.get("/get-pending")
 def get_pending_approval_requests():
@@ -40,3 +45,13 @@ def get_pending_approval_requests():
 @router.get("/get-rejected")
 def get_pending_approval_requests():
     return approval_request_repository.get_rejected_approval_requests()
+
+@router.post("/update")
+def update_approval_request(
+    data: ApprovalUpdate,
+):
+    if authorized_request():
+        return approval_request_repository.update_approval_request(data)
+
+# ======== Approver Endpoints ====-====
+# @router.get("")

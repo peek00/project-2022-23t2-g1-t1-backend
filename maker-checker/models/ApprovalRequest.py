@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field, Optional
+from pydantic import BaseModel, Field
 from uuid import uuid4
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional
 from datetime import datetime, timedelta
 
 class ApprovalStatus(str, Enum):
@@ -28,11 +28,13 @@ class ApprovalUpdate(BaseModel):
     Used when original requestor wants to make an update to the details.
     Request cannot be updated once modified. 
     """
-    status: Optional[ApprovalStatus]
-    comments: Optional[str]
-    request_details: Optional[Dict[str, str]]
-    request_title: Optional[str]
-    request_expiry: Optional[str]
+    request_uid: str # Link to request to update
+    requestor_id: int # Verify that the requestor is the same
+    status: Optional[ApprovalStatus] = None
+    comments: Optional[str] = None
+    request_details: Optional[Dict[str, str]] = None
+    request_title: Optional[str] = None
+    request_expiry: Optional[str] = None
 
 class ApprovalResponse(BaseModel):
     """
@@ -42,4 +44,4 @@ class ApprovalResponse(BaseModel):
     approver_id: int
     comments: Optional[str]
     resolution_at: str = datetime.now().isoformat()
-    
+
