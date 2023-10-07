@@ -51,8 +51,6 @@ jobs:
       - name: Trigger admin-proxy workflow
         if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
         run: cd admin-proxy && npm install && npm run build && npm run test
-        # uses: ./.github/workflows/node-test-runner
-        
 
       - name: Trigger frontend workflow
         if: contains(steps.file_changes.outputs.files , '"frontend/')
