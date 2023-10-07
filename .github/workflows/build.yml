@@ -50,8 +50,11 @@ jobs:
       # Runs a single command using the runners shell
       - name: Trigger admin-proxy workflow
         if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
-        run: echo Hello, admin-proxy!
-        
+        uses: ./.github/workflows/node-test
+        with:
+          name: 'admin-proxy test workflow'
+          folder: '"admin-proxy/"'
+
       - name: Trigger frontend workflow
         if: contains(steps.file_changes.outputs.files , '"frontend/')
         run: echo Hello, frontend!
