@@ -17,10 +17,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: echo input
-        run: echo ${{ inputs.folder }}
+      # - name: echo input
+      #   run: echo ${{ inputs.folder }}
       - name: cd into the repo
-        run: cd ${{ inputs.folder }}
+        run: cd admin-proxy
       - name: Set up node 16 environment
         uses: actions/setup-node@v3
         with:
