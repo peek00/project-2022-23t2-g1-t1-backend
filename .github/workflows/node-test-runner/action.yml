@@ -13,19 +13,18 @@ on:
         required: true
         type: string
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # - name: echo input
-      #   run: echo ${{ inputs.folder }}
-      - name: cd into the repo
-        run: cd admin-proxy
-      - name: Set up node 16 environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+runs:
+  using: 'composite'
+  steps:
+    # - name: echo input
+    #   run: echo ${{ inputs.folder }}
+    - name: cd into the repo
+      run: cd admin-proxy
+    - name: Set up node 16 environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
