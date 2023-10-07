@@ -1,4 +1,4 @@
-import { Redis } from './Redis';
+import { Redis } from "./Redis";
 
 const cacheProvider = Redis.getInstance();
 

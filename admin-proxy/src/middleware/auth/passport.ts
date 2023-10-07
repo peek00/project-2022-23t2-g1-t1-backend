@@ -74,11 +74,13 @@ passport.use(
       };
       // console.log(userProfile);
       try {
-        const user = await authenticationService.authenticate(userProfile.email);
+        const user = await authenticationService.authenticate(
+          userProfile.email,
+        );
         console.log(user);
         done(null, user);
       } catch (error) {
-        done((error as Error), undefined);
+        done(error as Error, undefined);
       }
       // const user = await getOrCreateUser(userProfile);
     },

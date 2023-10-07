@@ -4,6 +4,6 @@ import { JwtService } from "./JwtService";
 
 const authenticationService = AuthenticationService.getInstance();
 const authorisationService = AuthorisationService.getInstance();
-const jwtService = JwtService.getInstance()
+const jwtService = JwtService.getInstance();
 
-export {jwtService,authenticationService,authorisationService};
+export { jwtService, authenticationService, authorisationService };

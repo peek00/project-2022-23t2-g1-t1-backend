@@ -3,9 +3,8 @@ import { authenticationService } from "../../services/Auth";
 
 export class AuthController {
   private static instance: AuthController;
-  
-  private constructor() {
-  }
+
+  private constructor() {}
 
   public static getInstance(): AuthController {
     if (!AuthController.instance) {
@@ -16,9 +15,9 @@ export class AuthController {
 
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const {id} = req.user!;
+      const { id } = req.user!;
       console.log("Logout ID", id);
-      console.log("logout",authenticationService === undefined)
+      console.log("logout", authenticationService === undefined);
       const result = await authenticationService.logout(id);
       // Clear cookies from client
       res.clearCookie("jwt");
@@ -34,7 +33,7 @@ export class AuthController {
         res.redirect(process.env.CLIENT_BASE_URL as string);
       } else {
         res.cookie("jwt", req.user!.token, { httpOnly: true });
-        res.redirect('/auth/me');
+        res.redirect("/auth/me");
       }
     } catch (error) {
       next(error);

@@ -16,7 +16,7 @@ import authorize from "./middleware/auth/authorize";
 dotenv.config();
 
 const app: Application = express();
-const host = '0.0.0.0';
+const host = "0.0.0.0";
 const port = Number(process.env.PORT) || 8000;
 
 // Adding Passport
@@ -47,7 +47,7 @@ const myProxy = createProxyMiddleware({
         proxyRes.statusCode || 500,
         response,
         req as any,
-        userId
+        userId,
       );
       // Remove x-auth-user from response header
       res.removeHeader("x-auth-user");
@@ -65,11 +65,11 @@ const myProxy = createProxyMiddleware({
 });
 
 // Add Proxy Middleware
-app.use("/2", authorize(["superadmin","admin"]), myProxy);
+app.use("/2", authorize(["superadmin", "admin"]), myProxy);
 
 app.use(router);
 app.use(errorHandler);
 
-app.listen(port,host, () => {
+app.listen(port, host, () => {
   console.log(`Server is running on port ${port}`);
-})
+});

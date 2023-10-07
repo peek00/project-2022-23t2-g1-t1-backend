@@ -15,12 +15,12 @@ export class AuthorisationService {
     return AuthorisationService.instance;
   }
 
-  public authorize(userRoles:[], accessRole: string[]) {
+  public authorize(userRoles: [], accessRole: string[]) {
     if (accessRole.length === 0) {
       return;
     }
     // check if user has access to resource
-    if (!userRoles.some(role => accessRole.includes(role))) {
+    if (!userRoles.some((role) => accessRole.includes(role))) {
       throw new Error("Not authorized");
     }
   }

@@ -1,4 +1,4 @@
-import jwt, {JwtPayload} from 'jsonwebtoken';
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export class JwtService {
   private static instance: JwtService;
@@ -28,7 +28,7 @@ export class JwtService {
   //   if (typeof decoded === "string" || !decoded.id || !decoded.role || !decoded.exp) {
   //     throw new Error("Invalid token");
   //   }
-  //   // Verify Expiry  
+  //   // Verify Expiry
   //   const now = Date.now().valueOf() / 1000;
   //   if (typeof decoded.exp !== "undefined" && decoded.exp < now) {
   //     throw new Error("Token expired");
@@ -42,7 +42,7 @@ export class JwtService {
 
   public validateJwtPayload(payload: JwtPayload) {
     // Validate JWT Token
-    console.log(payload)
+    console.log(payload);
     console.log(typeof payload);
     console.log(payload.id);
     console.log(payload.exp);
@@ -54,6 +54,6 @@ export class JwtService {
     if (typeof payload.exp !== "undefined" && payload.exp < now) {
       throw new Error("Token expired");
     }
-    return true
+    return true;
   }
 }

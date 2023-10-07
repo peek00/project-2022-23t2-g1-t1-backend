@@ -15,7 +15,12 @@ class AuditLogger extends Logger {
     this.additionalAttributes = additionalAttributes;
   }
 
-  public logRequest(status: number, details: any, req: Request, userId: string) {
+  public logRequest(
+    status: number,
+    details: any,
+    req: Request,
+    userId: string,
+  ) {
     let ip = requestIP.getClientIp(req)?.replace("::ffff:", "");
     let country = "unknown";
     if (ip) {
@@ -29,7 +34,7 @@ class AuditLogger extends Logger {
     try {
       const additionalInfo = this.retrieveAdditionalInfo(
         JSON.parse(details || "{}"),
-        userId
+        userId,
       );
       if (status === 200) {
         this.log("info", message, additionalInfo);
@@ -49,14 +54,14 @@ class AuditLogger extends Logger {
     }
   }
 
-  retrieveAdditionalInfo(body: any,userId:string) {
+  retrieveAdditionalInfo(body: any, userId: string) {
     let additionalInfo = this.additionalAttributes.reduce((acc, curr) => {
       if (body[curr]) {
         return { ...acc, [curr]: body[curr] };
       }
       return acc;
     }, {});
-    additionalInfo = {...additionalInfo, userId}
+    additionalInfo = { ...additionalInfo, userId };
     return JSON.stringify(additionalInfo);
   }
 }

@@ -18,25 +18,26 @@ export class AuthenticationService {
   private constructor() {
     this.jwtService = JwtService.getInstance();
     this.cacheProvider = cacheProvider;
-    this.userMicroServiceUrl = process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
+    this.userMicroServiceUrl =
+      process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
   }
   public static getInstance(): AuthenticationService {
-    console.log("AuthenticationService.getInstance()")
+    console.log("AuthenticationService.getInstance()");
     if (!AuthenticationService.instance) {
       AuthenticationService.instance = new AuthenticationService();
     }
     return AuthenticationService.instance;
   }
-  public async authenticate(email:string): Promise<UserWithToken> {
+  public async authenticate(email: string): Promise<UserWithToken> {
     // Invoke User Proxy to retrieve user details
     try {
       const user = await this.findUserByEmail(email);
-      const {id, role=[]} = user;
+      const { id, role = [] } = user;
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(id);
-      const response = {...user, token}
+      const response = { ...user, token };
       this.cacheProvider.write(id, JSON.stringify(response), 60 * 60 * 1); // 1 hour
-      return {id, role, token};
+      return { id, role, token };
     } catch (error) {
       throw error;
     }
@@ -50,23 +51,23 @@ export class AuthenticationService {
     const user = {
       data: {
         id: "1",
-        role: ["admin"]
-      }
-    }
+        role: ["admin"],
+      },
+    };
     return user.data;
   }
   public async logout(id: string): Promise<boolean> {
-    console.log("authenticationService.logout",id)
+    console.log("authenticationService.logout", id);
     await this.cacheProvider.remove(id);
     return true;
   }
 
-  public async getUserById(id:string): Promise<any> {
+  public async getUserById(id: string): Promise<any> {
     const userData = await this.cacheProvider.get(id);
-    
+
     if (userData) {
-      const {id, role, token} = JSON.parse(userData);
-      return {id, role, token};
+      const { id, role, token } = JSON.parse(userData);
+      return { id, role, token };
     } else {
       throw new Error("User Session not found");
     }
