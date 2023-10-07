@@ -1,10 +1,9 @@
 name: Reusable Node Test Workflow
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       folder:
-        description: 'Folder to test'
         required: true
         type: string
 

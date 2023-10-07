@@ -52,8 +52,8 @@ jobs:
         if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
         uses: ./.github/workflows/node-test-runner
         with:
-          name: 'admin-proxy test workflow'
           folder: '"admin-proxy/"'
+          name: 'admin-proxy test workflow'
 
       - name: Trigger frontend workflow
         if: contains(steps.file_changes.outputs.files , '"frontend/')
