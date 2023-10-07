@@ -19,10 +19,9 @@ async def home():
     }
 @router.get("/get-all", response_model=None)
 async def get_all_approval_requests(
-    # repo: ApprovalRequestRepository
 ):
-    _ = approval_request_repository.get_all_approval_requests()
-    return _
+    return approval_request_repository.get_all_approval_requests()
+    
 
 @router.post("/create", response_model=None)
 def create_approval_requests(
@@ -33,3 +32,11 @@ def create_approval_requests(
 @router.get("/get-pending")
 def get_pending_approval_requests():
     return approval_request_repository.get_pending_approval_requests()
+
+@router.get("/get-approved")
+def get_pending_approval_requests():
+    return approval_request_repository.get_approved_approval_requests()
+
+@router.get("/get-rejected")
+def get_pending_approval_requests():
+    return approval_request_repository.get_rejected_approval_requests()

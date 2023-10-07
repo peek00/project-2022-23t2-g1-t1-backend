@@ -23,17 +23,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("Trying to connect 1")
 db = initialize_db()
+print("DB initialized successfully.")
 
 from controllers.generate_schema import create_approval_request_table
-print("Trying to connect 2")
 create_approval_request_table()
 
-print("Trying to connect 3")
 approval_request_repository = ApprovalRequestRepository(db)
+print("Created database repository.")
 
-print("Trying to connect 4")
 # Backend entry point for all routers based on their high-level functions
 app.include_router(approvals.router)
 

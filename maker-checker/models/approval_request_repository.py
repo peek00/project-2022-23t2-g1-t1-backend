@@ -19,16 +19,47 @@ class ApprovalRequestRepository:
     def get_pending_approval_requests(self):
         try:
             table = self.__db.Table('approval_request')  
-
-            # Define a placeholder for the reserved keyword "status"
-
             response = table.scan(
-                FilterExpression=Attr("status").eq('pending'),  # Use Attr separately for filtering
+                FilterExpression=Attr("status").eq('pending')
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
+
+    def get_approved_approval_requests(self):
+        try:
+            table = self.__db.Table('approval_request')  
+            response = table.scan(
+                FilterExpression=Attr("status").eq('approved')
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+        
+    def get_rejected_approval_requests(self):
+        try:
+            table = self.__db.Table('approval_request')  
+            response = table.scan(
+                FilterExpression=Attr("status").eq('rejected')
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+
+    def get_expired_approval_requests(self):
+        pass
+        # try:
+        #     table = self.__db.Table('approval_request')  
+        #     response = table.scan(
+        #         FilterExpression=Attr("status").eq('rejected')
+        #     )
+        #     items = response.get('Items', [])
+        #     return items
+        # except ClientError as e:
+        #     raise ValueError(e.response['Error']['Message'])
 
     def create_approval_request(self, approval_request: dict):
         table = self.__db.Table('approval_request')  # referencing to table Recipes
