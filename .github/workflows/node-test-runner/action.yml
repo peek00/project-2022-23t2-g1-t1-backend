@@ -17,11 +17,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: cd into the repo
-        run: cd "/admin-proxy"
-        shell: bash
+      # - name: Checkout
+      #   uses: actions/checkout@v2
+      # - name: cd into the repo
+      #   run: cd "/admin-proxy"
+      #   shell: bash
       - name: Set up node 16 environment
         uses: actions/setup-node@v3
         with:
