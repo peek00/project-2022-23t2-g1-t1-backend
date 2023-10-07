@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cd into the repo
-        run: cd ${{ github.workspace }}/${{ github.event.inputs.folder }}
+        run: cd ./${{ github.event.inputs.folder }}
       - name: Set up node 16 environment
         uses: actions/setup-node@v3
         with:
