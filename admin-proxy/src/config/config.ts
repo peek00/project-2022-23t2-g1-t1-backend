@@ -15,9 +15,9 @@ export const config = {
     awsRegion: process.env.CLOUDWATCH_REGION,
   },
   AdditionalInfo: {
-    User: ["userId", "email", "role"],
-    Points: ["userId", "previousBalance", "newBalance"],
-    MakerChecker: ["userId", "action"],
+    User: ["email", "role"],
+    Points: ["previousBalance", "newBalance"],
+    MakerChecker: ["action"],
   },
   RententionPolicy: {
     User: 30, // 30 days

@@ -7,14 +7,8 @@ import {
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { config } from "../../config/config";
 const GoogleOauth2Config = config.GoogleOauth2Config;
-import { verify, JwtPayload } from "jsonwebtoken";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
+import { JwtPayload } from "jsonwebtoken";
+import { authenticationService, jwtService } from "../../services/Auth";
 
 export interface IProfile {
   id: string;
@@ -22,55 +16,6 @@ export interface IProfile {
   email: string;
   provider: string;
 }
-
-// Mock API Request to create or retrieve user from User Microservice
-const getOrCreateUser = async (profile: IProfile) => {
-  const user: User = await new Promise((resolve) => {
-    setTimeout(() => {
-      if (profile.id === "114209728723577334382") {
-        resolve({
-          id: "1",
-          name: profile.displayName,
-          email: profile.email,
-          role: "admin",
-        });
-      } else {
-        resolve({
-          id: "2",
-          name: profile.displayName,
-          email: profile.email,
-          role: "superadmin",
-        });
-      }
-    }, 1000);
-  });
-  return user;
-};
-// Mock API Request to find user from User Microservice
-const findUser = async (id: string) => {
-  const user: User = await new Promise((resolve, rejects) => {
-    setTimeout(() => {
-      if (id === "1") {
-        resolve({
-          id: "1",
-          name: "Ng Shen Jie",
-          email: "ngshenjie@gmail.com",
-          role: "admin",
-        });
-      } else if (id === "2") {
-        resolve({
-          id: "2",
-          name: "Ng Shen Jie",
-          email: "ngshen.jie1999@gmail.com",
-          role: "superadmin",
-        });
-      } else {
-        rejects("User not found");
-      }
-    }, 1000);
-  });
-  return user;
-};
 
 const cookieExtractor = (req: any) => {
   const cookies = req.headers.cookie?.split(";");
@@ -96,20 +41,8 @@ passport.use(
     },
     async (jwtPayload: JwtPayload, done) => {
       try {
-        // Verify jwt payload is not expired
-        // const now = Date.now() / 1000;
-        // For testing purposes, add 1.5 hours from the timestamp
-        console.log(jwtPayload);
-        const now = Date.now() / 1000; //+ (60 * 60 * 1);
-        console.log(jwtPayload.exp, now);
-        if (jwtPayload.exp && jwtPayload.exp < now) {
-          return done(new Error("Token expired"));
-        }
-        // Find user from User Microservice
-        const user = await findUser(jwtPayload.id as string);
-        if (!user) {
-          return done(new Error("User not found"));
-        }
+        jwtService.validateJwtPayload(jwtPayload);
+        const user = await authenticationService.getUserById(jwtPayload.id);
         return done(null, user, { scope: "all" });
       } catch (error) {
         console.log(error);
@@ -140,9 +73,14 @@ passport.use(
         provider: "google",
       };
       // console.log(userProfile);
-      const user = await getOrCreateUser(userProfile);
-      console.log(user);
-      done(null, user);
+      try {
+        const user = await authenticationService.authenticate(userProfile.email);
+        console.log(user);
+        done(null, user);
+      } catch (error) {
+        done((error as Error), undefined);
+      }
+      // const user = await getOrCreateUser(userProfile);
     },
   ),
 );
@@ -155,14 +93,23 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id: string, done) => {
-  // Invoke API request to User Microservice to retrieve user
-  // Mocking user for now
   try {
-    const userMock: User = await findUser(id);
-    done(null, userMock);
+    const user = await authenticationService.getUserById(id);
+    done(null, user);
   } catch (error) {
     done(error, null);
   }
 });
+
+// passport.deserializeUser(async (id: string, done) => {
+//   // Invoke API request to User Microservice to retrieve user
+//   // Mocking user for now
+//   try {
+//     const userMock: User = await findUser(id);
+//     done(null, userMock);
+//   } catch (error) {
+//     done(error, null);
+//   }
+// });
 
 export default passport;
