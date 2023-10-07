@@ -1,6 +1,6 @@
 // import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 // import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-const { DynamoDBClient, GetItemCommand, QueryCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const ddbClient = new DynamoDBClient({ region : 'local' })
 
@@ -36,6 +36,7 @@ async function getAllAccounts(userId) {
     }
 }
 
+// returns all details of particular account
 async function getPointsBalance(pointsId) {
     try{
         const params = {
@@ -46,9 +47,10 @@ async function getPointsBalance(pointsId) {
                 ) 
         }
         const data = await ddbClient.send(new GetItemCommand(params));
-        const item = unmarshall(data.Item);
-
-        return item;
+        // const item = unmarshall(data.Item);
+        // const item = data.Item;
+        // return item;
+        return data;
     }
     catch (err) {
         console.log(err);
@@ -56,4 +58,48 @@ async function getPointsBalance(pointsId) {
     }
 }
 
-module.exports = { getPointsBalance, getAllAccounts };
+async function pointsAccExist(pointsid) {
+    try{
+        const params = {
+            TableName: 'points_ledger',
+            Key: marshall( 
+                {id: pointsid }
+                // , { removeUndefinedValues: true } 
+                ) 
+        }
+        const data = await ddbClient.send(new GetItemCommand(params));
+        if (data.Item){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+async function updatePoints(pointsId,newbalance) {
+    try {
+        const params = {
+            "ExpressionAttributeValues" : marshall({
+                ":v1": newbalance
+            }),
+            "Key": marshall({
+                "id": pointsId
+            }),
+            "TableName": "points_ledger",
+            "UpdateExpression": "SET balance = :v1"
+        }
+        const data = await ddbClient.send(new UpdateItemCommand(params));
+        return data;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints };

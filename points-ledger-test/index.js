@@ -1,4 +1,4 @@
-import { DynamoDBClient, GetItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 const ddbClient = new DynamoDBClient({ region : 'local' })
 
@@ -15,6 +15,26 @@ const getPointsBalance = async (pointsid) => {
     try {
         const data = await ddbClient.send(new GetItemCommand(params));
         console.log(unmarshall(data.Item));
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+const pointsAccExist = async(pointsid) => {
+    const params = {
+        TableName: 'points_ledger',
+        Key: marshall( {id: pointsid } ) 
+    }
+    try {
+        const data = await ddbClient.send(new GetItemCommand(params));
+        // return data;
+        if (data.Item) {
+            console.log('true');
+        }
+        else {
+            console.log('false');
+        }
     }
     catch (err) {
         console.log(err);
@@ -42,8 +62,30 @@ const getAllAccounts = async (userId) => {
       console.log(result);
 }
 
-// const mainid = '2f5687c7-af51-4d79-9a38-9eef5a3c42b8'
-// getPointsBalance(mainid);
-
-const userId = "d89eb1a2-ade2-4004-9528-9ccee344e3b9";
-getAllAccounts(userId);
+const updatePoints = async(pointsId,newbalance) => {
+    const input = {
+        "ExpressionAttributeValues" : marshall({
+            ":v1": newbalance
+        }),
+        "Key": marshall({
+            "id": pointsId
+        }),
+        "ReturnValues": "ALL_NEW",
+        "TableName": "points_ledger",
+        "UpdateExpression": "SET balance = :v1"
+    };
+    if (!pointsAccExist(pointsId)){
+        console.log("don't exist");
+    }
+    else{
+        console.log("exist");
+    }
+    try{
+        const data = await ddbClient.send(new UpdateItemCommand(input));
+        console.log(data);
+    }
+    catch(err) {
+        console.log(err);
+    }
+    
+}
