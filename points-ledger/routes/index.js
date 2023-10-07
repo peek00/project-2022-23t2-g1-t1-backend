@@ -9,8 +9,10 @@ router.get('/', function(req, res, next) {
 });
 
 
-// POST request to return balance of a particular account
-router.post('/points', async (req,res) => {
+
+
+// GET request to return balance of a particular account
+router.get('/points', async (req,res) => {
   console.log(req.body);
   const mainId = req.body.mainId;
   /* The code is making a POST request to the '/points' endpoint and calling the `getPointsBalance`
