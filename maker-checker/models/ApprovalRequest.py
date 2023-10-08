@@ -28,7 +28,7 @@ class ApprovalUpdate(BaseModel):
     Used when original requestor wants to make an update to the details.
     Request cannot be updated once modified. 
     """
-    request_uid: str # Link to request to update
+    uid: str # Link to request to update
     requestor_id: int # Verify that the requestor is the same
     status: Optional[ApprovalStatus] = None
     comments: Optional[str] = None
@@ -40,9 +40,12 @@ class ApprovalResponse(BaseModel):
     """
     Base model used when an approver rejects or approves a request.
     """
-    request_id: str
+    uid: str
     status: ApprovalStatus
     approver_id: int
     comments: Optional[str] = None
     resolution_at: str = datetime.now().isoformat()
 
+class DeleteRequest(BaseModel):
+    uid: str
+    requestor_id: int

@@ -1,7 +1,7 @@
 from botocore.exceptions import ClientError
 from boto3.resources.base import ServiceResource
 from boto3.dynamodb.conditions import Key, Attr  # Import Key and Attr
-from models.ApprovalRequest import ApprovalResponse
+from models.ApprovalRequest import ApprovalResponse, DeleteRequest
 
 class ApprovalRequestRepository:
     def __init__(self, db: ServiceResource) -> None:
@@ -78,23 +78,26 @@ class ApprovalRequestRepository:
         # Compare the requestor uuid with the one in the database
         # make changes
         table = self.__db.Table('approval_request')
-        item = table.get_item(Key={'uid': data.request_uid}).get('Item')
+        item = table.get_item(Key={'uid': data.uid}).get('Item')
         # Check if requestor is the same
         assert item.get('requestor_id') == data.requestor_id, "Requestor is not the same as the original requestor!"
         # Update the item
         for key, value in data.dict().items():
             # Can add additional validation before
-            item[key] = value
+            if value == None:
+                pass
+            else:
+                item[key] = value
         response = table.put_item(Item=item)
         return response
     
-    def approve_approval_request(self, data:ApprovalResponse):
+    def approve_or_reject_approval_request(self, data:ApprovalResponse):
         """
-        Approve a resposne
+        Approve a response
         """
         try:
             table = self.__db.Table('approval_request')
-            item = table.get_item(Key={'uid': data.request_id}).get('Item')
+            item = table.get_item(Key={'uid': data.uid}).get('Item')
 
             # Check if requestor is the same as approver
             assert item.get('requestor_id') != data.approver_id, "Requestor cannot be the same as the approver!"
@@ -110,17 +113,59 @@ class ApprovalRequestRepository:
                 # Can add additional validation before
                 item[key] = value
 
+            # Send out call to do whatever the request contains
+            if item.get('status') == 'approved':
+                # Do something
+                pass
             response = table.put_item(Item=item)
             return response
         except AssertionError as e:
+            print(e)
             return e
         
-        
+    def withdraw_approval_request(self, data: ApprovalResponse):
+        try:
+            table = self.__db.Table('approval_request')
+            item = table.get_item(Key={'uid': data.uid}).get('Item')
 
-    def delete_request(self, uid:str):
+            # Check if requestor is the same as approver
+            assert item.get('requestor_id') == data.approver_id, "Requestor must be the same as approver!"
+
+            # Check if request has been approved / rejected / etc
+            assert item.get('status') == 'pending', "Request has already been resolved!"
+
+            # Check if item is not expired
+            assert item.get('request_expiry') > data.resolution_at, "Request has expired!"
+
+            # Confirm its a withdraw status
+            assert data.status == 'withdrawn', "Request status must be set to withdrawn!"
+            # Update the item
+            for key, value in data.model_dump().items():
+                # Can add additional validation before
+                item[key] = value
+
+            # Send out call to do whatever the request contains
+            response = table.put_item(Item=item)
+            return response
+        except AssertionError as e:
+            print(e)
+            return e
+
+    def delete_approval_request(self, data:DeleteRequest):
         """
-        
+        Not sure if we will be using this function
         """
+        try:
+            table = self.__db.Table('approval_request')
+            item = table.get_item(Key={'uid': data.uid}).get('Item')
+
+            # Send out call to do whatever the request contains
+            response = table.delete_item(Key={'uid': data.uid})
+            return response
+        except AssertionError as e:
+            print(e)
+            return e
+
     # def delete_recipe(self, uid: str):
     #     table = self.__db.Table('Recipes')      # referencing to table Recipes
     #     response = table.delete_item(           # delete recipe using uuid

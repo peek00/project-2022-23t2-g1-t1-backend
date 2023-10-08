@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse
+from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
 from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db
 
@@ -53,12 +53,25 @@ def update_approval_request(
     if authorized_request():
         return approval_request_repository.update_approval_request(data)
     
-@router.post("/approve")
+@router.post("/response")
 def approve_approval_request(
     data: ApprovalResponse,
 ):
     if authorized_request():
-        return approval_request_repository.approve_approval_request(data)
+        return approval_request_repository.approve_or_reject_approval_request(data)
+    
+@router.post("/withdraw")
+def withdraw_approval_request(
+    data: ApprovalResponse,
+):
+    if authorized_request():
+        return approval_request_repository.withdraw_approval_request(data)
 
+@router.post("/delete")
+def delete_approval_request(
+    data: DeleteRequest,
+):
+    if authorized_request():
+        return approval_request_repository.delete_approval_request(data)
 # ======== Approver Endpoints ====-====
 # @router.get("")
