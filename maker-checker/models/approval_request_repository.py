@@ -1,7 +1,7 @@
 from botocore.exceptions import ClientError
 from boto3.resources.base import ServiceResource
 from boto3.dynamodb.conditions import Key, Attr  # Import Key and Attr
-
+from models.ApprovalRequest import ApprovalResponse
 
 class ApprovalRequestRepository:
     def __init__(self, db: ServiceResource) -> None:
@@ -87,8 +87,40 @@ class ApprovalRequestRepository:
             item[key] = value
         response = table.put_item(Item=item)
         return response
+    
+    def approve_approval_request(self, data:ApprovalResponse):
+        """
+        Approve a resposne
+        """
+        try:
+            table = self.__db.Table('approval_request')
+            item = table.get_item(Key={'uid': data.request_id}).get('Item')
 
+            # Check if requestor is the same as approver
+            assert item.get('requestor_id') != data.approver_id, "Requestor cannot be the same as the approver!"
 
+            # Check if request has been approved / rejected / etc
+            assert item.get('status') == 'pending', "Request has already been resolved!"
+
+            # Check if item is not expired
+            assert item.get('request_expiry') > data.resolution_at, "Request has expired!"
+
+            # Update the item
+            for key, value in data.model_dump().items():
+                # Can add additional validation before
+                item[key] = value
+
+            response = table.put_item(Item=item)
+            return response
+        except AssertionError as e:
+            return e
+        
+        
+
+    def delete_request(self, uid:str):
+        """
+        
+        """
     # def delete_recipe(self, uid: str):
     #     table = self.__db.Table('Recipes')      # referencing to table Recipes
     #     response = table.delete_item(           # delete recipe using uuid

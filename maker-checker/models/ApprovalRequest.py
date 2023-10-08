@@ -40,8 +40,9 @@ class ApprovalResponse(BaseModel):
     """
     Base model used when an approver rejects or approves a request.
     """
+    request_id: str
     status: ApprovalStatus
     approver_id: int
-    comments: Optional[str]
+    comments: Optional[str] = None
     resolution_at: str = datetime.now().isoformat()
 

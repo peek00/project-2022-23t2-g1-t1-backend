@@ -52,6 +52,13 @@ def update_approval_request(
 ):
     if authorized_request():
         return approval_request_repository.update_approval_request(data)
+    
+@router.post("/approve")
+def approve_approval_request(
+    data: ApprovalResponse,
+):
+    if authorized_request():
+        return approval_request_repository.approve_approval_request(data)
 
 # ======== Approver Endpoints ====-====
 # @router.get("")
