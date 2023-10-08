@@ -4,7 +4,7 @@ export default function SideBar(){
 
 
     return(
-    <div className="min-h-screen  max-w-[20%] bg-[#1C2434]">
+    <div className="min-h-screen w-[100%] z-50 relative">
 
         <div>
 
