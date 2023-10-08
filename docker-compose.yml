@@ -12,7 +12,7 @@ services:
     env_file:
       - ./admin-proxy/.env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - microservice1=http://microservice1:3000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
