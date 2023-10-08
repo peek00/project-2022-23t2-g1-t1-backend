@@ -6,6 +6,9 @@ import WinstonCloudwatch, {
 import { config } from "../../config/config";
 const { CloudWatchConfigPartial } = config;
 const { combine, timestamp, printf, colorize } = format;
+import AWS from "aws-sdk";
+
+AWS.config.update(config.AWSConfig);
 
 interface Message {
   level: string;
@@ -22,17 +25,23 @@ class Logger {
     retentionPolicy: number = 30,
   ) {
     if (production) {
+      console.log("Cloudwatch config", CloudWatchConfigPartial);
       const cloudwatchConfig = {
         ...CloudWatchConfigPartial,
         logGroupName: logGroup,
-        logStreamName: `${logGroup}-${process.env.NODE_ENV}`,
+        logStreamName: `${new Date().toISOString().split("T")[0]}`,
+        ensureLogGroup: true,
         messageFormatter: ({ level, message, additionalInfo }: Message) =>
           `[${level}] : ${message} \nDetails: ${additionalInfo}`,
         retentionInDays: retentionPolicy,
       };
-      this.logger = new WinstonCloudwatch(
-        cloudwatchConfig as CloudwatchTransportOptions,
-      );
+      this.logger = createLogger({
+        transports: [
+          new WinstonCloudwatch(
+            cloudwatchConfig as CloudwatchTransportOptions,
+          )
+        ]
+      });
     } else {
       this.logger = createLogger({
         format: combine(
@@ -53,6 +62,7 @@ class Logger {
       ...JSON.parse(addedInfo),
     });
     if (level === "info") {
+      console.log("Logging info", message, additionalInfo)
       this.logger.info(message, { additionalInfo });
     } else if (level === "error") {
       this.logger.error(message, { additionalInfo });

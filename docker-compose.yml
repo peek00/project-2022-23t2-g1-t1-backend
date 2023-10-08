@@ -12,10 +12,12 @@ services:
     env_file:
       - ./admin-proxy/.env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - microservice1=http://microservice1:3000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - CLOUDWATCH_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
     depends_on:
       - microservice1
       - redis
