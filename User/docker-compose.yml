@@ -4,7 +4,7 @@ services:
    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
    image: "amazon/dynamodb-local:latest"
    container_name: dynamodb-local
-   platform: linux/amd64
+   platform: linux/arm64
    ports:
      - "8000:8000"
    volumes:
