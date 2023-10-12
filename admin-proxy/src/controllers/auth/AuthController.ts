@@ -30,6 +30,7 @@ export class AuthController {
   public async authCallback(req: Request, res: Response, next: NextFunction) {
     try {
       if (false && process.env.NODE_ENV === "production") {
+        res.cookie("jwt", req.user!.token, { httpOnly: true });
         res.redirect(process.env.CLIENT_BASE_URL as string);
       } else {
         res.cookie("jwt", req.user!.token, { httpOnly: true });

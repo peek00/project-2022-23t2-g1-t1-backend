@@ -12,19 +12,18 @@ export class Redis implements ICacheProvider {
   private client: RedisClientType;
 
   private constructor() {
-    console.log(`redis://${username}:${password}@${host}:${port}`);
     this.client = createClient({
       url: `redis://${username}:${password}@${host}:${port}`,
       legacyMode: true,
     });
-    this.client
-      .connect()
-      .then(() => {
-        console.log("Connected to Redis");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    (async () => {
+      try {
+        console.log(`redis://${username}:${password}@${host}:${port}`);
+        await this.client.connect()
+      } catch (error) {
+        console.log(error);
+      }
+    })
   }
 
   public static getInstance(): Redis {

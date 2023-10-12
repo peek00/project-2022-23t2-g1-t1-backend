@@ -1,7 +1,7 @@
 import { JwtService } from "./JwtService";
-import { cacheProvider } from "../../modules/CacheProvider";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
 import axios from "axios";
+import { Redis } from "../../modules/CacheProvider/Redis";
 
 export interface UserWithToken {
   id: string;
@@ -17,12 +17,11 @@ export class AuthenticationService {
 
   private constructor() {
     this.jwtService = JwtService.getInstance();
-    this.cacheProvider = cacheProvider;
+    this.cacheProvider = Redis.getInstance();
     this.userMicroServiceUrl =
       process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
   }
   public static getInstance(): AuthenticationService {
-    console.log("AuthenticationService.getInstance()");
     if (!AuthenticationService.instance) {
       AuthenticationService.instance = new AuthenticationService();
     }
@@ -43,17 +42,17 @@ export class AuthenticationService {
     }
   }
   private async findUserByEmail(email: string): Promise<any> {
-    // const user = await axios.get(`${this.userMicroServiceUrl}/users?email=${email}`);
-    // if (!user.data) {
-    //   throw new Error("User not found");
-    // }
+    const user = await axios.get(`${this.userMicroServiceUrl}/users?email=${email}`);
+    if (!user.data) {
+      throw new Error("User not found");
+    }
     // Mock API response
-    const user = {
-      data: {
-        id: "1",
-        role: ["admin"],
-      },
-    };
+    // const user = {
+    //   data: {
+    //     id: "1",
+    //     role: ["admin"],
+    //   },
+    // };
     return user.data;
   }
   public async logout(id: string): Promise<boolean> {

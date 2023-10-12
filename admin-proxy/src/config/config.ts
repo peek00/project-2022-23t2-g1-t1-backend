@@ -16,7 +16,7 @@ export const config = {
   AdditionalInfo: {
     User: ["email", "role"],
     Points: ["previousBalance", "newBalance"],
-    MakerChecker: ["action"],
+    MakerChecker: ["action","finalUser"],
   },
   RententionPolicy: {
     User: 30, // 30 days

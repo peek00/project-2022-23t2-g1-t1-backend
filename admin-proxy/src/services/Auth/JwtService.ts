@@ -16,29 +16,12 @@ export class JwtService {
   }
 
   public generateToken(userId: string): string {
+    console.log("JwtService.generateToken()");
     const token = jwt.sign({ id: userId }, this.secret, {
       expiresIn: 60 * 60 * 1, // 1 hour
     });
     return token;
   }
-
-  // public verifyToken(token: string){
-  //   const decoded = jwt.verify(token, this.secret);
-  //   // Validate JWT Token
-  //   if (typeof decoded === "string" || !decoded.id || !decoded.role || !decoded.exp) {
-  //     throw new Error("Invalid token");
-  //   }
-  //   // Verify Expiry
-  //   const now = Date.now().valueOf() / 1000;
-  //   if (typeof decoded.exp !== "undefined" && decoded.exp < now) {
-  //     throw new Error("Token expired");
-  //   }
-  //   return {
-  //     id: decoded.id,
-  //     role: JSON.parse(decoded.role),
-  //     token: token
-  //   };
-  // }
 
   public validateJwtPayload(payload: JwtPayload) {
     // Validate JWT Token
