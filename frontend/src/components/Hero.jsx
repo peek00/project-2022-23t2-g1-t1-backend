@@ -66,6 +66,8 @@ export default function Hero() {
                 <img src="/footerLogo.svg" className='w-30 h-30'/>
 
                 
+
+                
             </div>
          <div className=' flex justify-around md:flex-row flex-col text-center gap-4 '>
            
