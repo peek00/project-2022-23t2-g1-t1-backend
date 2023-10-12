@@ -6,6 +6,7 @@ export class JwtService {
 
   private constructor() {
     this.secret = process.env.JWT_SECRET as string;
+    console.log(this.secret);
   }
 
   public static getInstance(): JwtService {
