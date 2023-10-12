@@ -8,9 +8,15 @@ import com.ITSABackend.User.constant.AppConstant;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.repo.DynamoDBRepo;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,6 +96,47 @@ public class UserService {
         return user;
 
     }
+
+    public void deleteUser(String bankId, String userId){
+        DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
+            .withPrimaryKey(new PrimaryKey("bankId", bankId, "userId", userId));
+        
+        try {
+
+            Table table = dynamoDBRepo.getTable(AppConstant.USER);
+            System.out.println("Deleting item....");
+            table.deleteItem(deleteItemSpec);
+            System.out.println("Item deleted, Successful");
+
+        } catch (Exception e){
+            System.err.println("Unable to delete item.");
+            System.err.println(e.getMessage());
+        }
+        
+    }
+
+    public void updateUser(User user){
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec()
+            .withPrimaryKey("bankId", user.getbankId(), "userId", user.getUserId())
+            .withUpdateExpression("set username = :user.getUsername()")
+            .withValueMap(new ValueMap().withString("username", user.getUsername()))
+            .withUpdateExpression("set email = :user.getUsername()")
+            .withValueMap(new ValueMap().withString("username", user.getEmail()))
+            .withReturnValues(ReturnValue.UPDATED_NEW);
+
+        try{
+
+            Table table = dynamoDBRepo.getTable(AppConstant.USER);
+            System.out.println("Updating User...");
+            UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
+            System.out.println("Update user successful " + outcome.getItem().toJSONPretty());
+
+        } catch (Exception e){
+            System.err.println("Unable to update User");
+            System.err.println(e.getMessage());
+        }
+    }
+
 
     // public UserService(DynamoDbTable<User> userTable) {
     //     this.userTable = userTable;

@@ -63,7 +63,7 @@ public class UserController {
     @PutMapping(value ="/updateUser", consumes = "application/json")
     public ResponseEntity updateUser(@RequestBody User user){
         try{
-            userService.updateUser(user.getbankId(), user.getUserId(), user);
+            userService.updateUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
