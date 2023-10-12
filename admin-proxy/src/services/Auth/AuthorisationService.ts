@@ -2,10 +2,8 @@ import { AuthenticationService } from "./AuthenticationService";
 
 export class AuthorisationService {
   private static instance: AuthorisationService;
-  private authenticationService: AuthenticationService;
 
   private constructor() {
-    this.authenticationService = AuthenticationService.getInstance();
   }
 
   public static getInstance(): AuthorisationService {
@@ -15,7 +13,7 @@ export class AuthorisationService {
     return AuthorisationService.instance;
   }
 
-  public authorize(userRoles: [], accessRole: string[]) {
+  public authorize(userRoles: string[], accessRole: string[]) {
     if (accessRole.length === 0) {
       return;
     }
