@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
-from models.approval_request_repository import ApprovalRequestRepository
+from models.approval_request_repository import ApprovalRequestRepository, ValidationError
 from controllers.db import initialize_db
 
 
@@ -64,8 +64,12 @@ def approve_approval_request(
 def withdraw_approval_request(
     data: ApprovalResponse,
 ):
-    if authorized_request():
-        return approval_request_repository.withdraw_approval_request(data)
+    try:
+        if authorized_request():
+            return approval_request_repository.withdraw_approval_request(data)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @router.post("/delete")
 def delete_approval_request(
