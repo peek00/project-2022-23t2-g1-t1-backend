@@ -19,10 +19,18 @@ public class User {
     private String userId;
 
     @DynamoDBAttribute
-    private String username;
+    private String firstName;
+
+    @DynamoDBAttribute
+    private String lastName;
 
     @DynamoDBAttribute
     private String email;
+
+    @DynamoDBAttribute
+    private String role;
+
+
 
 
 
@@ -45,13 +53,24 @@ public class User {
         this.userId = userId;
     }
 
-    @DynamoDbSortKey
-    public String getUsername() {
-        return username;
+    public String getfirstName() {
+        return firstName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setfirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getlastName(){
+        return lastName;
+    }
+
+    public String getFullName(){
+        return firstName + " " + lastName;
+    }
+
+    public void setlastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -60,6 +79,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRole(){
+        return role;
+    }
+
+    public void setRole(String role){
+        this.role = role;
     }
 
     // Constructors, getPoints can be added after

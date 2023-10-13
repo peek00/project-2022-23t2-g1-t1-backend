@@ -30,8 +30,10 @@ public class DynamoDBRepo {
             Arrays.asList(
                 new AttributeDefinition("bankId", ScalarAttributeType.S),
                 new AttributeDefinition("userId", ScalarAttributeType.S),
-                new AttributeDefinition("username", ScalarAttributeType.S),
-                new AttributeDefinition("email", ScalarAttributeType.S)
+                new AttributeDefinition("firstName", ScalarAttributeType.S),
+                new AttributeDefinition("lastName", ScalarAttributeType.S),
+                new AttributeDefinition("email", ScalarAttributeType.S),
+                new AttributeDefinition("role", ScalarAttributeType.S)
             ),
             new ProvisionedThroughput(10L, 10L)
             

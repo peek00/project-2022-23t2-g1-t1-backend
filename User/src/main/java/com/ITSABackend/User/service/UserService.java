@@ -20,13 +20,6 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.UpdateBehavior;
-import software.amazon.awssdk.enhanced.dynamodb.model.DeleteItemEnhancedRequest;
-import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
-import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 
 
 @Service
@@ -56,8 +49,10 @@ public class UserService {
 
             PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("bankId", bankId)
                 .with("userId", userId)
-                .with("username", user.getUsername())
-                .with("email", user.getUsername()));
+                .with("firstName", user.getfirstName())
+                .with("lastName", user.getlastName())
+                .with("email", user.getEmail())
+                .with("role", user.getRole()));
 
             System.out.println("Creat user success\n" + outcome.getPutItemResult());
 
@@ -83,7 +78,9 @@ public class UserService {
                     user.setBankId(outcome.getString("bankId"));
                     user.setUserId(outcome.getString("userId"));
                     user.setEmail(outcome.getString("email"));
-                    user.setUsername(outcome.getString("username"));
+                    user.setfirstName(outcome.getString("firstName"));
+                    user.setlastName(outcome.getString("lastName"));
+                    user.setRole(outcome.getString("role"));
                 }
 
                 System.out.println("User retrieved" + outcome);
@@ -118,10 +115,14 @@ public class UserService {
     public void updateUser(User user){
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
             .withPrimaryKey("bankId", user.getbankId(), "userId", user.getUserId())
-            .withUpdateExpression("set username = :user.getUsername()")
-            .withValueMap(new ValueMap().withString("username", user.getUsername()))
-            .withUpdateExpression("set email = :user.getUsername()")
-            .withValueMap(new ValueMap().withString("username", user.getEmail()))
+            .withUpdateExpression("set firstName = :user.getfirstName()")
+            .withValueMap(new ValueMap().withString("firstName", user.getfirstName()))
+            .withUpdateExpression("set lastName = :user.getlastName()")
+            .withValueMap(new ValueMap().withString("lastName", user.getlastName()))
+            .withUpdateExpression("set email = :user.getEmail()")
+            .withValueMap(new ValueMap().withString("email", user.getEmail()))
+            .withUpdateExpression("set role = :user.getRole()")
+            .withValueMap(new ValueMap().withString("role", user.getRole()))
             .withReturnValues(ReturnValue.UPDATED_NEW);
 
         try{
