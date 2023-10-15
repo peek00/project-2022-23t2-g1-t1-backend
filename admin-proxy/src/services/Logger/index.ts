@@ -20,5 +20,4 @@ const makerCheckerAuditLogger = new AuditLogger(
 );
 
 // Export AuditLoggers
-// module.exports = { userAuditLogger, pointsAuditLogger, makerCheckerAuditLogger };
 export { userAuditLogger, pointsAuditLogger, makerCheckerAuditLogger };

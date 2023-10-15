@@ -42,17 +42,21 @@ export class AuthenticationService {
     }
   }
   private async findUserByEmail(email: string): Promise<any> {
-    const user = await axios.get(`${this.userMicroServiceUrl}/users?email=${email}`);
-    if (!user.data) {
-      throw new Error("User not found");
-    }
+    let user;
     // Mock API response
-    // const user = {
-    //   data: {
-    //     id: "1",
-    //     role: ["admin"],
-    //   },
-    // };
+    if (process.env.NODE_ENV !== 'production') {
+      user = {
+        data: {
+          id: "1",
+          role: ["admin"],
+        },
+      };
+    }else {
+      user = await axios.get(`${this.userMicroServiceUrl}/users?email=${email}`);
+      if (!user.data) {
+        throw new Error("User not found");
+      }
+    }
     return user.data;
   }
   public async logout(id: string): Promise<boolean> {

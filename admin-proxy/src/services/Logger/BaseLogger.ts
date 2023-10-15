@@ -39,8 +39,9 @@ class Logger {
         transports: [
           new WinstonCloudwatch(
             cloudwatchConfig as CloudwatchTransportOptions,
-          )
-        ]
+          ),
+          new transports.File({ filename: "/tmp/logs.log"}), //Only for when cloudwatch is not working
+        ],
       });
     } else {
       this.logger = createLogger({
@@ -51,7 +52,9 @@ class Logger {
             return `[${level}] : ${message} \nDetails: ${additionalInfo}`;
           }),
         ),
-        transports: [new transports.Console()],
+        transports: [
+          new transports.Console(),
+          new transports.File({ filename: "/tmp/logs.log" })],
       });
     }
   }
@@ -61,11 +64,16 @@ class Logger {
       timestamp: new Date().toISOString(),
       ...JSON.parse(addedInfo),
     });
-    if (level === "info") {
-      console.log("Logging info", message, additionalInfo)
-      this.logger.info(message, { additionalInfo });
-    } else if (level === "error") {
-      this.logger.error(message, { additionalInfo });
+    try {
+      if (level === "info") {
+        console.log("Logging info", message, additionalInfo)
+        this.logger.info(message, { additionalInfo });
+      } else if (level === "error") {
+        this.logger.error(message, { additionalInfo });
+      }
+    } catch (err) {
+      // Handle when logger fails
+      console.log("Logger failed", err);
     }
   }
 }

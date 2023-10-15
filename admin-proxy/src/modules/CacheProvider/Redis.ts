@@ -10,20 +10,18 @@ const port = Number(process.env.REDIS_PORT) || 6379;
 export class Redis implements ICacheProvider {
   private static instance: Redis;
   private client: RedisClientType;
+  private connected: boolean = false;
 
   private constructor() {
     this.client = createClient({
       url: `redis://${username}:${password}@${host}:${port}`,
       legacyMode: true,
     });
-    (async () => {
-      try {
-        console.log(`redis://${username}:${password}@${host}:${port}`);
-        await this.client.connect()
-      } catch (error) {
-        console.log(error);
-      }
-    })
+    this.client.connect().then(() => {
+      this.connected = true;
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   public static getInstance(): Redis {
