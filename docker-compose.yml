@@ -1,0 +1,48 @@
+version: '3.8'
+networks:
+  vpc:
+    driver: bridge
+services:
+  admin-proxy:
+    build: ./admin-proxy
+    ports:
+      - "8000:8000"
+    networks:
+      - vpc
+    env_file:
+      - ./admin-proxy/.env
+    environment:
+      - NODE_ENV=development
+      - microservice1=http://microservice1:3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CLOUDWATCH_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      - microservice1
+      - redis
+  microservice1:
+    build: ./testMicroservice
+    networks:
+      - vpc
+    deploy: # Example of load balancing with service discovery using virtual ip address
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - vpc
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=redis
+      - HTTP_USER=default
+      - HTTP_PASSWORD=password
+    ports:
+      - 8081:8081
+    networks:
+      - vpc
+    depends_on:
+      - redis

@@ -1,0 +1,8 @@
+**/.git
+**/*.sh
+**/.svn
+**/.hg
+**/.husky
+**/.env.*
+**/.prettierignore
+**/node_modules
