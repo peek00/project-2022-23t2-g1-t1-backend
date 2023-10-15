@@ -103,6 +103,30 @@ class ApprovalRequestRepository:
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
+        
+    def get_pending_approval_requests_by_requestor_id(self, approver_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("requestor_id").eq(approver_id) & Attr("status").eq('pending')
+
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+        
+    def get_non_pending_approval_requests_by_requestor_id(self, approver_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("requestor_id").eq(approver_id) & Attr("status").ne('pending')
+
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
 
     def create_approval_request(self, approval_request: dict):
         try:
@@ -111,7 +135,6 @@ class ApprovalRequestRepository:
             return response                         #
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
-
 
     def update_approval_request(self,
                        data: dict
@@ -213,8 +236,6 @@ class ApprovalRequestRepository:
     
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
-
-
 
     def delete_approval_request(self, data:DeleteRequest):
         """

@@ -36,11 +36,30 @@ async def get_all_requests(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-pending")
-def get_pending_requests():
+def get_pending_requests(
+    requestor_id: str = None,
+):
     try:
+        if requestor_id:
+            return approval_request_repository.get_pending_approval_requests_by_requestor_id(requestor_id)
         return approval_request_repository.get_pending_approval_requests()
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except ClientError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/get-not-pending")
+def get_not_pending_requests(
+    requestor_id: str,
+):
+    try:
+        return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(requestor_id)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
