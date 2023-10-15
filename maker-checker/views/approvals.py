@@ -79,6 +79,52 @@ def get_expired_requests():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+@router.get("/get-by-id")
+def get_request_by_id(
+    request_id: str,
+):
+    try:
+        return approval_request_repository.get_approval_request_by_uid(request_id)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ClientError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/get-by-requestor")
+def get_request_by_requestor_id(
+    requestor_id: str,
+):
+    try:
+        return approval_request_repository.get_approval_request_by_requestor_id(requestor_id)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ClientError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/get-by-approver")
+def get_request_by_approver_id(
+    approver_id: str,
+):
+    try:
+        return approval_request_repository.get_approval_request_by_approver_id(approver_id)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ClientError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
 # =================== END: GET requests =======================
 
 # =================== START: REQUESTOR requests =======================

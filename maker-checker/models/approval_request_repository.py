@@ -62,12 +62,43 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             
             # Get the current datetime
-            current_time = datetime.now()
+            current_time = datetime.now().isoformat()
             
             # Define the filter expression to check for pending items and not expired items
             filter_expression = Attr("status").eq('pending') & Attr("request_expiry").gt(current_time)
             
             response = table.scan(FilterExpression=filter_expression)
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])\
+            
+    def get_approval_request_by_uid(self, uid: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.get_item(Key={'uid': uid})
+            item = response.get('Item')
+            return item
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+        
+    def get_approval_request_by_requestor_id(self, requestor_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("requestor_id").eq(requestor_id)
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+    
+    def get_approval_request_by_approver_id(self, approver_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("approver_id").eq(approver_id)
+            )
             items = response.get('Items', [])
             return items
         except ClientError as e:
@@ -109,7 +140,6 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    
     def approve_or_reject_approval_request(self, data:ApprovalResponse):
         """
         Approve a response
@@ -146,8 +176,6 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-        
-        
     def withdraw_approval_request(self, data: ApprovalResponse):
         """
         Changes an approval object request to be withdrawn.
@@ -159,8 +187,8 @@ class ApprovalRequestRepository:
             item = table.get_item(Key={'uid': data.uid}).get('Item')
 
             # Check if requestor is the same as approver
-            if item.get('requestor_id') == data.approver_id:
-                raise ValidationError("Requestor cannot be the same as the approver!")
+            if item.get('requestor_id') != data.approver_id:
+                raise ValidationError("Withdrawer must be the same as the requestor!")
 
             # Check if request has been approved / rejected / etc
             if item.get('status') != 'pending':
