@@ -14,9 +14,8 @@ import {
           </Button>
         </MenuHandler>
         <MenuList className="">
-          <MenuItem>Menu Item 1</MenuItem>
-          <MenuItem>Menu Item 2</MenuItem>
-          <MenuItem>Menu Item 3</MenuItem>
+          <MenuItem>Edit Point Balance </MenuItem>
+          
         </MenuList>
       </Menu>
     );
