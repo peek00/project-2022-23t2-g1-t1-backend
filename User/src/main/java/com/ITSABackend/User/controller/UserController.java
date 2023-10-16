@@ -40,13 +40,14 @@ public class UserController {
     }
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
-    public ResponseEntity<User> getAllUsers(@PathParam("bankId")String bankId, @PathParam("userId") String userId){
+    public User getAllUsers(@PathParam("bankId")String bankId, @PathParam("userId") String userId){
         try{
 
-            return new ResponseEntity(userService.getUserById(bankId,userId), HttpStatus.OK);
+            return userService.getUserById(bankId,userId);
 
         } catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            System.err.println(e.getMessage());
+            return null;
         }
     }
 

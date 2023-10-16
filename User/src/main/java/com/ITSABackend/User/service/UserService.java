@@ -83,7 +83,7 @@ public class UserService {
                     user.setRole(outcome.getString("role"));
                 }
 
-                System.out.println("User retrieved" + outcome);
+                return user;
 
             } catch(Exception e){
                 System.err.println("Unable to read user" + bankId + userId);
