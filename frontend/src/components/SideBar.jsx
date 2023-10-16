@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function SideBar(){
 
@@ -10,12 +11,12 @@ export default function SideBar(){
 
             <div className="flex flex-col items-center justify-center">
 
-                <img src = "/footerLogo.svg" className="h-[100px] w-[100px]"/>
+                <Link to="/users"><img src = "/footerLogo.svg" className="h-[100px] w-[100px]"/></Link>
 
-                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-80">Users</h1>
-                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-60">View Users</h1>
-                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-60">Enroll Users</h1>
-                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-60 mt-20">View Logs</h1>
+                
+                <h1 className="text-white text-sm font-thin active:font-thick hover:font-bold cursor-pointer opacity-60 "><Link to="/users">View Users</Link></h1>
+                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-60"><Link to="/addUser">Enroll User</Link></h1>
+                <h1 className="text-white text-sm font-thin active:font-thin hover:font-bold cursor-pointer opacity-60 mt-20"><Link to="/logs">Logs</Link></h1>
                 
                 </div>
 
