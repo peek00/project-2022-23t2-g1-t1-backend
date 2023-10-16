@@ -1,5 +1,3 @@
-import { AuthenticationService } from "./AuthenticationService";
-
 export class AuthorisationService {
   private static instance: AuthorisationService;
 

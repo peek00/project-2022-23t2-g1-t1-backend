@@ -12,15 +12,26 @@ services:
     env_file:
       - ./admin-proxy/.env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=development 
       - microservice1=http://microservice1:3000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - CLOUDWATCH_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-1
+      # - CLIENT_BASE_URL=http://localhost:3000 #Update this to the url to redirect the client to after authentication
     depends_on:
       - microservice1
       - redis
+    volumes:
+      - efs:/tmp
+  logging-restore:
+    build: ./loggingRestore
+    volumes:
+      - efs:/tmp
+    networks:
+      - vpc
+    depends_on:
+      - admin-proxy
   microservice1:
     build: ./testMicroservice
     networks:
@@ -28,7 +39,6 @@ services:
     deploy: # Example of load balancing with service discovery using virtual ip address
       mode: replicated
       replicas: 2
-      endpoint_mode: vip
   redis:
     image: redis:alpine
     restart: always
@@ -46,3 +56,5 @@ services:
       - vpc
     depends_on:
       - redis
+volumes:
+  efs:
