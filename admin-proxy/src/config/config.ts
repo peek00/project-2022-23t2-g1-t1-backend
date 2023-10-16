@@ -24,8 +24,14 @@ export const config = {
     MakerChecker: 30,
   },
   AWSConfig: {
-    region: process.env.AWS_DEFAULT_REGION || '',
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-  }
+    region: process.env.AWS_DEFAULT_REGION || 'local',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'test',
+    dynamoDBEndpoint: process.env.AWS_DYNAMODB_ENDPOINT || undefined,
+  },
+  ProxyPaths: {
+    userProxy: process.env.USER_MS || '',
+    pointsProxy: process.env.POINTS_MS || '',
+    makerCheckerProxy: process.env.MAKER_CHECKER_MS || '',
+  },
 };

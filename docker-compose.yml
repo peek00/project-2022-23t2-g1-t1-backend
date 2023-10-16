@@ -17,8 +17,13 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - CLOUDWATCH_REGION=us-east-1
-      - AWS_DEFAULT_REGION=us-east-1
-      # - CLIENT_BASE_URL=http://localhost:3000 #Update this to the url to redirect the client to after authentication
+      - AWS_DEFAULT_REGION=local
+      - AWS_DYNAMODB_ENDPOINT=http://db:8000
+      - CLIENT_BASE_URL=http://localhost:3000 
+      # - CLIENT_AUTH_REDIRECT_URL=http://localhost:3000 #Update this to the url to redirect the client to after authentication
+      - USER_MS=http://microservice1:3000
+      - POINTS_MS=http://microservice1:3000
+      - MAKER_CHECKER_MS=http://microservice1:3000
     depends_on:
       - microservice1
       - redis
@@ -56,5 +61,12 @@ services:
       - vpc
     depends_on:
       - redis
+  db:
+    image: amazon/dynamodb-local
+    restart: unless-stopped
+    ports:
+      - 8001:8000
+    networks:
+      - vpc
 volumes:
   efs:

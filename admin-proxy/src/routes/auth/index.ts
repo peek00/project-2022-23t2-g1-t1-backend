@@ -6,7 +6,7 @@ import { authController } from "../../controllers/auth";
 const authRouter = Router();
 authRouter.get(
   "/me",
-  authorize([]),
+  authorize(),
   (req: Request, res: Response, next: NextFunction) => {
     console.log(req.user);
     res.json(req.user);
@@ -27,6 +27,6 @@ authRouter.get(
 );
 
 // Logout Route
-authRouter.get("/logout", authorize([]), authController.logout);
+authRouter.get("/logout", authorize(), authController.logout);
 
 export default authRouter;

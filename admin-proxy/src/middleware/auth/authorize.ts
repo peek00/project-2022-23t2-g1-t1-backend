@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { authorisationService } from "../../services/Auth";
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-function authorize(accessRoles: string[]) {
+function authorize() {
   return (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
       "jwt",
@@ -17,11 +18,23 @@ function authorize(accessRoles: string[]) {
         }
         const { role } = user;
         try {
-          authorisationService.authorize(role, accessRoles);
+          // (
+          //   async () => {
+          //     await authorisationService.authorize(role, req.method as HttpMethod, req.path);
+          //   } 
+          // );
           // Make user available in req.user
-          req.user = user;
-          console.log("authorisationService.authorize", req.user);
-          next();
+          console.log(req.method as HttpMethod, req.path)
+          authorisationService.authorize(role, req.method as HttpMethod, req.path).then(() => {
+            req.user = user;
+            console.log("authorisationService.authorize", req.user);
+            next();
+          }).catch((error) => {
+            return next(error);
+          });
+          // req.user = user;
+          // console.log("authorisationService.authorize", req.user);
+          // next();
         } catch (error) {
           return next(error);
         }

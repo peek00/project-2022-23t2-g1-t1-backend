@@ -29,7 +29,7 @@ export class AuthController {
 
   public async authCallback(req: Request, res: Response, next: NextFunction) {
     try {
-      const redirectUrl = process.env.CLIENT_BASE_URL || '/auth/me';
+      const redirectUrl = process.env.CLIENT_AUTH_REDIRECT_URL || '/auth/me';
       res.cookie("jwt", req.user!.token, { httpOnly: true });
       res.redirect(redirectUrl);
     } catch (error) {
