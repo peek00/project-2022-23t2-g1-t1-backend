@@ -23,14 +23,10 @@ public class UserController {
     @Autowired
     UserService userService;
     
-    @GetMapping(value = "/test")
-    public User testUser(){
-        return new User();
-    }
-
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity createUser(@RequestBody User user){
         try{
+
             userService.createUser(user);
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -51,7 +47,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "deletetable/{id}")
+    @DeleteMapping(value = "/deleteUser")
     public ResponseEntity deleteUser(@PathParam("id") String id){
         try{
 

@@ -27,17 +27,6 @@ public class User {
     @DynamoDBAttribute
     private String role;
 
-
-    public User(){
-        this.id = "test";
-        this.firstName = "test";
-        this.lastName = "test";
-        this.role ="test";
-        this.email = "test";
-    }
-
-
-
     @DynamoDBHashKey
     public String getUserId() {
         return this.id;

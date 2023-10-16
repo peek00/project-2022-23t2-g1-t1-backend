@@ -14,6 +14,8 @@ import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +38,18 @@ public class UserService {
     }
 
     public void createUser(User user) throws Exception{
-        createTable(AppConstant.USER);
+        // createTable(AppConstant.USER);
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
         try{
-            String id = user.getUserId();
+            // System.out.println("On try");
+            // System.out.println(user.getUserId());
+            // System.out.println(user.getfirstName());
+            // System.out.println(user.getlastName());
+
+            String id = UUID.randomUUID().toString();
 
             PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("id", id)
-                .with("id", id)
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
@@ -52,7 +58,9 @@ public class UserService {
             System.out.println("Creat user success\n" + outcome.getPutItemResult());
 
         } catch(Exception e){
+            System.out.println(" Only error");
             System.out.println(e.getMessage());
+
         }
 
     }
