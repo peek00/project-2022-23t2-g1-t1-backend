@@ -15,7 +15,7 @@ export default function LogsPage(){
         <TopBar/>
         <div className='absolute left-[25%] w-full'>
           <div className='min-h-screen'>
-            <UserSearch user="update"/>
+            <UserSearch user="Logs"/>
           </div>
           <div className='min-w-full'>
             <LogsTable/>

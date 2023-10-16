@@ -8,6 +8,7 @@ import TopBar from '../components/TopBar';
 import UserSearch from '../components/UserSearch';
 import UserTable from '../components/UserTable';
 import LogsTable from '../components/LogsTable';
+import UpdatePointsTable from '../components/UpdatePointsTable';
 
 
 
@@ -23,10 +24,10 @@ export default function UpdatePointsPage(){
         <TopBar/>
         <div className='absolute left-[25%] w-full'>
           <div className='min-h-screen'>
-            <UserSearch user="update"/>
+            <UserSearch user="Update Points"/>
           </div>
           <div className='min-w-full'>
-            <LogsTable/>
+            <UpdatePointsTable/>
           </div>
         </div>
       </div>
