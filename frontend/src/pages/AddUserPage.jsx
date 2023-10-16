@@ -4,7 +4,7 @@ import TopBar from '../components/TopBar';
 import UserForm from '../components/UserForm';
 
 
-export default function AddUserPage() {
+export default function AddUserPage(props) {
 
 
     return(
@@ -19,7 +19,9 @@ export default function AddUserPage() {
           <div className='absolute left-[20%] min-w-[65%]'>
            
             <UserForm/>
-            <h1 className='text-3xl font-bold mt-[20%]'>Add User</h1>
+            <h1 className='text-3xl font-bold mt-[20%]'>
+  {props.type === 'add' ? 'Add User' : 'Update User'}
+</h1>
           </div>
         </div>
       

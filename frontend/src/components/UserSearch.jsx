@@ -1,13 +1,17 @@
-export default function UserSearch()
+import React from 'react';
+import { Link } from 'react-router-dom';
+export default function UserSearch(props)
 
 {
 
 
     return (
-        <div className='flex w-[100%] absolute top-[20%]'>  
+        <div className='flex w-[100%] absolute top-[10%]'>  
 
         <div>
-            <h1 className='text-3xl font-bold'> Users </h1>
+        <h1 className='text-2xl ms-11 font-bold'>
+    {props.user === 'user' ? 'User' : 'Logs'}
+  </h1>
         </div>
 
         <div className="w-[50%]"></div>
@@ -24,7 +28,7 @@ export default function UserSearch()
                 </div>
                 
             </form>
-            <button type="submit" class="text-black mx-10 bg-[#F4F4F4] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">+</button>
+            <button type="submit" class="text-black mx-10 bg-[#F4F4F4] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><Link to ="/addUser">+</Link></button>
 
             </div>
 
