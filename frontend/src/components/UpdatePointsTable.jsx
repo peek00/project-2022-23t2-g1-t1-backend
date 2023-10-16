@@ -3,12 +3,21 @@
 import React from 'react';
 import AvatarText from './AvatarText';
 export default function UpdatePointsTable(){
+    const goBack = () => {
+        window.history.back();
+      };
 
 
     return(
 
 
     <div className=" w-[80%]  text-center absolute top-[20%]">
+         <img
+      src="/arrow.png" // Replace with the actual image URL
+      alt="Go Back"
+      onClick={goBack}
+      style={{ cursor: 'pointer' }} className='absolute  left-[15%] w-[2%]'
+    />
         
 
 

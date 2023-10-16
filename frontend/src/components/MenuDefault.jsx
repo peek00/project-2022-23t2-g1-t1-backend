@@ -17,7 +17,8 @@ import {
           </Button>
         </MenuHandler>
         <MenuList className="">
-          <MenuItem><Link to="/updateUser">Edit User Details</Link> </MenuItem>
+          <MenuItem><Link to="/updateUser">Edit User Details</Link></MenuItem>
+          <MenuItem><Link to="/updatePoints">Update User Points</Link></MenuItem>
           
         </MenuList>
       </Menu>
