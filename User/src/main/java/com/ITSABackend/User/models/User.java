@@ -31,6 +31,14 @@ public class User {
     private String role;
 
 
+    public User(){
+        this.bankId = "test";
+        this.userId = "test";
+        this.firstName = "test";
+        this.lastName = "test";
+        this.role ="test";
+        this.email = "test";
+    }
 
 
 

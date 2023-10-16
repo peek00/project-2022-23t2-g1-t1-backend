@@ -4,7 +4,6 @@ package com.ITSABackend.User.controller;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.service.UserService;
 
-import java.util.List;
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-// @RequestMapping("/users")
+@RequestMapping("/User")
 public class UserController {
 
     @Autowired
     UserService userService;
     
+    @GetMapping(value = "/test")
+    public User testUser(){
+        return new User();
+    }
+
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity createUser(@RequestBody User user){
         try{
