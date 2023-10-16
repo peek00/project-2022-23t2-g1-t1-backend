@@ -24,12 +24,9 @@ public class DynamoDBRepo {
             System.out.println("Creating the table...");
             Table table = dynamoDBConfig.getDynamoDB().createTable(AppConstant.USER,
             Arrays.asList(
-                new KeySchemaElement("bankId", KeyType.HASH),
-                new KeySchemaElement("userId", KeyType.RANGE)
+                new KeySchemaElement("id", KeyType.HASH)
             ),
             Arrays.asList(
-                new AttributeDefinition("bankId", ScalarAttributeType.S),
-                new AttributeDefinition("userId", ScalarAttributeType.S),
                 new AttributeDefinition("firstName", ScalarAttributeType.S),
                 new AttributeDefinition("lastName", ScalarAttributeType.S),
                 new AttributeDefinition("email", ScalarAttributeType.S),

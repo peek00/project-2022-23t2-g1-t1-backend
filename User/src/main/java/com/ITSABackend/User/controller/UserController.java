@@ -40,10 +40,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
-    public User getAllUsers(@PathParam("bankId")String bankId, @PathParam("userId") String userId){
+    public User getAllUsers(@PathParam("id") String id){
         try{
 
-            return userService.getUserById(bankId,userId);
+            return userService.getUserById(id);
 
         } catch(Exception e){
             System.err.println(e.getMessage());
@@ -51,11 +51,11 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "deletetable/{bankId}/{userId}")
-    public ResponseEntity deleteUser(@PathParam("bankId") String bankId, @PathParam("userId") String userId){
+    @DeleteMapping(value = "deletetable/{id}")
+    public ResponseEntity deleteUser(@PathParam("id") String id){
         try{
 
-            userService.deleteUser(bankId, userId);
+            userService.deleteUser(id);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch(Exception e){

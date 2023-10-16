@@ -1,9 +1,5 @@
 package com.ITSABackend.User.service;
 
-import java.util.UUID;
-
-
-
 import com.ITSABackend.User.constant.AppConstant;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.repo.DynamoDBRepo;
@@ -44,11 +40,10 @@ public class UserService {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
         try{
-            String bankId = user.getbankId();
-            String userId = UUID.randomUUID().toString();
+            String id = user.getUserId();
 
-            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("bankId", bankId)
-                .with("userId", userId)
+            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("id", id)
+                .with("id", id)
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
@@ -62,12 +57,12 @@ public class UserService {
 
     }
 
-    public User getUserById(String bankId, String userId){
+    public User getUserById(String id){
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
         if (table != null){
-            GetItemSpec spec = new GetItemSpec().withPrimaryKey("bankId", bankId, "userId", userId);
+            GetItemSpec spec = new GetItemSpec().withPrimaryKey("id", id);
 
             try{
                 System.out.println("Reading user....");
@@ -75,8 +70,7 @@ public class UserService {
 
                 if (outcome != null){
                     user = new User();
-                    user.setBankId(outcome.getString("bankId"));
-                    user.setUserId(outcome.getString("userId"));
+                    user.setUserId(outcome.getString("id"));
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
@@ -86,7 +80,7 @@ public class UserService {
                 return user;
 
             } catch(Exception e){
-                System.err.println("Unable to read user" + bankId + userId);
+                System.err.println("Unable to read user" + id);
                 System.err.println(e.getMessage());
             }
         }
@@ -94,9 +88,9 @@ public class UserService {
 
     }
 
-    public void deleteUser(String bankId, String userId){
+    public void deleteUser(String id){
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
-            .withPrimaryKey(new PrimaryKey("bankId", bankId, "userId", userId));
+            .withPrimaryKey(new PrimaryKey("id", id));
         
         try {
 
@@ -114,7 +108,7 @@ public class UserService {
 
     public void updateUser(User user){
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-            .withPrimaryKey("bankId", user.getbankId(), "userId", user.getUserId())
+            .withPrimaryKey("id", user.getUserId(), "id", user.getUserId())
             .withUpdateExpression("set firstName = :user.getfirstName()")
             .withValueMap(new ValueMap().withString("firstName", user.getfirstName()))
             .withUpdateExpression("set lastName = :user.getlastName()")
@@ -138,46 +132,5 @@ public class UserService {
         }
     }
 
-
-    // public UserService(DynamoDbTable<User> userTable) {
-    //     this.userTable = userTable;
-    // }
-
-    // public User createUser(User user) {
-    //     PutItemEnhancedRequest<User> request = PutItemEnhancedRequest.builder(User.class)
-    //             .item(user)
-    //             .build();
-
-    //     userTable.putItem(request);
-
-    //     return user;
-    // }
-
-    // public User getUserById(String bankId, String userId) {
-    //     GetItemEnhancedRequest getItemRequest = GetItemEnhancedRequest.builder()
-    //             .key(Key.builder().partitionValue(userId).build())
-    //             .build();
-
-    //     return userTable.getItem(getItemRequest);
-    // }
-
-    // public User updateUser(String bankId, String userId, User updatedUser) {
-    //     updatedUser.setUserId(userId);
-
-    //     PutItemEnhancedRequest<User> request = PutItemEnhancedRequest.builder(User.class)
-    //             .item(updatedUser)
-    //             .build();
-
-    //     userTable.putItem(request);
-
-    //     return updatedUser;
-    // }
-
-    // public void deleteUser(String bankId, String userId) {
-    //     DeleteItemEnhancedRequest request = DeleteItemEnhancedRequest.builder()
-    //             .key(Key.builder().partitionValue(userId).build())
-    //             .build();
-
-    //     userTable.deleteItem(request);
 }
 
