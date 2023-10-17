@@ -5,6 +5,7 @@ import cors from "cors";
 import { errorHandler } from "./middleware/error/error";
 import router from "./routes";
 import { PolicyService } from "./services/Policy/PolicyService";
+import authorize from "./middleware/auth/authorize";
 
 //For env File
 dotenv.config();
@@ -27,7 +28,7 @@ PolicyService.initialize().then(() => {
   );
 
   // Add Proxy Middleware
-  app.use(router);
+  app.use("/",authorize(), router);
   app.use(errorHandler);
 
   app.listen(port, host, () => {

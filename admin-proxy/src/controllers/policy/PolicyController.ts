@@ -31,7 +31,7 @@ export class PolicyController {
   public async listExistingPolicy(req:Request, res:Response, next:NextFunction): Promise<any> {
     try {
       console.log("listExistingPolicy");
-      const policy = await PolicyService.getInstance().findAll();
+      const policy = await PolicyService.getInstance().getAllPolicies();
       res.status(200).json(policy);
     } catch (error) {
       next(error);

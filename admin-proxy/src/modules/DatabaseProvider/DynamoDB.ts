@@ -1,5 +1,6 @@
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, PutItemCommand, DeleteItemCommand, GetItemCommand, Condition} from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import IDatabaseProvider from "./DatabaseProviderInterface";
 import { config } from "../../config/config";
 const { AWSConfig } = config;
@@ -145,9 +146,17 @@ export class DynamoDB implements IDatabaseProvider {
         TableName: tableName,
         // FilterExpression: filter ? Object.keys(filter).map((key) => `${key} = :${key}`).join(" AND ") : undefined,
       }));
+      // Convert response to json
       console.log(response)
-      return response;
-    } catch (error) {
+      // return response;
+      if (response.Items === undefined || response.Items.length == 0) return [];
+      console.log(response.Items)
+      const formatted = response.Items.map((item) => {
+        return unmarshall(item);
+      });
+      console.log("Formatted",formatted)
+      return formatted;
+    } catch (error){
       console.log(error)
       throw new Error(`Error finding item ${filter} to table: ${tableName}`);
     }

@@ -1,14 +1,18 @@
 import { ScanCommandInput } from "@aws-sdk/client-dynamodb";
 import IDatabaseProvider from "../../modules/DatabaseProvider/DatabaseProviderInterface";
 import { DynamoDB } from "../../modules/DatabaseProvider/DynamoDB";
+import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
+import { Redis } from "../../modules/CacheProvider/Redis";
 
 export class PolicyService {
   private static instance: PolicyService;
   private db: IDatabaseProvider;
+  private cacheProvider: ICacheProvider
   private tableName: string = "policy";
 
   private constructor() {
     this.db = DynamoDB.getInstance();
+    this.cacheProvider = Redis.getInstance();
   }
 
   public static getInstance(): PolicyService {
@@ -18,25 +22,38 @@ export class PolicyService {
     return PolicyService.instance;
   }
 
-  public static async initialize(): Promise<void> {
+  public static async initialize(restart:boolean = true): Promise<void> {
     const policyService = PolicyService.getInstance();
+    if (restart) {
+      await PolicyService.tearDown();
+    }
     // Check if table exists
     const tables = await policyService.db.listTables();
     console.log(tables);
-    if (tables.TableNames.includes(policyService.tableName)) {
+    if (!tables.TableNames.includes(policyService.tableName)) {
       await policyService.createTable();
     } 
     // Check if there are any policies in the table
     const policies = await policyService.findAll();
-    if (policies.Count === 0) {
+    console.log(policies)
+    if (policies === undefined || policies.length === 0) {
       const defaultPolicy = {
-        path: "/",
-        GET: ["admin", "user", "superadmin"],
-        POST: ["admin"],
-        PUT: ["admin"],
-        DELETE: ["admin"],
+        path: "*",
+        GET: ["superadmin", "admin"],
+        POST: ["superadmin", "admin"],
+        PUT: ["superadmin", "admin"],
+        DELETE: ["superadmin", "admin"],
       };
       await policyService.add(defaultPolicy);
+      // Add auth route policy
+      const authPolicy = {
+        path: "/auth",
+        GET: [],
+        POST: [],
+        PUT: [],
+        DELETE: [],
+      };
+      await policyService.add(authPolicy);
     }
   }
 
@@ -49,11 +66,8 @@ export class PolicyService {
     }
   }
 
-  private async createTable(restart:boolean = true): Promise<any> {
+  private async createTable(): Promise<any> {
     console.log("createTable");
-    if (restart) {
-      await PolicyService.tearDown();
-    }
     await this.db.createTable(this.tableName, {
       KeySchema: [
         {
@@ -100,5 +114,35 @@ export class PolicyService {
 
   public async findBy(filter: any): Promise<any> {
     return await this.db.findBy(this.tableName, filter);
+  }
+
+  public async getAllPolicies(): Promise<any> {
+    // Check cache
+    const cachedPolicies = await this.cacheProvider.get("policies");
+    if (cachedPolicies) {
+      return JSON.parse(cachedPolicies);
+    } else {
+      const policies = await this.findAll();
+      console.log(policies);
+      await this.cacheProvider.write("policies", JSON.stringify(policies), -1); 
+      return policies;
+    }
+  }
+
+  public async getPolicy(path: string, method: string): Promise<String[]> {
+    const policies = await this.getAllPolicies();
+    // const pathMap =  policies.find((policy: any) => policy.path === path) || policies.find((policy: any) => policy.path === "*"); //Default return default pathMap
+    // return pathMap[method];
+    // Try to find exact match, if not, fall back to parents, if not, fall back to *
+    const exactMatch = policies.find((policy: any) => policy.path === path);
+    if (exactMatch) {
+      return exactMatch[method];
+    }
+    const parentMatch = policies.find((policy: any) => path.startsWith(policy.path));
+    if (parentMatch) {
+      return parentMatch[method];
+    }
+    const defaultMatch = policies.find((policy: any) => policy.path === "*");
+    return defaultMatch[method];
   }
 }

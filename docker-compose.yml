@@ -27,6 +27,7 @@ services:
     depends_on:
       - microservice1
       - redis
+      - db
     volumes:
       - efs:/tmp
   logging-restore:
@@ -68,5 +69,11 @@ services:
       - 8001:8000
     networks:
       - vpc
+    depends_on:
+      - redis
+    volumes:
+      - dynamodb:/data
 volumes:
   efs:
+  dynamodb:
+  
