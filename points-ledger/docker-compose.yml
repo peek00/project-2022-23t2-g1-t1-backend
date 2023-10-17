@@ -16,17 +16,17 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
-  # app-node:
-  #   build: 
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: app-node
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - "dynamodb-local"
-  #   links:
-  #     - "dynamodb-local"
+  app-node:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-node
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
   #   environment:
   #     AWS_ACCESS_KEY_ID: 'bryan'
   #     AWS_SECRET_ACCESS_KEY: 'lee'
