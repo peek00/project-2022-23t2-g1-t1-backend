@@ -3,8 +3,15 @@
 const config = require("../config/config.js")
 const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
-const local_config = config.aws_local_config;
-const ddbClient = new DynamoDBClient({ local_config });
+const AWSConfig = config.aws_local_config;
+const ddbClient = new DynamoDBClient({ 
+    region: AWSConfig.region,
+    endpoint: AWSConfig.dynamoDBEndpoint,
+    credentials: {
+        accessKeyId: AWSConfig.accessKeyId,
+        secretAccessKey: AWSConfig.secretAccessKey
+    }
+});
 // const ddbClient = new DynamoDBClient({ region : config.aws_local_config.region })
 // const ddbClient = new DynamoDBClient({ region : 'local' })
 

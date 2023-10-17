@@ -1,5 +1,7 @@
 version: '3.8'
-
+networks:
+  vpc:
+    driver: bridge
 services:
   # points:
   #   image: bryan/points
@@ -13,6 +15,10 @@ services:
     container_name: dynamodb-local
     ports:
       - "8000:8000"
+    networks:
+      - vpc
+    expose:
+      - "8000"
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
@@ -23,6 +29,8 @@ services:
     container_name: app-node
     ports:
       - "3000:3000"
+    networks:
+      - vpc
     depends_on:
       - "dynamodb-local"
     links:
