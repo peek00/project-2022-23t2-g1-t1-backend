@@ -7,15 +7,11 @@ module.exports = {
         secretAccessKey: 'test',
         // dynamoDBEndpoint: "http://localhost:8000",
         dynamoDBEndpoint: "http://docker.for.mac.localhost:8000",
-        // region: 'local',
-        // credentials: {
-        //     accessKeyId: 'bryan',
-        //     secretAccessKey: 'lee'
-        // }
     },
-    // aws_remote_config: {
-    //   accessKeyId: 'ACCESS_KEY_ID',
-    //   secretAccessKey: 'SECRET_ACCESS_KEY',
-    //   region: 'us-east-1',
-    // }
+    aws_remote_config: {
+      accessKeyId: 'ACCESS_KEY_ID',
+      secretAccessKey: 'SECRET_ACCESS_KEY',
+      region: 'us-east-1',
+      dynamoDBEndpoint: undefined
+    }
 };
