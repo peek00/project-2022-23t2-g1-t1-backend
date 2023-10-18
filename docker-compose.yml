@@ -18,7 +18,7 @@ services:
       - REDIS_PORT=6379
       - CLOUDWATCH_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-1
-      # - CLIENT_BASE_URL=http://localhost:3000 #Update this to the url to redirect the client to after authentication
+      - CLIENT_BASE_URL=http://localhost:5173/users #Update this to the url to redirect the client to after authentication
     depends_on:
       - microservice1
       - redis
