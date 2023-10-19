@@ -32,11 +32,19 @@ const cookieExtractor = (req: any) => {
   return token;
 };
 
+const BearerTokenFromRequest = (req: any) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    return authHeader.split(" ")[1];
+  }
+  return null;
+}
+
 // Configure JWT Strategy
 passport.use(
   new JwtStrategy(
     {
-      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+      jwtFromRequest: process.env.NODE_ENV === 'postman'? ExtractJwt.fromExtractors([BearerTokenFromRequest]) : ExtractJwt.fromExtractors([cookieExtractor]),
       secretOrKey: process.env.JWT_SECRET as string,
     },
     async (jwtPayload: JwtPayload, done) => {
@@ -102,16 +110,5 @@ passport.deserializeUser(async (id: string, done) => {
     done(error, null);
   }
 });
-
-// passport.deserializeUser(async (id: string, done) => {
-//   // Invoke API request to User Microservice to retrieve user
-//   // Mocking user for now
-//   try {
-//     const userMock: User = await findUser(id);
-//     done(null, userMock);
-//   } catch (error) {
-//     done(error, null);
-//   }
-// });
 
 export default passport;

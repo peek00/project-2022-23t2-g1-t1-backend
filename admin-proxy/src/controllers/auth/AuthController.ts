@@ -29,8 +29,11 @@ export class AuthController {
 
   public async authCallback(req: Request, res: Response, next: NextFunction) {
     try {
-      const redirectUrl = process.env.CLIENT_BASE_URL || '/auth/me';
+      const redirectUrl = process.env.CLIENT_AUTH_REDIRECT_URL || '/auth/me';
       res.cookie("jwt", req.user!.token, { httpOnly: true });
+      if (process.env.NODE_ENV === "postman") {
+        res.json({ token: req.user!.token });
+      };
       res.redirect(redirectUrl);
     } catch (error) {
       next(error);

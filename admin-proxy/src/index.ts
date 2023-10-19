@@ -2,14 +2,9 @@ import express, { Application } from "express";
 import passport from "./middleware/auth/passport";
 import dotenv from "dotenv";
 import cors from "cors";
-import { config } from "./config/config";
 import { errorHandler } from "./middleware/error/error";
 import router from "./routes";
-import {
-  createProxyMiddleware,
-  responseInterceptor,
-} from "http-proxy-middleware";
-import { userAuditLogger } from "./services/Logger";
+import { PolicyService } from "./services/Policy/PolicyService";
 import authorize from "./middleware/auth/authorize";
 
 //For env File
@@ -19,57 +14,30 @@ const app: Application = express();
 const host = "0.0.0.0";
 const port = Number(process.env.PORT) || 8000;
 
-// Adding Passport
-app.use(passport.initialize());
+// Initialize Policy Service
+PolicyService.initialize().then(() => {
+  console.log("Policy Service Initialized");
+  // Adding Passport
+  app.use(passport.initialize());
+  app.use(
+    cors({
+      origin: process.env.CLIENT_BASE_URL,
+      credentials: true,
+    }),
+  );
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  }),
-);
+  // Add Proxy Middleware
+  app.use("/",authorize(), router);
+  app.use(errorHandler);
 
-const myProxy = createProxyMiddleware({
-  target: process.env.microservice1 || "http://localhost:3002",
-  changeOrigin: false,
-  pathRewrite: {
-    [`^/2`]: "",
-  },
-  selfHandleResponse: true,
-  onProxyReq: (proxyReq, req, res) => {
-    req.headers["x-auth-user"] = req.user!.id;
-  },
-  onProxyRes: responseInterceptor(
-    async (responseBuffer, proxyRes, req, res) => {
-      const response = responseBuffer.toString("utf8");
-      const userId = req.headers["x-auth-user"] as string;
-      userAuditLogger.logRequest(
-        proxyRes.statusCode || 500,
-        response,
-        req as any,
-        userId,
-      );
-      // Remove x-auth-user from response header
-      res.removeHeader("x-auth-user");
-      return responseBuffer;
-    },
-  ),
-  onError: (err, req, res) => {
-    res.writeHead(500, {
-      "Content-Type": "text/plain",
-    });
-    res.end(
-      "Something went wrong. And we are reporting a custom error message.",
-    );
-  },
-});
+  app.listen(port, host, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 
-// Add Proxy Middleware
-app.use("/2", authorize(["superadmin", "admin"]), myProxy);
-
-app.use(router);
-app.use(errorHandler);
-
-app.listen(port, host, () => {
-  console.log(`Server is running on port ${port}`);
+}).catch((err) => {
+  console.log("Error initializing Policy Service");
+  console.log(err);
+  process.exit(1);
 });

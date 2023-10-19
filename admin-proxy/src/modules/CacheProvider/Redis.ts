@@ -43,6 +43,10 @@ export class Redis implements ICacheProvider {
   ): Promise<boolean> {
     try {
       console.log(key, value, ttl);
+      if (ttl === -1) {
+        await promisify(this.client.set).bind(this.client)(key, value);
+        return true;
+      }
       await promisify(this.client.set).bind(this.client)(key, value, "EX", ttl);
       return true;
     } catch (e) {
