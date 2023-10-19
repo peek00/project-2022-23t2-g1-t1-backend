@@ -154,8 +154,10 @@ def create_approval_requests(
 ):
     try:
         if authorized_request():
-            # TO DO : Put in validation  that data has request details
-            return approval_request_repository.create_approval_request(data)
+            # TODO : Put in validation  that data has request details
+            response = approval_request_repository.create_approval_request(data)
+            # TODO: Japheth send email notifications here
+            return response
     except ValidationError  as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:

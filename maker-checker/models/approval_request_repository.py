@@ -148,7 +148,7 @@ class ApprovalRequestRepository:
             item = table.get_item(Key={'uid': data.uid}).get('Item')
 
             # Compare the requestor uuid with the one in the database
-            if item.get('requestor_id') == data.approver_id:
+            if item.get('requestor_id') != data.requestor_id:
                 raise ValidationError("Only original requestor can update request!")
             
             # Update the item
@@ -190,8 +190,7 @@ class ApprovalRequestRepository:
 
             # Send out call to do whatever the request contains
             if item.get('status') == 'approved':
-                # Japheth do things here
-                # Make a call to user storage to get list of all emails to send to queue
+                # TODO: Japheth do things here
                 # Make a call to points storage to update transaction
                 pass
             response = table.put_item(Item=item)

@@ -47,7 +47,7 @@ def test_success_create_approval_requests(mock_create_approval_request):
             "request_type": "Transaction",
             "request_details": {
                 "amount" : 100,
-                "increment" : False,
+                "increment" : "False",
                 "account_id" : 456789
             },
             "status": "pending",
