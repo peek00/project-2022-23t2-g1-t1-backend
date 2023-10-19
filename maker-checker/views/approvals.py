@@ -154,14 +154,15 @@ def create_approval_requests(
 ):
     try:
         if authorized_request():
+            # TO DO : Put in validation  that data has request details
             return approval_request_repository.create_approval_request(data)
-    except ValidationError as e:
+    except ValidationError  as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 @router.post("/update")
 def update_approval_request(
     data: ApprovalUpdate,
