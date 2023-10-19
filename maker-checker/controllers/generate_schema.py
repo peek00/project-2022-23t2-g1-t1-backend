@@ -1,44 +1,49 @@
 import boto3
 import botocore.exceptions
+import os
 
 def create_approval_request_table():
+    aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+    aws_region = os.getenv('AWS_REGION')
+    db_url = os.getenv("DB_URL")
     ddb = boto3.resource('dynamodb',
-                        endpoint_url='http://db:8000',
-                        # endpoint_url='http://localhost:8000',
-                        region_name='example',                 # Replace with your AWS region
-                        aws_access_key_id='example',           # Replace with your AWS access key ID
-                        aws_secret_access_key='example')       # Replace with your AWS secret access key
+                endpoint_url=db_url,
+                region_name=aws_region,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key
+                            )    # Replace with your AWS secret access key
     
     # Define the schema for your table
-    try:
-        table = ddb.create_table(
-            TableName='approval_request',
-            AttributeDefinitions=[
-                {
-                    'AttributeName': 'uid',
-                    'AttributeType': 'S'  # String type for uid
-                }
-            ],
-            KeySchema=[
-                {
-                    'AttributeName': 'uid',
-                    'KeyType': 'HASH'  # Partition key
-                }
-            ],
-            ProvisionedThroughput={
-                'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
-                'WriteCapacityUnits': 10   # Adjust based on your expected write workload
-            }
-        )
+    # try:
+    #     table = ddb.create_table(
+    #         TableName='approval_request',
+    #         AttributeDefinitions=[
+    #             {
+    #                 'AttributeName': 'uid',
+    #                 'AttributeType': 'S'  # String type for uid
+    #             }
+    #         ],
+    #         KeySchema=[
+    #             {
+    #                 'AttributeName': 'uid',
+    #                 'KeyType': 'HASH'  # Partition key
+    #             }
+    #         ],
+    #         ProvisionedThroughput={
+    #             'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
+    #             'WriteCapacityUnits': 10   # Adjust based on your expected write workload
+    #         }
+    #     )
         
-        print('Waiting for table creation...')
-        table.wait_until_exists()
-        print('Table created successfully.')
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'ResourceInUseException':
-            print('Table already exists. Skipping table creation.')
-        else:
-            raise e
+    #     print('Waiting for table creation...')
+        # table.wait_until_exists()
+    # #     print('Table created successfully.')
+    # except botocore.exceptions.ClientError as e:
+    #     if e.response['Error']['Code'] == 'ResourceInUseException':
+    #         print('Table already exists. Skipping table creation.')
+    #     else:
+    #         raise e
 
 # Call the function to create or skip table creation
 def populate_db():

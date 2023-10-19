@@ -10,6 +10,11 @@ COPY . /app
 
 EXPOSE 5000
 
-ENV AWS_REGION='ap-southeast-1'
+# Uncomment below if if aws
+# ENV AWS_REGION='ap-southeast-1' 
+ENV AWS_ACCESS_KEY_ID='example'
+ENV AWS_SECRET_ACCESS_KEY='example'
+
+
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]

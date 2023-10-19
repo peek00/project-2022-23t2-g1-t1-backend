@@ -11,23 +11,23 @@ services:
       - "5000:5000"
     depends_on: 
       - db
+
   db:
-  
     image: amazon/dynamodb-local
     restart: unless-stopped
     ports:
       - 8000:8000
 
-  admin:
-    build:
-      context: .
-      dockerfile: dynamoadmin.Dockerfile
-    ports:
-    - 8001:8001
-    environment:
-      - DYNAMO_ENDPOINT=http://db:8000
-      - AWS_REGION=example
-      - AWS_ACCESS_KEY_ID=example
-      - AWS_SECRET_ACCESS_KEY=example
-    depends_on:
-      - db
+  # admin:
+  #   build:
+  #     context: .
+  #     dockerfile: dynamoadmin.Dockerfile
+  #   ports:
+  #   - 8001:8001
+  #   environment:
+  #     - DYNAMO_ENDPOINT=http://db:8000
+  #     - AWS_REGION=example
+  #     - AWS_ACCESS_KEY_ID=example
+  #     - AWS_SECRET_ACCESS_KEY=example
+  #   depends_on:
+  #     - db
