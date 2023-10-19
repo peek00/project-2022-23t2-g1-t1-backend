@@ -18,4 +18,9 @@ policyRouter.put(
   policyController.updateExistingPolicy
 );
 
+policyRouter.delete(
+  "/", 
+  policyController.deleteExistingPolicy
+);
+
 export default policyRouter;

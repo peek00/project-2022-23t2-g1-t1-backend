@@ -4,6 +4,14 @@ import { DynamoDB } from "../../modules/DatabaseProvider/DynamoDB";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
 import { Redis } from "../../modules/CacheProvider/Redis";
 
+interface Policy {
+  endpoint: string;
+  GET: string[];
+  POST: string[];
+  PUT: string[];
+  DELETE: string[];
+}
+
 export class PolicyService {
   private static instance: PolicyService;
   private db: IDatabaseProvider;
@@ -38,7 +46,7 @@ export class PolicyService {
     console.log(policies)
     if (policies === undefined || policies.length === 0) {
       const defaultPolicy = {
-        path: "*",
+        endpoint: "*",
         GET: ["superadmin", "admin"],
         POST: ["superadmin", "admin"],
         PUT: ["superadmin", "admin"],
@@ -47,7 +55,7 @@ export class PolicyService {
       await policyService.add(defaultPolicy);
       // Add auth route policy
       const authPolicy = {
-        path: "/auth",
+        endpoint: "/auth",
         GET: [],
         POST: [],
         PUT: [],
@@ -71,13 +79,13 @@ export class PolicyService {
     await this.db.createTable(this.tableName, {
       KeySchema: [
         {
-          AttributeName: "path",
+          AttributeName: "endpoint",
           KeyType: "HASH",
         }
       ],
       AttributeDefinitions: [
         {
-          AttributeName: "path",
+          AttributeName: "endpoint",
           AttributeType: "S",
         }
       ],
@@ -88,20 +96,66 @@ export class PolicyService {
     await this.db.deleteTable(this.tableName);
   }
 
-  public async add(policy: any): Promise<any> {
+  public async add(policy: Policy): Promise<any> {
+    console.log("policyService", policy, this.tableName);
+    // Drop cache for policy
+    await this.cacheProvider.remove("policies");
     return await this.db.add(this.tableName, policy);
   }
 
-  public async update(policy: any): Promise<any> {
-    return await this.db.update(this.tableName, policy.id, policy);
+  public async update(policy: Partial<Policy>): Promise<any> {
+    // Generate expression statement
+    let UpdateExpressionArr:string[] = [];
+    let ExpressionAttributeValues:any = {};
+    let ExpressionAttributeNames:any = {};
+    if (policy.GET) {
+      ExpressionAttributeValues[":GET"] = policy.GET;
+      UpdateExpressionArr.push("#GET = :GET");
+      ExpressionAttributeNames["#GET"] = "GET";
+    }
+    if (policy.POST) {
+      ExpressionAttributeValues[":POST"] = policy.POST;
+      UpdateExpressionArr.push("#POST = :POST");
+      ExpressionAttributeNames["#POST"] = "POST";
+    }
+    if (policy.PUT) {
+      ExpressionAttributeValues[":PUT"] = policy.PUT;
+      UpdateExpressionArr.push("#PUT = :PUT");
+      ExpressionAttributeNames["#PUT"] = "PUT";
+    }
+    if (policy.DELETE) {
+      ExpressionAttributeValues[":DELETE"] = policy.DELETE;
+      UpdateExpressionArr.push("#DELETE = :DELETE");
+      ExpressionAttributeNames["#DELETE"] = "DELETE";
+    }
+
+    if (UpdateExpressionArr.length === 0) {
+      throw new Error("Nothing to update");
+    }
+
+    const details = {
+      Key: {
+        endpoint: policy.endpoint,
+      },
+      ExpressionAttributeNames,
+      UpdateExpression: `SET ${UpdateExpressionArr.join(", ")}`,
+      ExpressionAttributeValues,
+    }
+    console.log(details)
+    // Drop cache for policy
+    await this.cacheProvider.remove("policies");
+    return await this.db.updateBy(this.tableName, details);
   }
 
-  public async deleteById(id: string): Promise<any> {
-    return await this.db.delete(this.tableName, id);
-  }
-
-  public async findOne(id: string): Promise<any> {
-    return await this.db.findOne(this.tableName, id);
+  public async delete(policy: Partial<Policy>): Promise<any> {
+    const details = {
+      Key: {
+        endpoint: policy.endpoint,
+      },
+    }
+    // Drop cache for policy
+    await this.cacheProvider.remove("policies");
+    return await this.db.deleteBy(this.tableName, details);
   }
 
   public async findAll(): Promise<any> {
@@ -110,10 +164,6 @@ export class PolicyService {
       TableName: this.tableName,
     };
     return await this.db.findAll(this.tableName, params);
-  }
-
-  public async findBy(filter: any): Promise<any> {
-    return await this.db.findBy(this.tableName, filter);
   }
 
   public async getAllPolicies(): Promise<any> {
@@ -129,20 +179,17 @@ export class PolicyService {
     }
   }
 
-  public async getPolicy(path: string, method: string): Promise<String[]> {
+  public async getPolicy(endpoint: string, method: string): Promise<String[]> {
     const policies = await this.getAllPolicies();
-    // const pathMap =  policies.find((policy: any) => policy.path === path) || policies.find((policy: any) => policy.path === "*"); //Default return default pathMap
-    // return pathMap[method];
-    // Try to find exact match, if not, fall back to parents, if not, fall back to *
-    const exactMatch = policies.find((policy: any) => policy.path === path);
-    if (exactMatch) {
+    const exactMatch = policies.find((policy: any) => policy.endpoint === endpoint);
+    if (exactMatch && exactMatch[method]) {
       return exactMatch[method];
     }
-    const parentMatch = policies.find((policy: any) => path.startsWith(policy.path));
-    if (parentMatch) {
+    const parentMatch = policies.find((policy: any) => endpoint.startsWith(policy.endpoint));
+    if (parentMatch && parentMatch[method]) {
       return parentMatch[method];
     }
-    const defaultMatch = policies.find((policy: any) => policy.path === "*");
+    const defaultMatch = policies.find((policy: any) => policy.endpoint === "*");
     return defaultMatch[method];
   }
 }

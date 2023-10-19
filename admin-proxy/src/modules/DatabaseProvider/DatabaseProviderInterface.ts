@@ -3,9 +3,8 @@ export default interface IDatabaseProvider {
   listTables: () => Promise<any>;
   deleteTable: (tableName: string) => Promise<any>;
   add: (tableName:string, data: any) => Promise<any>;
-  update: (tableName:string, id: string, data?: any) => Promise<any>;
-  delete: (tableName:string, id: string) => Promise<any>;
-  findOne: (tableName:string, id: string) => Promise<any>;
-  findAll: (tableName:string, filter: any) => Promise<any>;
+  findAll: (tableName:string, details: any) => Promise<any>;
   findBy: (tableName:string, filter: any) => Promise<any>;
+  updateBy: (tableName:string, filter: any) => Promise<any>
+  deleteBy: (tableName:string, filter: any) => Promise<any>
 }

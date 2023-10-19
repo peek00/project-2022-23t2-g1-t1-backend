@@ -16,6 +16,7 @@ export class ProxyController{
         console.log("onProxyReq", req.user);
         console.log("target", target);
         req.headers["x-auth-user"] = req.user!.id;
+        proxyReq.setHeader("x-auth-user", req.user!.id);
       },
       onProxyRes: responseInterceptor(
         async (responseBuffer, proxyRes, req, res) => {

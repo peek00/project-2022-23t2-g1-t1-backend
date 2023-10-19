@@ -19,13 +19,16 @@ PolicyService.initialize().then(() => {
   console.log("Policy Service Initialized");
   // Adding Passport
   app.use(passport.initialize());
-
   app.use(
     cors({
       origin: process.env.CLIENT_BASE_URL,
       credentials: true,
     }),
   );
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+
+  
 
   // Add Proxy Middleware
   app.use("/",authorize(), router);

@@ -1,5 +1,5 @@
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, PutItemCommand, DeleteItemCommand, GetItemCommand, Condition} from "@aws-sdk/client-dynamodb";
-import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, PutItemCommand, DeleteItemCommand, GetItemCommand, Condition, UpdateItemCommand, UpdateItemCommandInput} from "@aws-sdk/client-dynamodb";
+import { PutCommand, DynamoDBDocumentClient, UpdateCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import IDatabaseProvider from "./DatabaseProviderInterface";
 import { config } from "../../config/config";
@@ -12,10 +12,10 @@ export class DynamoDB implements IDatabaseProvider {
   private db: DynamoDBDocumentClient;
 
   private constructor() {
-    console.log(`Creating DynamoDB client: ${AWSConfig.region}}`)
-    console.log(`Creating DynamoDB client: ${AWSConfig.dynamoDBEndpoint}}`)
-    console.log(`Creating DynamoDB client: ${AWSConfig.accessKeyId}}`)
-    console.log(`Creating DynamoDB client: ${AWSConfig.secretAccessKey}}`)
+    // console.log(`Creating DynamoDB client: ${AWSConfig.region}}`)
+    // console.log(`Creating DynamoDB client: ${AWSConfig.dynamoDBEndpoint}}`)
+    // console.log(`Creating DynamoDB client: ${AWSConfig.accessKeyId}}`)
+    // console.log(`Creating DynamoDB client: ${AWSConfig.secretAccessKey}}`)
     this.client = new DynamoDBClient({
       region: AWSConfig.region,
       endpoint: AWSConfig.dynamoDBEndpoint,
@@ -97,46 +97,40 @@ export class DynamoDB implements IDatabaseProvider {
     }
   }
 
-  public async update(tableName:string, id: string, data: any): Promise<any> {
+  public async updateBy(tableName:string, details: any): Promise<any> {
+    const {Key, UpdateExpression, ExpressionAttributeValues, ExpressionAttributeNames} = details;
+    if (Key === undefined || UpdateExpression === undefined || ExpressionAttributeValues === undefined || ExpressionAttributeNames === undefined) {
+      throw new Error("Invalid update details");
+    }
     try {
-      const response = await this.db.send(new PutItemCommand({
+      const response = await this.db.send(new UpdateCommand({
         TableName: tableName,
-        Item: {
-          id: { S: id },
-          ...data,
-        },
+        Key,
+        ExpressionAttributeNames,
+        UpdateExpression,
+        ExpressionAttributeValues,
+        ReturnValues: "ALL_NEW",
       }));
       return response;
     } catch (error) {
-      throw new Error(`Error updating item ${id} to table: ${data.TableName}`);
+      console.log(error)
+      throw new Error(`Error update item ${Key} to table: ${tableName}`);
     }
   }
 
-  public async delete(tableName:string, id: string): Promise<any> {
-    try {
-      const response = await this.db.send(new DeleteItemCommand({
-        TableName: tableName,
-        Key: {
-          id: { S: id },
-        },
-      }));
-      return response;
-    } catch (error) {
-      throw new Error(`Error deleting item ${id} to table: ${tableName}`);
+  public async deleteBy(tableName:string, details:any): Promise<any> {
+    const {Key} = details;
+    if (Key === undefined) {
+      throw new Error("Invalid delete details");
     }
-  }
-
-  public async findOne(tableName:string, id: string): Promise<any> {
     try {
-      const response = await this.db.send(new GetItemCommand({
+      const response = await this.db.send(new DeleteCommand({
         TableName: tableName,
-        Key: {
-          id: { S: id },
-        },
+        Key,
       }));
       return response;
     } catch (error) {
-      throw new Error(`Error finding item ${id} to table: ${tableName}`);
+      throw new Error(`Error deleting item ${Key} to table: ${tableName}`);
     }
   }
 

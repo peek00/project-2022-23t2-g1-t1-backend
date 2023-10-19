@@ -13,8 +13,9 @@ app.use(express.json({ type: 'application/json' }));
 
 app.get('/:id', (req, res) => {
   console.log(req.params.id);
+  console.log(req.headers)
   res.send({
-    userId: req.params.id || 'default',
+    userId: req.headers["x-auth-user"]|| 'default',
     role: 'admin',
     email: 'admin@example.com',
   });

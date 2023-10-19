@@ -21,14 +21,13 @@ export class AuthorisationService {
   public async authorize(userRoles: string[], httpMethod:HttpMethod, proxy: string) {
     // check if user has access to proxy
     const accessRole = await this.policyService.getPolicy(proxy, httpMethod);
-    console.log("accessRole",accessRole)
-    console.log("accessRole",accessRole.length)
     if (accessRole.length === 0) return; // Allow all to access
     if (!accessRole) {
       throw new Error("No Policy Exist");
     }
+    console.log(userRoles);
     // check if user has access to resource
-    if (!userRoles.some((role) => accessRole.includes(role))) {
+    if (userRoles===undefined || !userRoles.some((role) => accessRole.includes(role))) {
       throw new Error("Not authorized");
     }
   }
