@@ -25,14 +25,11 @@ app.add_middleware(
 )
 
 db = initialize_db()
-print("DB initialized successfully.")
 
-create_approval_request_table()
-populate_db()
-
+# create_approval_request_table()
+# populate_db()
 
 approval_request_repository = ApprovalRequestRepository(db)
-print("Created database repository.")
 
 # Backend entry point for all routers based on their high-level functions
 app.include_router(approvals.router)
