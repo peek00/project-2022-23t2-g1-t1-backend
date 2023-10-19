@@ -28,8 +28,6 @@ PolicyService.initialize().then(() => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  
-
   // Add Proxy Middleware
   app.use("/",authorize(), router);
   app.use(errorHandler);

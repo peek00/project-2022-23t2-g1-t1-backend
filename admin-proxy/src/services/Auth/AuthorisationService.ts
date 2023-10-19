@@ -1,5 +1,4 @@
 import { PolicyService } from "../Policy/PolicyService";
-import policyService from "../Policy";
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -8,7 +7,8 @@ export class AuthorisationService {
   private policyService: PolicyService;
 
   private constructor() {
-    this.policyService = policyService;
+    this.policyService = PolicyService.getInstance();
+    console.log(this.policyService)
   }
 
   public static getInstance(): AuthorisationService {
@@ -18,9 +18,10 @@ export class AuthorisationService {
     return AuthorisationService.instance;
   }
 
-  public async authorize(userRoles: string[], httpMethod:HttpMethod, proxy: string) {
-    // check if user has access to proxy
-    const accessRole = await this.policyService.getPolicy(proxy, httpMethod);
+  public async authorize(userRoles: string[], httpMethod:HttpMethod, endpoint: string) {
+    // check if user has access to endpoint
+    const accessRole = await this.policyService.getPolicy(endpoint, httpMethod);
+    console.log(accessRole);
     if (accessRole.length === 0) return; // Allow all to access
     if (!accessRole) {
       throw new Error("No Policy Exist");

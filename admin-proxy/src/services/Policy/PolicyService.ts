@@ -38,7 +38,7 @@ export class PolicyService {
     // Check if table exists
     const tables = await policyService.db.listTables();
     console.log(tables);
-    if (!tables.TableNames.includes(policyService.tableName)) {
+    if (tables===undefined || !tables.TableNames.includes(policyService.tableName)) {
       await policyService.createTable();
     } 
     // Check if there are any policies in the table
@@ -69,7 +69,8 @@ export class PolicyService {
     const policyService = PolicyService.getInstance();
     // Check if table exists
     const tables = await policyService.db.listTables();
-    if (tables.TableNames.includes(policyService.tableName)) {
+    console.log(tables);
+    if (tables && tables.TableNames.includes(policyService.tableName)) {
       await policyService.deleteTable();
     }
   }
@@ -160,9 +161,7 @@ export class PolicyService {
 
   public async findAll(): Promise<any> {
     console.log("findAll");
-    const params: ScanCommandInput = {
-      TableName: this.tableName,
-    };
+    const params = {};
     return await this.db.findAll(this.tableName, params);
   }
 
