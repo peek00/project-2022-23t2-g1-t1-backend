@@ -10,11 +10,7 @@ from controllers.generate_schema import create_approval_request_table, populate_
 app = FastAPI()
 # CORS policy for backend to interact with the frontend
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://is-212-spm.vercel.app",
+"*",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -26,8 +22,8 @@ app.add_middleware(
 
 db = initialize_db()
 
-create_approval_request_table()
-populate_db()
+# create_approval_request_table()
+# populate_db()
 
 approval_request_repository = ApprovalRequestRepository(db)
 
