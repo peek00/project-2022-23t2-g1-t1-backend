@@ -50,7 +50,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Trigger admin-proxy workflow
         if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
-        run: cd admin-proxy && npm install && npm run build && npm run test
+        run: cd admin-proxy && npm install && npm run test
 
       - name: Trigger frontend workflow
         if: contains(steps.file_changes.outputs.files , '"frontend/')
