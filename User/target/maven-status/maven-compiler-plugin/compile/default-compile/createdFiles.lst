@@ -1,7 +1,0 @@
-com/ITSABackend/User/repo/DynamoDBRepo.class
-com/ITSABackend/User/constant/AppConstant.class
-com/ITSABackend/User/controller/UserController.class
-com/ITSABackend/User/service/UserService.class
-com/ITSABackend/User/config/DynamoDBConfig.class
-com/ITSABackend/User/UserApplication.class
-com/ITSABackend/User/models/User.class
