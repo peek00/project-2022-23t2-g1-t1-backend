@@ -115,17 +115,17 @@ public class UserService {
     }
 
     public void updateUser(User user){
+        System.out.println("Trying....");
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-            .withPrimaryKey("id", user.getUserId(), "id", user.getUserId())
-            .withUpdateExpression("set firstName = :user.getfirstName()")
-            .withValueMap(new ValueMap().withString("firstName", user.getfirstName()))
-            .withUpdateExpression("set lastName = :user.getlastName()")
-            .withValueMap(new ValueMap().withString("lastName", user.getlastName()))
-            .withUpdateExpression("set email = :user.getEmail()")
-            .withValueMap(new ValueMap().withString("email", user.getEmail()))
-            .withUpdateExpression("set role = :user.getRole()")
-            .withValueMap(new ValueMap().withString("role", user.getRole()))
-            .withReturnValues(ReturnValue.UPDATED_NEW);
+        .withPrimaryKey("id", user.getUserId())
+        .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, role = :role")
+        .withValueMap(new ValueMap()
+                .withString(":firstName", user.getfirstName())
+                .withString(":lastName", user.getlastName())
+                .withString(":email", user.getEmail())
+                .withString(":role", user.getRole()))
+        .withReturnValues(ReturnValue.UPDATED_NEW);
+
 
         try{
 
@@ -135,8 +135,10 @@ public class UserService {
             System.out.println("Update user successful " + outcome.getItem().toJSONPretty());
 
         } catch (Exception e){
+
             System.err.println("Unable to update User");
             System.err.println(e.getMessage());
+
         }
     }
 

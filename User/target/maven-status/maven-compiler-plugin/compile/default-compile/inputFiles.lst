@@ -1,7 +1,7 @@
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/service/UserService.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/config/DynamoDBConfig.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/constant/AppConstant.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/controller/UserController.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/repo/DynamoDBRepo.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/models/User.java
-/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/user/src/main/java/com/ITSABackend/User/UserApplication.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/service/UserService.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/constant/AppConstant.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/models/User.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/repo/DynamoDBRepo.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/config/DynamoDBConfig.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/UserApplication.java
+/Users/justinpansacola/Documents/ITSA/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/controller/UserController.java

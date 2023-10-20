@@ -6,7 +6,7 @@ amazon:
   dynamodb:
     endpoint: 'http://localhost:8000/'
 server:
-  port: 9500
+  port: 8080
 spring:
   application:
     name: springboot-aws-dynamodb
