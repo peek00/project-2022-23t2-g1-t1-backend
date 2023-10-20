@@ -71,4 +71,4 @@ jobs:
       - name: Trigger User workflow
         if: contains(steps.file_changes.outputs.files , 'User/')
         working-directory: User
-        run: ./mvnw test
+        run: ./mvnw clean install && ./mvnw test
