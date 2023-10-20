@@ -22,12 +22,14 @@ router.get('/allaccounts', async(req,res) => {
     if (results.length==0) {
       res.status(400).json({
         "code" : 400,
+        "logs_info": userId + " accessed all /allaccounts, status: 400",
         "data": results,
         "message": "No records found."
       })
     }
     res.status(200).json({
       "code" : 200,
+      "logs_info": userId + " accessed '/allaccounts', status: 200",
       "data": results,
       "message": "Success"
     });
@@ -36,6 +38,7 @@ router.get('/allaccounts', async(req,res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
+      "logs_info": userId + " accessed '/allaccounts', status: 500",
       "data": [],
       "message": error.message
     });
@@ -62,6 +65,7 @@ router.get('/accdetails', async (req,res) => {
     const returnres = unmarshall(results.Item);
     res.status(200).json({
       "code" : 200,
+      "logs_info": "Accessed '/accdetails' for points account {pointsId}, status: 200",
       "data" : returnres,
       "message" : "Success"
     });
@@ -133,6 +137,7 @@ router.post('/createAccount', async (req,res) => {
         if (status ==200) {
           res.status(200).json({
             "code": 200,
+            "logs_info": "Accessed '/createAccount', new points account created, status: 200",
             "data": newresults,
             "message": "Account successfully created"
           });
@@ -147,7 +152,7 @@ router.post('/createAccount', async (req,res) => {
         });
       })
     }
-    // randomly generated uuid exists
+    //points acc id already exists
     else {
       res.status(400).json({
         "code" : 400,
@@ -181,6 +186,7 @@ router.delete('/deleteAccount', function(req,res){
         // if (status==200){
           res.status(200).json({
             "code": 200,
+            "logs_info": "Accessed '/deleteAccount', points account deleted, status: 200",
             "data": results,
             "message": "Account successfully deleted"
           })
@@ -190,6 +196,7 @@ router.delete('/deleteAccount', function(req,res){
         console.log(err);
         res.status(500).json({
           "code": 500,
+          "logs_info": "Accessed '/deleteAccount', points account failed to delete, status: 500",
           "data": [],
           "message": err.message
         })
@@ -198,6 +205,7 @@ router.delete('/deleteAccount', function(req,res){
     else {
       res.status(400).json({
         "code": 400,
+        "logs_info": "Accessed '/deleteAccount', no points account to delete, status: 400",
         "data": [],
         "message": "No such Points Account Exists"
       })
@@ -222,6 +230,7 @@ router.put('/updatebalance', async (req,res) => {
         if (status == 200) {
           res.status(200).json({
             "code" : 200,
+            "logs_info": "Accessed '/updatebalance', points account balance updated, status: 200",
             "data" : newresults,
             "message" : "Update Success"
           });
@@ -231,6 +240,7 @@ router.put('/updatebalance', async (req,res) => {
         console.log(err);
         res.status(500).json({
           "code" : 500,
+          "logs_info": "Accessed '/updatebalance', points account balance failed to update, status: 500",
           "data" : [],
           "message" : err.message
         });
@@ -239,6 +249,7 @@ router.put('/updatebalance', async (req,res) => {
     else {
       res.status(400).json({
         "code" : 400,
+        "logs_info": "Accessed '/updatebalance', no such points account balance to update, status: 400",
         "data" : [],
         "message" : "No record of points account found."
       })
