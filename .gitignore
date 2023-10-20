@@ -1,0 +1,9 @@
+node_modules
+__pycache__/
+.vscode/
+*/node_modules
+*/.vscode/
+*/.history
+*/.env
+*/.DS_Store
+*/*.bak

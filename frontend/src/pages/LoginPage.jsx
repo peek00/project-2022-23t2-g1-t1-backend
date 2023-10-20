@@ -9,8 +9,9 @@ export default function LoginPage(){
     
     
     return (<div className='min-h-screen min-w-full'>
-        {isRegister && <SignUpForm updateRegister={setIsRegister}/>}
-        {!isRegister && <SignInForm updateRegister={setIsRegister}/>}
+ 
+         <SignInForm/>
+       
         
         </div>)
 
