@@ -1,11 +1,30 @@
 import React from 'react';
 import Carousell from './CarousellTransition.jsx';
+import axios from 'axios';
 
 
-export default function SignInForm(props){
-    const loginUser=()=>{
-        props.updateRegister(true);
-     }
+export default function SignInForm(){
+  // const loginUser = async () => {
+  //   try {
+  //     // Send a GET request to localhost:8000/auth/google
+  //     const response = await axios.get('http://localhost:8000/auth/google', {
+       
+  //     });
+  
+  //     if (response.status === 200) {
+  //       // If the response status is 200, you can consider the user signed in.
+  //       console.log('Signed in successfully');
+  //       // You might want to redirect to a new page or perform additional actions here.
+  //     } else {
+  //       console.error('Sign-in failed');
+  //       // Handle sign-in failure
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     // Handle any errors that occurred during the request
+  //   }
+  // };
+  
 
   
 
@@ -17,7 +36,7 @@ export default function SignInForm(props){
 
     >
         
-      <div class="lg:w-1/2 xl:w-5/12 sm:p-12">
+      <form class="lg:w-1/2 xl:w-5/12 sm:p-12" action="http://localhost:8000/auth/google">
         
         <img src="/footerLogo.svg" class='w-30 h-30'/>
         
@@ -28,8 +47,10 @@ export default function SignInForm(props){
           </h1>
           <div class="w-full flex-1 mt-8">
             <div class="flex flex-col items-center">
+           
               <button
                 class="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-white text-[#1C2434] flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
+                type="submit"
               >
                 <div class="bg-white p-2 rounded-full">
                   <svg class="w-4" viewBox="0 0 533.5 544.3">
@@ -59,18 +80,16 @@ export default function SignInForm(props){
              
             </div>
 
-            <div class="my-12  text-center">
+            {/* <div class="my-12  text-center">
               <div
                 class=" mt-3 leading-none px-2 inline-block text-sm text-white  font-medium border-b-2 "
               >
                 Or Sign In with E-mail
               </div>
-            </div>
+            </div> */}
 
-            <div class="mx-auto max-w-xs">
-            <p class="text-sm font-light text-gray-300 dark:text-gray-400 mb-2">
-                      Don't have an account? <a href="#" onClick = {loginUser}className=" text-primary-600 hover:underline text-white font-extrabold">Sign up here</a>
-                  </p>
+            {/* <div class="mx-auto max-w-xs">
+            
               <input
                 class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                 type="email"
@@ -84,6 +103,7 @@ export default function SignInForm(props){
              
               <button
                 class="mt-5 tracking-wide font-semibold bg-[#1C2434] text-white border border-white w-full py-4 rounded-lg  transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+               
               >
                 <svg
                   class="w-6 h-6 -ml-2"
@@ -102,10 +122,10 @@ export default function SignInForm(props){
                 </span>
               </button>
               
-            </div>
+            </div> */}
           </div>
         </div>
-      </div>
+      </form>
       <div class="flex-1 bg-white text-center ">
         <Carousell/>
         

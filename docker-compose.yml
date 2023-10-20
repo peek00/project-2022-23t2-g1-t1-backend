@@ -1,0 +1,79 @@
+version: '3.8'
+networks:
+  vpc:
+    driver: bridge
+services:
+  admin-proxy:
+    build: ./admin-proxy
+    ports:
+      - "8000:8000"
+    networks:
+      - vpc
+    env_file:
+      - ./admin-proxy/.env
+    environment:
+      - NODE_ENV=postman #Set to `postman` when testing with postman, else, use `development` or `production`
+      - microservice1=http://microservice1:3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CLOUDWATCH_REGION=us-east-1
+      - AWS_DEFAULT_REGION=local
+      - AWS_DYNAMODB_ENDPOINT=http://db:8000
+      # - CLIENT_BASE_URL=http://localhost:3000 #Update to the url of the FE
+      # - CLIENT_AUTH_REDIRECT_URL=http://localhost:3000 #Update this to the FE url with the path to redirect the client to after authentication
+      - USER_MS=http://microservice1:3000
+      - POINTS_MS=http://microservice1:3000
+      - MAKER_CHECKER_MS=http://microservice1:3000
+    depends_on:
+      - microservice1
+      - redis
+      - db
+    volumes:
+      - efs:/tmp
+  logging-restore:
+    build: ./loggingRestore
+    volumes:
+      - efs:/tmp
+    networks:
+      - vpc
+    depends_on:
+      - admin-proxy
+  microservice1:
+    build: ./testMicroservice
+    networks:
+      - vpc
+    deploy: # Example of load balancing with service discovery using virtual ip address
+      mode: replicated
+      replicas: 2
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - vpc
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=redis
+      - HTTP_USER=default
+      - HTTP_PASSWORD=password
+    ports:
+      - 8081:8081
+    networks:
+      - vpc
+    depends_on:
+      - redis
+  db:
+    image: amazon/dynamodb-local
+    restart: unless-stopped
+    ports:
+      - 8001:8000
+    networks:
+      - vpc
+    depends_on:
+      - redis
+    volumes:
+      - dynamodb:/data
+volumes:
+  efs:
+  dynamodb:
+  

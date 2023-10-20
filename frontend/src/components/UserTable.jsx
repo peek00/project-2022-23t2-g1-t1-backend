@@ -35,7 +35,7 @@ export default function UserTable(){
                            <img src ="/user.png"/>
                         </th>
                         <td class="px-6 py-4">
-                            ITSA TEST /Admin
+                            ITSA TEST/Admin
                         </td>
                         <td class="px-6 py-4">
                             test@gmail.com
