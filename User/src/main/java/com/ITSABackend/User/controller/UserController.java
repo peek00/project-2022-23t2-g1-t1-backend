@@ -62,10 +62,10 @@ public class UserController {
     }
 
     @PutMapping(value ="/updateUser", consumes = "application/json")
-    public ResponseEntity updateUser(@RequestBody User user){
+    public ResponseEntity updateUser(@RequestBody User user, @PathParam("id") String id){
         try{
 
-            userService.updateUser(user);
+            userService.updateUser(user, id);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch(Exception e){

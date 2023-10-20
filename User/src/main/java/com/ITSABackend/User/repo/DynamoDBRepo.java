@@ -30,7 +30,7 @@ public class DynamoDBRepo {
                 new AttributeDefinition("firstName", ScalarAttributeType.S),
                 new AttributeDefinition("lastName", ScalarAttributeType.S),
                 new AttributeDefinition("email", ScalarAttributeType.S),
-                new AttributeDefinition("role", ScalarAttributeType.S)
+                new AttributeDefinition("userRole", ScalarAttributeType.S)
             ),
             new ProvisionedThroughput(10L, 10L)
             
