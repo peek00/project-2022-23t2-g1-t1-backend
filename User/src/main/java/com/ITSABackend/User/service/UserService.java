@@ -25,9 +25,8 @@ public class UserService {
     @Autowired 
     DynamoDBRepo dynamoDBRepo;
 
-    // private final DynamoDbTable<User> userTable;
     public void createTable(String tableName) throws Exception{
-        if (dynamoDBRepo.getTable(tableName) != null){
+        if (dynamoDBRepo.getTable(tableName) == null){
             dynamoDBRepo.createUserTable();
         }
     }
