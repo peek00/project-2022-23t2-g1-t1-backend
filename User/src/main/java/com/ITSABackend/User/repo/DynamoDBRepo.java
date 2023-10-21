@@ -7,6 +7,9 @@ import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+
+import jakarta.annotation.PostConstruct;
+
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
 
@@ -19,6 +22,7 @@ public class DynamoDBRepo {
     @Autowired
     DynamoDBConfig dynamoDBConfig;
 
+    @PostConstruct
     public void createUserTable() throws Exception{
         try{
             System.out.println("Creating the table...");
@@ -27,10 +31,11 @@ public class DynamoDBRepo {
                 new KeySchemaElement("id", KeyType.HASH)
             ),
             Arrays.asList(
-                new AttributeDefinition("firstName", ScalarAttributeType.S),
-                new AttributeDefinition("lastName", ScalarAttributeType.S),
-                new AttributeDefinition("email", ScalarAttributeType.S),
-                new AttributeDefinition("userRole", ScalarAttributeType.S)
+                new AttributeDefinition("id", ScalarAttributeType.S)
+                // new AttributeDefinition("firstName", ScalarAttributeType.S),
+                // new AttributeDefinition("lastName", ScalarAttributeType.S),
+                // new AttributeDefinition("email", ScalarAttributeType.S),
+                // new AttributeDefinition("userRole", ScalarAttributeType.S)
             ),
             new ProvisionedThroughput(10L, 10L)
             
@@ -41,6 +46,7 @@ public class DynamoDBRepo {
 
         } catch(Exception e ){
             System.err.println("Cannot create the table");
+            System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
     }
