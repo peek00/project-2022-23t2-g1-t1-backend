@@ -26,7 +26,6 @@ public class UserService {
     DynamoDBRepo dynamoDBRepo;
 
     // private final DynamoDbTable<User> userTable;
-
     public void createTable(String tableName) throws Exception{
         if (dynamoDBRepo.getTable(tableName) != null){
             dynamoDBRepo.createUserTable();
@@ -37,7 +36,7 @@ public class UserService {
         dynamoDBRepo.deleteTable(tableName);
     }
 
-    public void createUser(User user) throws Exception{
+    public String createUser(User user) throws Exception{
         // createTable(AppConstant.USER);
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
@@ -56,10 +55,12 @@ public class UserService {
                 .with("userRole", user.getRole()));
 
             System.out.println("Creat user success\n" + outcome.getPutItemResult());
+            return id;
 
         } catch(Exception e){
             System.out.println(" Only error");
             System.out.println(e.getMessage());
+            throw new IllegalStateException("Unable to create user");
 
         }
 

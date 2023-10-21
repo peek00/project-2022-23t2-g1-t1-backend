@@ -27,8 +27,9 @@ public class UserController {
     public ResponseEntity createUser(@RequestBody User user){
         try{
 
-            userService.createUser(user);
-            return new ResponseEntity<>(HttpStatus.OK);
+            String userId = userService.createUser(user);
+            return new ResponseEntity<>(userId, HttpStatus.OK);
+            // return new ResponseEntity<>(HttpStatus.OK);
 
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
