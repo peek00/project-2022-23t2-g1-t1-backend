@@ -9,6 +9,23 @@ services:
   #   restart: always
   #   ports:
   #     - "3000:3000"
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - vpc
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=redis
+      - HTTP_USER=default
+      - HTTP_PASSWORD=password
+    ports:
+      - 8081:8081
+    networks:
+      - vpc
+    depends_on:
+      - redis
   dynamodb-local:
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     image: "amazon/dynamodb-local:latest"

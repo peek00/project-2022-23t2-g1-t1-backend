@@ -1,7 +1,7 @@
 // import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 // import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 const config = require("../config/config.js")
-const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand, PutItemCommand, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const AWSConfig = config.aws_local_config;
 const ddbClient = new DynamoDBClient({ 
@@ -21,6 +21,7 @@ const ddbClient = new DynamoDBClient({
 //     endpoint: "http://localhost:8000"
 //   });
 
+// get all points balance for the particular userid
 async function getAllAccounts(userId) {
     try {
         // console.log(AWS.config);
@@ -73,6 +74,7 @@ async function getPointsBalance(pointsId) {
     }
 }
 
+// check if points acc exist
 async function pointsAccExist(pointsid) {
     try{
         const params = {
@@ -81,7 +83,7 @@ async function pointsAccExist(pointsid) {
             Key: marshall( 
                 {id: pointsid }
                 // , { removeUndefinedValues: true } 
-                ) 
+            ) 
         }
         const data = await ddbClient.send(new GetItemCommand(params));
         if (data.Item){
@@ -97,6 +99,32 @@ async function pointsAccExist(pointsid) {
     }
 }
 
+// create points account
+async function createAccount(userId, new_pointsId,inputbalance) {
+    // const new_pointsId = uuidv4();
+    // console.log(new_pointsId);
+    try {
+        const params = {
+            "Item": {
+                "id": { "S" : new_pointsId},
+                "user_id": {"S" : userId },
+                "balance": {"N" : inputbalance }
+            },
+            "TableName": config.aws_table_name,
+            "ReturnConsumedCapacity":"TOTAL",
+        }
+
+        const data = await ddbClient.send(new PutItemCommand(params));
+        return data
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+
+// update points from particular points account
 async function updatePoints(pointsId,newbalance) {
     try {
         const params = {
@@ -119,4 +147,21 @@ async function updatePoints(pointsId,newbalance) {
     }
 }
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints };
+// delete points_balance account
+async function deleteAccount(pointsId){
+    try {
+        const params = {
+            "TableName": config.aws_table_name,
+            "Key": marshall(
+                {id: pointsId}
+            )
+        }
+        const data = await ddbClient.send(new DeleteItemCommand(params))
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount };

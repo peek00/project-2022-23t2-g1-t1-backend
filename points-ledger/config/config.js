@@ -6,7 +6,8 @@ module.exports = {
         accessKeyId: 'test',
         secretAccessKey: 'test',
         // dynamoDBEndpoint: "http://localhost:8000",
-        dynamoDBEndpoint: "http://docker.for.mac.localhost:8000",
+        // dynamoDBEndpoint: "http://docker.for.mac.localhost:8000",
+        dynamoDBEndpoint: "http://host.docker.internal:8000",
     },
     aws_remote_config: {
       accessKeyId: 'ACCESS_KEY_ID',
