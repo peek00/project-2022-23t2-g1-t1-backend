@@ -74,6 +74,7 @@ public class UserService {
     public User getUserById(String id){
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
+        System.out.println("Getting User from the DB");
 
         if (table != null){
             GetItemSpec spec = new GetItemSpec().withPrimaryKey("id", id);

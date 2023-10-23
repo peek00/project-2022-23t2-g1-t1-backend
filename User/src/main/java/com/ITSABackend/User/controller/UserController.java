@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/User")
+@EnableCaching
 @CrossOrigin(origins = "*")
 public class UserController {
 
@@ -42,6 +45,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
+    @Cacheable(key = "#id", value = "User")
     public User getAllUsers(@PathParam("id") String id){
         try{
 
