@@ -1,0 +1,4 @@
+[error] : [404] GET /api/user, ip: 172.25.0.1, country: unknown, userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 
+Details: {"timestamp":"2023-10-16T11:24:27.872Z","error":"Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"}
+[error] : [404] GET /api/maker-checker, ip: 172.25.0.1, country: unknown, userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 
+Details: {"timestamp":"2023-10-16T11:24:34.282Z","error":"Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"}

@@ -38,7 +38,7 @@ jobs:
       
       - id: file_changes
         name: File Changes
-        uses: trilom/file-changes-action@v1.2.3
+        uses: trilom/file-changes-action@v1.2.4
         with:
           prNumber: ${{ steps.pr.outputs.number }}
           pushBefore: ''
@@ -47,15 +47,35 @@ jobs:
       - name: Ouput File Changes
         run: echo '${{ steps.file_changes.outputs.files }}'
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+
       # Runs a single command using the runners shell
       - name: Trigger admin-proxy workflow
-        if: contains(steps.file_changes.outputs.files , '"admin-proxy/')
-        run: cd admin-proxy && npm install && npm run test
+        if: contains(steps.file_changes.outputs.files , 'admin-proxy/')
+        working-directory: admin-proxy
+        run: npm install && npm run test
 
       - name: Trigger frontend workflow
-        if: contains(steps.file_changes.outputs.files , '"frontend/')
+        if: contains(steps.file_changes.outputs.files , 'frontend/')
+        working-directory: frontend
         run: echo Hello, frontend!
         
-      - name: Trigger testMicroservice workflow
-        if: contains(steps.file_changes.outputs.files , '"testMicroservice/')
-        run: echo Hello, testMicroservice!
+      - name: Trigger Maker-checker workflow
+        if: contains(steps.file_changes.outputs.files , 'maker-checker/')
+        working-directory: maker-checker
+        run: echo Hello, maker-checker!
+        
+      - name: Trigger Points-ledger workflow
+        if: contains(steps.file_changes.outputs.files , 'points-ledger/')
+        working-directory: points-ledger
+        run: echo Hello, points-ledger!
+        
+      - name: Trigger User workflow
+        if: contains(steps.file_changes.outputs.files , 'User/')
+        working-directory: User
+        run: ./mvnw clean && ./mvnw test

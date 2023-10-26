@@ -39,3 +39,4 @@ urllib3==1.26.17
 uvicorn==0.23.2
 Werkzeug==3.0.0
 xmltodict==0.13.0
+httpx==0.25.0

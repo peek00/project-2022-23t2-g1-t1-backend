@@ -27,8 +27,9 @@ public class UserController {
     public ResponseEntity createUser(@RequestBody User user){
         try{
 
-            userService.createUser(user);
-            return new ResponseEntity<>(HttpStatus.OK);
+            String userId = userService.createUser(user);
+            return new ResponseEntity<>(userId, HttpStatus.OK);
+            // return new ResponseEntity<>(HttpStatus.OK);
 
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -62,10 +63,10 @@ public class UserController {
     }
 
     @PutMapping(value ="/updateUser", consumes = "application/json")
-    public ResponseEntity updateUser(@RequestBody User user){
+    public ResponseEntity updateUser(@RequestBody User user, @PathParam("id") String id){
         try{
 
-            userService.updateUser(user);
+            userService.updateUser(user, id);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch(Exception e){

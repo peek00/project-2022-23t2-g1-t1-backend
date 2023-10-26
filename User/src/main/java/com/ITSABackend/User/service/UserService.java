@@ -25,10 +25,8 @@ public class UserService {
     @Autowired 
     DynamoDBRepo dynamoDBRepo;
 
-    // private final DynamoDbTable<User> userTable;
-
     public void createTable(String tableName) throws Exception{
-        if (dynamoDBRepo.getTable(tableName) != null){
+        if (dynamoDBRepo.getTable(tableName) == null){
             dynamoDBRepo.createUserTable();
         }
     }
@@ -37,7 +35,7 @@ public class UserService {
         dynamoDBRepo.deleteTable(tableName);
     }
 
-    public void createUser(User user) throws Exception{
+    public String createUser(User user) throws Exception{
         // createTable(AppConstant.USER);
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
@@ -53,13 +51,15 @@ public class UserService {
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
-                .with("role", user.getRole()));
+                .with("userRole", user.getRole()));
 
             System.out.println("Creat user success\n" + outcome.getPutItemResult());
+            return id;
 
         } catch(Exception e){
             System.out.println(" Only error");
             System.out.println(e.getMessage());
+            throw new IllegalStateException("Unable to create user");
 
         }
 
@@ -82,7 +82,7 @@ public class UserService {
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
-                    user.setRole(outcome.getString("role"));
+                    user.setRole(outcome.getString("userRole"));
                 }
 
                 return user;
@@ -114,16 +114,17 @@ public class UserService {
         
     }
 
-    public void updateUser(User user){
+    public void updateUser(User user, String id){
         System.out.println("Trying....");
+
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-        .withPrimaryKey("id", user.getUserId())
-        .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, role = :role")
+        .withPrimaryKey("id", id)
+        .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
         .withValueMap(new ValueMap()
                 .withString(":firstName", user.getfirstName())
                 .withString(":lastName", user.getlastName())
                 .withString(":email", user.getEmail())
-                .withString(":role", user.getRole()))
+                .withString(":userRole", user.getRole()))
         .withReturnValues(ReturnValue.UPDATED_NEW);
 
 

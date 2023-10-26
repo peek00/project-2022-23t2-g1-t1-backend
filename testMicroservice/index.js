@@ -15,6 +15,7 @@ app.get('/:id', (req, res) => {
   console.log(req.params.id);
   console.log(req.headers)
   res.send({
+    logInfo: "this is a sample log",
     userId: req.headers["x-auth-user"]|| 'default',
     role: 'admin',
     email: 'admin@example.com',

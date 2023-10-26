@@ -25,7 +25,7 @@ public class User {
     private String email;
 
     @DynamoDBAttribute
-    private String role;
+    private String userRole;
 
     @DynamoDBHashKey
     public String getUserId() {
@@ -65,11 +65,11 @@ public class User {
     }
 
     public String getRole(){
-        return role;
+        return userRole;
     }
 
     public void setRole(String role){
-        this.role = role;
+        this.userRole = role;
     }
 
     // Constructors, getPoints can be added after
