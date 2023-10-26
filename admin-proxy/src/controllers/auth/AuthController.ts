@@ -31,10 +31,18 @@ export class AuthController {
     try {
       const redirectUrl = process.env.CLIENT_AUTH_REDIRECT_URL || '/auth/me';
       res.cookie("jwt", req.user!.token, { httpOnly: true });
-      if (process.env.NODE_ENV === "postman") {
-        res.json({ token: req.user!.token });
-      };
       res.redirect(redirectUrl);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async magicToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log(req.body);
+      const { roleLs } = req.body;
+      const user = await authenticationService.generateTemporaryToken(roleLs);
+      res.json(user);
     } catch (error) {
       next(error);
     }

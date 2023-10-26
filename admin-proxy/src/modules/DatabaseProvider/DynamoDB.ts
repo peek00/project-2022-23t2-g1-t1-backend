@@ -1,4 +1,4 @@
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, PutItemCommand, DeleteItemCommand, GetItemCommand, Condition, UpdateItemCommand, UpdateItemCommandInput} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, Condition } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient, UpdateCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import IDatabaseProvider from "./DatabaseProviderInterface";

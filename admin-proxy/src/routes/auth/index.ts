@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response, Router } from "express";
-import authorize from "../../middleware/auth/authorize";
+import express, { NextFunction, Request, Response, Router } from "express";
 import passport from "../../middleware/auth/passport";
 import { authController } from "../../controllers/auth";
 
 const authRouter = Router();
+authRouter.use(express.json());
+authRouter.use(express.urlencoded({ extended: true }));
 authRouter.get(
   "/me",
   (req: Request, res: Response, next: NextFunction) => {
@@ -29,5 +30,10 @@ authRouter.get(
 authRouter.get(
   "/logout", 
   authController.logout);
+
+// Magic Token Route only for development
+if (process.env.NODE_ENV === "development") {
+  authRouter.post("/magic", authController.magicToken);
+}
 
 export default authRouter;
