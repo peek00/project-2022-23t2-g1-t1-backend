@@ -6,5 +6,6 @@ const { ProxyPaths } = config
 const userProxy = new ProxyController(ProxyPaths.userProxy, "/api/user", userAuditLogger);
 const pointsProxy = new ProxyController(ProxyPaths.pointsProxy, "/api/points", pointsAuditLogger);
 const makerCheckerProxy = new ProxyController(ProxyPaths.makerCheckerProxy, "/api/maker-checker", makerCheckerAuditLogger);
+const loggingProxy = new ProxyController(ProxyPaths.loggingProxy, "/api/logging");
 
-export { userProxy, pointsProxy, makerCheckerProxy };
+export { userProxy, pointsProxy, makerCheckerProxy, loggingProxy };

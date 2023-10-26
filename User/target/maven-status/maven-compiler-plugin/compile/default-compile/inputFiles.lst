@@ -1,0 +1,7 @@
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/constant/AppConstant.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/UserApplication.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/repo/DynamoDBRepo.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/controller/UserController.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/service/UserService.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/models/User.java
+/Users/sjng1234/Desktop/itsa/project/project-2022-23t2-g1-t1-backend/User/src/main/java/com/ITSABackend/User/config/DynamoDBConfig.java

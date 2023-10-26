@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userProxy, pointsProxy, makerCheckerProxy } from "../../controllers/proxy";
+import { userProxy, pointsProxy, makerCheckerProxy, loggingProxy } from "../../controllers/proxy";
 
 const proxyRouter = Router();
 
@@ -16,6 +16,11 @@ proxyRouter.use(
 proxyRouter.use(
   "/maker-checker", 
   makerCheckerProxy.getProxy()
+);
+
+proxyRouter.use(
+  "/logging", 
+  loggingProxy.getProxy()
 );
 
 export default proxyRouter;

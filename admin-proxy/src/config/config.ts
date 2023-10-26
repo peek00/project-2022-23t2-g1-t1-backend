@@ -13,11 +13,6 @@ export const config = {
     awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     awsRegion: process.env.CLOUDWATCH_REGION || '',
   },
-  AdditionalInfo: {
-    User: ["email", "role"],
-    Points: ["previousBalance", "newBalance"],
-    MakerChecker: ["action","finalUser"],
-  },
   RententionPolicy: {
     User: 30, // 30 days
     Points: 30,
@@ -33,5 +28,6 @@ export const config = {
     userProxy: process.env.USER_MS || '',
     pointsProxy: process.env.POINTS_MS || '',
     makerCheckerProxy: process.env.MAKER_CHECKER_MS || '',
+    loggingProxy: process.env.LOGGING_MS || '',
   },
 };

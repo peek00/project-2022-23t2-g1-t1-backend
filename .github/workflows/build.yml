@@ -78,4 +78,8 @@ jobs:
       - name: Trigger User workflow
         if: contains(steps.file_changes.outputs.files , 'User/')
         working-directory: User
+<<<<<<< Updated upstream
         run: ./mvnw clean && ./mvnw test
+=======
+        run: ./mvnw test
+>>>>>>> Stashed changes

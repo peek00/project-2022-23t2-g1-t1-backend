@@ -5,7 +5,9 @@ import cors from "cors";
 import { errorHandler } from "./middleware/error/error";
 import router from "./routes";
 import { PolicyService } from "./services/Policy/PolicyService";
+import { Logger } from "./services/Logger/Logger";
 import authorize from "./middleware/auth/authorize";
+import cron from "node-cron";
 
 //For env File
 dotenv.config();
@@ -25,15 +27,22 @@ PolicyService.initialize().then(() => {
       credentials: true,
     }),
   );
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
 
   // Add Proxy Middleware
   app.use("/",authorize(), router);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
   app.use(errorHandler);
 
   app.listen(port, host, () => {
     console.log(`Server is running on port ${port}`);
+  });
+
+  // Schedule a cron job to run at the start of every second
+  cron.schedule("* * * * * *", () => {
+    // Trigger reinitialization of logger
+    console.log("Reinitializing Logger");
+    Logger.getInstance().createLogger();
   });
 
 }).catch((err) => {
