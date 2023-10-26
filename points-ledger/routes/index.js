@@ -14,8 +14,8 @@ router.get('/', function(req, res, next) {
 // GET request to return all accounts by a particular user
 // takes in a particular user_id
 router.get('/allaccounts', async(req,res) => {
-  console.log(req.body);
-  const userId = req.body.userId;
+  console.log(req.headers);
+  const userId = req.headers.userid;
   allquery.getAllAccounts(userId)
   .then((results) => {
     console.log("Results: ", results);
@@ -48,8 +48,8 @@ router.get('/allaccounts', async(req,res) => {
 // GET request to return details of a particular account
 // takes in a particular points account's id
 router.get('/accdetails', async (req,res) => {
-  console.log(req.body);
-  const pointsId = req.body.pointsId;
+  console.log(req.headers);
+  const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.getPointsBalance(pointsId)
@@ -78,29 +78,13 @@ router.get('/accdetails', async (req,res) => {
       "message" : error.message
     });
   })
-  // try {
-  //   const params = {
-  //     TableName: 'points_ledger',
-  //     KeyConditionExpression: "id = :id",
-  //     ExpressionAtttributeValues:{
-  //       // ":id": req.query.id
-  //       ":id": "2f5687c7-af51-4d79-9a38-9eef5a3c42b8"
-  //     }
-  //   }
-  //   const result = await docClient.query(params).promise();
-  //   console.log(result);
-  //   res.status(200).json(result)
-  // }
-  // catch(error) {
-  //   console.log(error);
-  // }
 })
 
 // GET request to return if a particular account exists
 // takes in a particular points account's id
 router.get('/validate', async (req,res) => {
-  console.log(req.body);
-  const mainId = req.body.mainId;
+  console.log(req.headers);
+  const mainId = req.headers.mainid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.pointsAccExist(mainId)
@@ -121,9 +105,9 @@ router.get('/validate', async (req,res) => {
 // POST request to create a new points balance account
 // takes in user_id and input balance 
 router.post('/createAccount', async (req,res) => {
-  console.log(req.body);
-  const userId = req.body.userId;
-  const inputbalance = req.body.balance;
+  console.log(req.headers);
+  const userId = req.headers.userid;
+  const inputbalance = req.headers.balance;
   const new_pointsId = uuidv4();
   console.log("uuid: " + new_pointsId)
   allquery.pointsAccExist(new_pointsId)
@@ -174,8 +158,8 @@ router.post('/createAccount', async (req,res) => {
 // POST request to delete a points balance account
 // takes in pointsId
 router.delete('/deleteAccount', function(req,res){
-  console.log(req.body);
-  const pointsId = req.body.pointsId;
+  console.log(req.headers);
+  const pointsId = req.headers.pointsid;
   allquery.pointsAccExist(pointsId)
   .then((ifexist) => {
     // if points account exist, then proceed with deleting
@@ -218,9 +202,9 @@ router.delete('/deleteAccount', function(req,res){
 // takes in a particular points account's id and new balance 
 // sample input = {"mainId": "2f5687c7-af51-4d79-9a38-9eef5a3c42b8","newbalance": 5000}
 router.put('/updatebalance', async (req,res) => {
-  console.log(req.body);
-  const pointsId = req.body.pointsId;
-  const balance = req.body.newbalance;
+  console.log(req.headers);
+  const pointsId = req.headers.pointsid;
+  const balance = req.headers.newbalance;
   allquery.pointsAccExist(pointsId)
   .then((results) => {
     if (results){

@@ -12,14 +12,6 @@ const ddbClient = new DynamoDBClient({
         secretAccessKey: AWSConfig.secretAccessKey
     }
 });
-// const ddbClient = new DynamoDBClient({ region : config.aws_local_config.region })
-// const ddbClient = new DynamoDBClient({ region : 'local' })
-
-
-// AWS.config.update({
-//     region: "local",
-//     endpoint: "http://localhost:8000"
-//   });
 
 // get all points balance for the particular userid
 async function getAllAccounts(userId) {
