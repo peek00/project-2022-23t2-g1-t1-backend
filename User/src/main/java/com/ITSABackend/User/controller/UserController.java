@@ -74,6 +74,8 @@ public class UserController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
+        return new ResponseEntity<>(response, status);
+    }
 
     @GetMapping(value = "/getUserByEmail", produces = {"application/json"})
     public ResponseEntity getUserByEmail(@PathParam("email") String email){
