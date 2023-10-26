@@ -22,8 +22,8 @@ services:
       # - CLIENT_BASE_URL=http://localhost:3000 #Update to the url of the FE
       # - CLIENT_AUTH_REDIRECT_URL=http://localhost:3000 #Update this to the FE url with the path to redirect the client to after authentication
       - USER_MS=http://user_ms:8080
-      - POINTS_MS=http://microservice1:3000
-      - MAKER_CHECKER_MS=http://microservice1:3000
+      - POINTS_MS=http://points:3000
+      - MAKER_CHECKER_MS=http://maker-checker:5000
       - LOGGING_MS=http://logging:3000
     depends_on:
       - microservice1
@@ -39,6 +39,26 @@ services:
       - vpc
     depends_on:
       - admin-proxy
+      - db
+    environment:
+      - AWS_REGION=local
+      - AWS_DYNAMODB_ENDPOINT=http://db:8000
+  maker-checker:
+    build: 
+      context: ./maker-checker
+      dockerfile: makerchecker.Dockerfile
+    networks:
+      - vpc
+    depends_on:
+      - db
+    environment:
+      - AWS_REGION=local
+      - AWS_DYNAMODB_ENDPOINT=http://db:8000
+  points:
+    build: ./points-ledger
+    networks:
+      - vpc
+    depends_on:
       - db
     environment:
       - AWS_REGION=local
