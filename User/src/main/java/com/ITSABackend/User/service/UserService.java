@@ -57,9 +57,9 @@ public class UserService {
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
-                .with("userRole", user.getRole()));
+                .with("userRole", user.getRoles()));
 
-            System.out.println("Creat user success\n" + outcome.getPutItemResult());
+            System.out.println("Create user success\n" + outcome.getPutItemResult());
             return id;
 
         } catch(Exception e){
@@ -89,7 +89,8 @@ public class UserService {
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
-                    user.setRole(outcome.getString("userRole"));
+                    // Set String array
+                    user.setRole(outcome.getStringSet("role"));
                 }
 
                 return user;
@@ -131,7 +132,7 @@ public class UserService {
                 .withString(":firstName", user.getfirstName())
                 .withString(":lastName", user.getlastName())
                 .withString(":email", user.getEmail())
-                .withString(":userRole", user.getRole()))
+                .withStringSet(":userRole", user.getRoles()))
         .withReturnValues(ReturnValue.UPDATED_NEW);
 
 
@@ -174,7 +175,7 @@ public class UserService {
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
-                    user.setRole(outcome.getString("userRole"));
+                    user.setRole(outcome.getStringSet("userRole"));
                 }
 
                 return user;

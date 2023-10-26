@@ -40,11 +40,20 @@ const BearerTokenFromRequest = (req: any) => {
   return null;
 }
 
+const TokenExtractor = (req: any) => {
+  // Check if the userAgent is Postman
+  const userAgent = req.headers["user-agent"];
+  if (userAgent && userAgent.includes("Postman") && process.env.NODE_ENV !== "production") {
+    return BearerTokenFromRequest(req);
+  }
+  return cookieExtractor(req);
+}
+
 // Configure JWT Strategy
 passport.use(
   new JwtStrategy(
     {
-      jwtFromRequest: process.env.NODE_ENV === 'postman'? ExtractJwt.fromExtractors([BearerTokenFromRequest]) : ExtractJwt.fromExtractors([cookieExtractor]),
+      jwtFromRequest: ExtractJwt.fromExtractors([TokenExtractor]),
       secretOrKey: process.env.JWT_SECRET as string,
     },
     async (jwtPayload: JwtPayload, done) => {

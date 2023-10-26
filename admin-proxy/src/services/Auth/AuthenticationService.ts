@@ -15,13 +15,10 @@ export class AuthenticationService {
   private static instance: AuthenticationService;
   private jwtService: JwtService;
   private cacheProvider: ICacheProvider;
-  // private userMicroServiceUrl: string;
 
   private constructor() {
     this.jwtService = JwtService.getInstance();
     this.cacheProvider = Redis.getInstance();
-    // this.userMicroServiceUrl =
-    //   process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
   }
   public static getInstance(): AuthenticationService {
     if (!AuthenticationService.instance) {
@@ -37,23 +34,13 @@ export class AuthenticationService {
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(id);
       const response = { ...user, token };
-      this.cacheProvider.write(id, JSON.stringify(response), 60 * 60 * 1); // 1 hour
+      await this.cacheProvider.write(id, JSON.stringify(response), 60 * 60 * 1); // 1 hour
       return { id, role, token };
     } catch (error) {
       throw error;
     }
   }
   private async findUserByEmail(email: string): Promise<any> {
-    // return new Promise((resolve, reject) => {
-    //   setTimeout(() => {
-    //     resolve({
-    //       id: "123",
-    //       name: "John Doe",
-    //       email: "test@example.com",
-    //       role: ["admin","superadmin"],
-    //     });
-    //   }, 1000);
-    // });
     try {
       const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       console.log(user);
@@ -70,8 +57,8 @@ export class AuthenticationService {
     await this.cacheProvider.remove(id);
     return true;
   }
-
   public async getUserById(id: string): Promise<any> {
+    console.log("authenticationService.getUserById", id);
     const userData = await this.cacheProvider.get(id);
 
     if (userData) {
@@ -80,5 +67,11 @@ export class AuthenticationService {
     } else {
       throw new Error("User Session not found");
     }
+  }
+  public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {
+    const token = this.jwtService.generateToken("temporary");
+    const response = { id: "temporary", role: roleLs, token };
+    await this.cacheProvider.write("temporary", JSON.stringify(response), 60 * 3); // 3 minutes
+    return response;
   }
 }

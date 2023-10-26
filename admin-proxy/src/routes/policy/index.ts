@@ -1,7 +1,9 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import policyController from "../../controllers/policy";
 
 const policyRouter = Router();
+policyRouter.use(express.json());
+policyRouter.use(express.urlencoded({ extended: true }));
 
 policyRouter.get(
   "/", 
