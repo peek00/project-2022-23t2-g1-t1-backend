@@ -21,7 +21,7 @@ services:
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
       # - CLIENT_BASE_URL=http://localhost:3000 #Update to the url of the FE
       # - CLIENT_AUTH_REDIRECT_URL=http://localhost:3000 #Update this to the FE url with the path to redirect the client to after authentication
-      - USER_MS=http://user_ms:8080
+      - USER_MS=http://user:8080
       - POINTS_MS=http://points:3000
       - MAKER_CHECKER_MS=http://maker-checker:5000
       - LOGGING_MS=http://logging:3000
@@ -70,7 +70,7 @@ services:
     deploy: # Example of load balancing with service discovery using virtual ip address
       mode: replicated
       replicas: 2
-  user_ms:
+  user:
     build: ./User
     networks:
       - vpc
