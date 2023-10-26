@@ -12,11 +12,12 @@ export class DynamoDB implements IDatabaseProvider {
   private db: DynamoDBDocumentClient;
 
   private constructor() {
-    // console.log(`Creating DynamoDB client: ${AWSConfig.region}}`)
-    // console.log(`Creating DynamoDB client: ${AWSConfig.dynamoDBEndpoint}}`)
-    // console.log(`Creating DynamoDB client: ${AWSConfig.accessKeyId}}`)
-    // console.log(`Creating DynamoDB client: ${AWSConfig.secretAccessKey}}`)
-    this.client = new DynamoDBClient({
+    this.client = this.createDynamoDbClient();
+    this.db = this.createDynamoDbDocumentClient();
+  }
+
+  private createDynamoDbClient(): DynamoDBClient {
+    return new DynamoDBClient({
       region: AWSConfig.region,
       endpoint: AWSConfig.dynamoDBEndpoint,
       credentials: {
@@ -24,7 +25,10 @@ export class DynamoDB implements IDatabaseProvider {
         secretAccessKey: AWSConfig.secretAccessKey,
       },
     });
-    this.db = DynamoDBDocumentClient.from(this.client);
+  }
+
+  private createDynamoDbDocumentClient(): DynamoDBDocumentClient {
+    return DynamoDBDocumentClient.from(this.createDynamoDbClient());
   }
 
   public static getInstance(): DynamoDB {
@@ -48,6 +52,11 @@ export class DynamoDB implements IDatabaseProvider {
     // create Table if not exists
     try {
       console.log(`creating table ${tableName}`);
+      const existingTables = await this.listTables();
+      const tableNames = existingTables.TableNames;
+      if (tableNames && tableNames.indexOf(tableName) !== -1) {
+        return;
+      }
       // Assert that config has the required properties
       if (!config.KeySchema || !config.AttributeDefinitions) {
         throw new Error(`Invalid config for table ${tableName}`);

@@ -1,4 +1,3 @@
-import { ScanCommandInput } from "@aws-sdk/client-dynamodb";
 import IDatabaseProvider from "../../modules/DatabaseProvider/DatabaseProviderInterface";
 import { DynamoDB } from "../../modules/DatabaseProvider/DynamoDB";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
@@ -35,6 +34,7 @@ export class PolicyService {
     if (restart) {
       await PolicyService.tearDown();
     }
+
     // Check if table exists
     const tables = await policyService.db.listTables();
     console.log(tables);

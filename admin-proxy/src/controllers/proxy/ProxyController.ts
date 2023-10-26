@@ -4,7 +4,7 @@ import AuditLogger from "../../services/Logger/AuditLogger";
 export class ProxyController{
   private proxy: RequestHandler;
 
-  constructor(target: string, path: string, logger: AuditLogger){
+  constructor(target: string, path: string, logger?: AuditLogger){
     this.proxy = createProxyMiddleware({
       target: target,
       changeOrigin: false,
@@ -23,15 +23,27 @@ export class ProxyController{
           const response = responseBuffer.toString("utf8");
           const userId = req.headers["x-auth-user"] as string;
           console.log("response", response);
-          logger.logRequest(
-            proxyRes.statusCode || 500,
-            response,
-            req as any,
-            userId,
-          );
-          // Remove x-auth-user from response header
-          res.removeHeader("x-auth-user");
-          return responseBuffer;
+          if (logger === undefined) return responseBuffer; // For routes without logging
+          try {
+            let responseDetails = JSON.parse(response);
+            if (!responseDetails || responseDetails.logInfo === undefined) return responseBuffer;
+
+            logger.logRequest(
+              proxyRes.statusCode || 500,
+              responseDetails.logInfo,
+              req as any,
+              userId,
+            );
+            // Remove x-auth-user from response header
+            res.removeHeader("x-auth-user");
+            // Remove logInfo from responseDetails and send as new response Buffer
+            delete responseDetails.logInfo;
+            return Buffer.from(JSON.stringify(responseDetails));
+          } catch (error) {
+            console.error(error);
+            return responseBuffer;
+          }
+
         },
       ),
       onError: (err, req, res) => {

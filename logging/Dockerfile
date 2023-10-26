@@ -1,5 +1,5 @@
 FROM node:latest
-WORKDIR /app/admin-proxy
+WORKDIR /app/logging
 COPY package*.json ./
 RUN npm install
 COPY . .
