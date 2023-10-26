@@ -49,12 +49,34 @@ function createCreateTableInput() {
       {
         "AttributeName": "id",
         "AttributeType": "S"
+      },
+      {
+        "AttributeName": "user_id",
+        "AttributeType": "S"
       }
     ],
     "ProvisionedThroughput": {
       "ReadCapacityUnits": 1,
       "WriteCapacityUnits": 1
-    }
+    },
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "user_id",
+        "KeySchema": [
+          {
+            "AttributeName": "user_id",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    ]
   }
 }
 
@@ -240,6 +262,52 @@ const enable_points_ledger_policy_write = {
     }
   }
 
+const enable_points_ledger_user_id_target_read = {
+    "ServiceNamespace": "dynamodb",
+    "ResourceId": "table/points_ledger/index/user_id",
+    "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+    "MinCapacity": 1,
+    "MaxCapacity": 10
+  }
+const enable_points_ledger_user_id_policy_read = {
+    "ServiceNamespace": "dynamodb",
+    "ResourceId": "table/points_ledger/index/user_id",
+    "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+    "PolicyName": "points_ledger-index-user_id-read-capacity-scaling-policy",
+    "PolicyType": "TargetTrackingScaling",
+    "TargetTrackingScalingPolicyConfiguration": {
+      "PredefinedMetricSpecification": {
+        "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+      },
+      "ScaleOutCooldown": 60,
+      "ScaleInCooldown": 60,
+      "TargetValue": 70
+    }
+  }
+
+const enable_points_ledger_user_id_target_write = {
+    "ServiceNamespace": "dynamodb",
+    "ResourceId": "table/points_ledger/index/user_id",
+    "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+    "MinCapacity": 1,
+    "MaxCapacity": 10
+  }
+const enable_points_ledger_user_id_policy_write = {
+    "ServiceNamespace": "dynamodb",
+    "ResourceId": "table/points_ledger/index/user_id",
+    "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+    "PolicyName": "points_ledger-index-user_id-write-capacity-scaling-policy",
+    "PolicyType": "TargetTrackingScaling",
+    "TargetTrackingScalingPolicyConfiguration": {
+      "PredefinedMetricSpecification": {
+        "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+      },
+      "ScaleOutCooldown": 60,
+      "ScaleInCooldown": 60,
+      "TargetValue": 70
+    }
+  }
+
 async function enableAutoScaling(autoScalingClient) {
   // Call DynamoDB's AutoScaling API
   try {
@@ -249,6 +317,12 @@ async function enableAutoScaling(autoScalingClient) {
 
     await autoScalingClient.registerScalableTarget(enable_points_ledger_target_write).promise();
     await autoScalingClient.putScalingPolicy(enable_points_ledger_policy_write).promise();
+
+    await autoScalingClient.registerScalableTarget(enable_points_ledger_user_id_target_read).promise();
+    await autoScalingClient.putScalingPolicy(enable_points_ledger_user_id_policy_read).promise();
+
+    await autoScalingClient.registerScalableTarget(enable_points_ledger_user_id_target_write).promise();
+    await autoScalingClient.putScalingPolicy(enable_points_ledger_user_id_policy_write).promise();
 
     console.log("Successfully applied autoscaling");
   } catch(err) {

@@ -3,31 +3,42 @@
 /**
  * Module dependencies.
  */
-
+// import {dbtableconfig} from '../config/dbtableconfig';
+var dbtableconfig = require('../config/dbtableconfig.js');
 var app = require('../app');
 var debug = require('debug')('points-ledger:server');
 var http = require('http');
-
+var dbConfigInstance = new dbtableconfig();
+dbtableconfig.getInstance();
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+// initialise tableconfig
+app.set('port',port);
+var server = http.createServer(app);
+dbConfigInstance.initialise()
+.then(() => {
+  server.listen(port);
+  server.on('error',onError);
+  server.on('listening',onListening);
+})
+// app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+// server.listen(port);
+// server.on('error', onError);
+// server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
