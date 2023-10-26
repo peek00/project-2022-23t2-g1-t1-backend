@@ -2,6 +2,8 @@ import { JwtService } from "./JwtService";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
 import axios from "axios";
 import { Redis } from "../../modules/CacheProvider/Redis";
+import { config } from "../../config/config";
+const { ProxyPaths } = config;
 
 export interface UserWithToken {
   id: string;
@@ -13,13 +15,13 @@ export class AuthenticationService {
   private static instance: AuthenticationService;
   private jwtService: JwtService;
   private cacheProvider: ICacheProvider;
-  private userMicroServiceUrl: string;
+  // private userMicroServiceUrl: string;
 
   private constructor() {
     this.jwtService = JwtService.getInstance();
     this.cacheProvider = Redis.getInstance();
-    this.userMicroServiceUrl =
-      process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
+    // this.userMicroServiceUrl =
+    //   process.env.USER_MICROSERVICE_URL || "http://localhost:3001";
   }
   public static getInstance(): AuthenticationService {
     if (!AuthenticationService.instance) {
@@ -42,22 +44,26 @@ export class AuthenticationService {
     }
   }
   private async findUserByEmail(email: string): Promise<any> {
-    let user;
-    // Mock API response
-    if (process.env.NODE_ENV !== 'production') {
-      user = {
-        data: {
-          id: "1",
-          role: ["admin"],
-        },
-      };
-    }else {
-      user = await axios.get(`${this.userMicroServiceUrl}/users?email=${email}`);
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve({
+    //       id: "123",
+    //       name: "John Doe",
+    //       email: "test@example.com",
+    //       role: ["admin","superadmin"],
+    //     });
+    //   }, 1000);
+    // });
+    try {
+      const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
+      console.log(user);
       if (!user.data) {
         throw new Error("User not found");
       }
+      return user.data;
+    } catch (error) {
+      throw error;
     }
-    return user.data;
   }
   public async logout(id: string): Promise<boolean> {
     console.log("authenticationService.logout", id);

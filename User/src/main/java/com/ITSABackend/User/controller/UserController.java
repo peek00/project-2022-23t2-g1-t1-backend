@@ -4,10 +4,14 @@ package com.ITSABackend.User.controller;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.service.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/User")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired
@@ -45,6 +50,24 @@ public class UserController {
         } catch(Exception e){
             System.err.println(e.getMessage());
             return null;
+        }
+    }
+
+    @GetMapping(value = "/getUserByEmail", produces = {"application/json"})
+    public ResponseEntity getUserByEmail(@PathParam("email") String email){
+        try{
+            System.out.println(email);
+            User user = userService.getUserByEmail(email);
+            // Map reponse to return id and role
+            Map<String,String> response = new HashMap<>();
+            response.put("id", user.getUserId());
+            response.put("role", user.getRole());
+            System.out.println(response);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch(Exception e){
+            System.err.println(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

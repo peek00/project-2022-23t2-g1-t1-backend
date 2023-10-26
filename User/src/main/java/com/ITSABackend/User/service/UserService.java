@@ -3,13 +3,17 @@ package com.ITSABackend.User.service;
 import com.ITSABackend.User.constant.AppConstant;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.repo.DynamoDBRepo;
+import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
@@ -28,6 +32,8 @@ public class UserService {
     public void createTable(String tableName) throws Exception{
         if (dynamoDBRepo.getTable(tableName) == null){
             dynamoDBRepo.createUserTable();
+        } else {
+            System.out.println("Table already exists");
         }
     }
 
@@ -141,6 +147,43 @@ public class UserService {
             System.err.println(e.getMessage());
 
         }
+    }
+
+    public User getUserByEmail(String email){
+        User user = null;
+        Table table = dynamoDBRepo.getTable(AppConstant.USER);
+        Index emailIndex = table.getIndex("email-index");
+
+        QuerySpec spec = new QuerySpec()
+            .withKeyConditionExpression("email = :email")
+            .withValueMap(new ValueMap().withString(":email", email));
+            
+
+        if (table != null){
+            try{
+                System.out.println("Reading user....");
+                ItemCollection<QueryOutcome> items = emailIndex.query(spec);
+                Item outcome = items.iterator().next();
+
+                System.out.println(outcome);
+
+                if (outcome != null){
+                    user = new User();
+                    user.setUserId(outcome.getString("id"));
+                    user.setEmail(outcome.getString("email"));
+                    user.setfirstName(outcome.getString("firstName"));
+                    user.setlastName(outcome.getString("lastName"));
+                    user.setRole(outcome.getString("userRole"));
+                }
+
+                return user;
+
+            } catch(Exception e){
+                System.err.println("Unable to read user" + email);
+                System.err.println(e.getMessage());
+            }
+        }
+        return user;
     }
 
 }
