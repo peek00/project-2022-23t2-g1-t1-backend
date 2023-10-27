@@ -26,9 +26,11 @@ on:
 
 jobs:
   # This workflow contains a single job called "build"
-  cd:
+  filechange:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.file_changes.outputs.files }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -39,81 +41,81 @@ jobs:
         name: File Changes
         uses: trilom/file-changes-action@v1.2.4
         
-      - name: Ouput File Changes
+      - id: file_changes_output
+        name: Ouput File Changes
         run: echo '${{ steps.file_changes.outputs.files }}'
+  
+  deploy-admin-proxy:
+    needs: filechange
+    if: contains(needs.filechange.outputs.files , 'admin-proxy/')
+    uses: ./.github/workflows/build.yml
+    with:
+      github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
+      dockerfile: 'Dockerfile'
+      workdir: 'admin-proxy'
+      repo: ${{ github.repository }}
+      ecs_service: 'admin-proxy-service'
+      ecs_cluster: 'admin-proxy-cluster'
+      ecs_task_definition: '/.infra/ecs/adminProxyTaskDefinition.json'
+      container_name: 'admin-proxy'
+      execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test' }}
 
+  deploy-logging:
+    needs: filechange
+    if: contains(needs.filechange.outputs.files , 'logging-service/')
+    uses: ./.github/workflows/build.yml
+    with:
+      github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
+      dockerfile: 'Dockerfile'
+      workdir: 'logging-service'
+      repo: ${{ github.repository }}
+      ecs_service: 'logging-service'
+      ecs_cluster: 'logging-service-cluster'
+      ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
+      container_name: 'logging-service'
+      execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
+  
+  deploy-maker-checker:
+    needs: filechange
+    if: contains(needs.filechange.outputs.files , 'maker-checker/')
+    uses: ./.github/workflows/build.yml
+    with:
+      github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
+      dockerfile: 'maker-checker.Dockerfile'
+      workdir: 'maker-checker'
+      repo: ${{ github.repository }}
+      ecs_service: 'maker-checker-service'
+      ecs_cluster: 'maker-checker-cluster'
+      ecs_task_definition: '/.infra/ecs/makerCheckerTaskDefinition.json'
+      container_name: 'maker-checker'
+      execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
+  
+  deploy-points:
+    needs: filechange
+    if: contains(needs.filechange.outputs.files , 'points-ledger/')
+    uses: ./.github/workflows/build.yml
+    with:
+      github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
+      dockerfile: 'Dockerfile'
+      workdir: 'points-ledger'
+      repo: ${{ github.repository }}
+      ecs_service: 'points-service'
+      ecs_cluster: 'points-cluster'
+      ecs_task_definition: '/.infra/ecs/pointsLedgerTaskDefinition.json'
+      container_name: 'points'
+      execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
 
-      # Trigger Admin Proxy Build
-      - name: Deploy Admin Proxy
-        if: contains(steps.file_changes.outputs.files , 'admin-proxy/')
-        uses: ./.github/workflows/build.yml
-        with:
-          github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
-          dockerfile: 'Dockerfile'
-          workdir: 'admin-proxy'
-          repo: ${{ github.repository }}
-          ecs_service: 'admin-proxy-service'
-          ecs_cluster: 'admin-proxy-cluster'
-          ecs_task_definition: '/.infra/ecs/adminProxyTaskDefinition.json'
-          container_name: 'admin-proxy'
-          execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test' }}
-
-      # Trigger Logging Service Build
-      - name: Deploy Logging
-        if: contains(steps.file_changes.outputs.files , 'logging-service/')
-        uses: ./.github/workflows/build.yml
-        with:
-          github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
-          dockerfile: 'Dockerfile'
-          workdir: 'logging-service'
-          repo: ${{ github.repository }}
-          ecs_service: 'logging-service'
-          ecs_cluster: 'logging-service-cluster'
-          ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
-          container_name: 'logging-service'
-          execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
-
-      # Trigger Maker Checker Build
-      - name: Deploy Maker Checker
-        if: contains(steps.file_changes.outputs.files , 'maker-checker/')
-        uses: ./.github/workflows/build.yml
-        with:
-          github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
-          dockerfile: 'maker-checker.Dockerfile'
-          workdir: 'maker-checker'
-          repo: ${{ github.repository }}
-          ecs_service: 'maker-checker-service'
-          ecs_cluster: 'maker-checker-cluster'
-          ecs_task_definition: '/.infra/ecs/makerCheckerTaskDefinition.json'
-          container_name: 'maker-checker'
-          execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
-
-      # Trigger Points Ledger Build
-      - name: Deploy Points
-        if: contains(steps.file_changes.outputs.files , 'points-ledger/')
-        uses: ./.github/workflows/build.yml
-        with:
-          github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
-          dockerfile: 'Dockerfile'
-          workdir: 'points-ledger'
-          repo: ${{ github.repository }}
-          ecs_service: 'points-service'
-          ecs_cluster: 'points-cluster'
-          ecs_task_definition: '/.infra/ecs/pointsLedgerTaskDefinition.json'
-          container_name: 'points'
-          execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
-
-      # Trigger User Build
-      - name: Deploy User
-        if: contains(steps.file_changes.outputs.files , 'User/')
-        uses: ./.github/workflows/build.yml
-        with:
-          github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
-          dockerfile: 'Dockerfile'
-          workdir: 'User'
-          repo: ${{ github.repository }}
-          ecs_service: 'user-service'
-          ecs_cluster: 'user-cluster'
-          ecs_task_definition: '/.infra/ecs/userTaskDefinition.json'
-          container_name: 'user'
-          execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
+  deploy-user:
+    needs: filechange
+    if: contains(needs.filechange.outputs.files , 'User/')
+    uses: ./.github/workflows/build.yml
+    with:
+      github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
+      dockerfile: 'Dockerfile'
+      workdir: 'User'
+      repo: ${{ github.repository }}
+      ecs_service: 'user-service'
+      ecs_cluster: 'user-cluster'
+      ecs_task_definition: '/.infra/ecs/userTaskDefinition.json'
+      container_name: 'user'
+      execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
