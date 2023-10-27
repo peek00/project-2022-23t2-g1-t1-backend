@@ -54,6 +54,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log Current Directory && Verify all inputs are present
+        working-directory: ${{ inputs.workdir }}
         run: |
           pwd
           ls -la
