@@ -63,7 +63,7 @@ jobs:
 
   deploy-logging:
     needs: filechange
-    if: contains(needs.filechange.outputs.files , 'logging-service/')
+    if: contains(needs.filechange.outputs.files , 'logging/')
     uses: ./.github/workflows/build.yml
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
@@ -73,7 +73,7 @@ jobs:
       ecs_service: 'logging-service'
       ecs_cluster: 'logging-service-cluster'
       ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
-      container_name: 'logging-service'
+      container_name: 'logging'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
   
   deploy-maker-checker:
