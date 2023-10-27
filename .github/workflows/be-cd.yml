@@ -50,7 +50,7 @@ jobs:
     if: contains(needs.filechange.outputs.files , 'admin-proxy/')
     uses: ./.github/workflows/build.yml
     with:
-      github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
+      github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
       dockerfile: 'Dockerfile'
       workdir: 'admin-proxy'
       repo: ${{ github.repository }}
@@ -58,14 +58,14 @@ jobs:
       ecs_cluster: 'admin-proxy-cluster'
       ecs_task_definition: '/.infra/ecs/adminProxyTaskDefinition.json'
       container_name: 'admin-proxy'
-      execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test' }}
+      execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test' }}
 
   deploy-logging:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'logging-service/')
     uses: ./.github/workflows/build.yml
     with:
-      github_actions_oidc_role: ${{ secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
+      github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
       dockerfile: 'Dockerfile'
       workdir: 'logging-service'
       repo: ${{ github.repository }}
@@ -73,7 +73,7 @@ jobs:
       ecs_cluster: 'logging-service-cluster'
       ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
       container_name: 'logging-service'
-      execution_role_arn: ${{ secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
+      execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
   
   deploy-maker-checker:
     needs: filechange
