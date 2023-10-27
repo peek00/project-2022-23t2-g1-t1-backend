@@ -44,6 +44,10 @@ defaults:
 
 jobs:
   workflow-container:
+    concurrency:
+      group: deploy-${{ inputs.workdir }}
+      cancel-in-progress: true
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
