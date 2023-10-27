@@ -68,7 +68,7 @@ jobs:
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
       dockerfile: 'Dockerfile'
-      workdir: 'logging-service'
+      workdir: 'logging'
       repository: ${{ github.repository }}
       ecs_service: 'logging-service'
       ecs_cluster: 'logging-service-cluster'
