@@ -1,10 +1,6 @@
 on:
   workflow_call:
     inputs:
-      github_actions_oidc_role:
-        description: 'OIDC Role ARN'
-        required: true
-        type: string
       dockerfile:
         description: 'Dockerfile'
         required: true
@@ -58,7 +54,6 @@ jobs:
         run: |
           pwd
           ls -la
-          echo "github_actions_oidc_role: ${{ inputs.github_actions_oidc_role }}"
           echo "dockerfile: ${{ inputs.dockerfile }}"
           echo "workdir: ${{ inputs.workdir }}"
           echo "repository: ${{ inputs.repository }}"
@@ -74,8 +69,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ inputs.github_actions_oidc_role }}
-          aws-region: ap-southeast-1
+          aws-access-key-id: ${{ secrets.AWS_S3_FULL_ACCESS_KEY}}
+          aws-secret-access-key: ${{ secrets.AWS_S3_FULL_ACCESS_SECRET}}
+          aws-region: ${{ secrets.AWS_REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
