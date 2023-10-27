@@ -21,6 +21,7 @@ on:
       - 'frontend/**'
       - 'maker-checker/**'
       - 'points-ledger/**'
+      - 'logging/**'
       - 'User/**'
   workflow_dispatch:
 
