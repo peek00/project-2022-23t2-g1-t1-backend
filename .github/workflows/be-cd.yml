@@ -48,7 +48,7 @@ jobs:
   deploy-admin-proxy:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'admin-proxy/')
-    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@v1
+    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@feat/be-deployment
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
       dockerfile: 'Dockerfile'
@@ -63,7 +63,7 @@ jobs:
   deploy-logging:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'logging-service/')
-    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@v1
+    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@feat/be-deployment
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test' }}
       dockerfile: 'Dockerfile'
@@ -78,7 +78,7 @@ jobs:
   deploy-maker-checker:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'maker-checker/')
-    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@v1
+    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@feat/be-deployment
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
       dockerfile: 'maker-checker.Dockerfile'
@@ -93,7 +93,7 @@ jobs:
   deploy-points:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'points-ledger/')
-    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@v1
+    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@feat/be-deployment
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
       dockerfile: 'Dockerfile'
@@ -108,7 +108,7 @@ jobs:
   deploy-user:
     needs: filechange
     if: contains(needs.filechange.outputs.files , 'User/')
-    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@v1
+    uses: peek00/project-2022-23t2-g1-t1-backend/.github/workflows/build.yml@feat/be-deployment
     with:
       github_actions_oidc_role: ${{ github.secrets.GITHUB_ACTIONS_OIDC_ROLE || 'test'}}
       dockerfile: 'Dockerfile'
