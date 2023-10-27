@@ -35,13 +35,6 @@ jobs:
       - id: file_changes
         name: File Changes
         uses: trilom/file-changes-action@v1.2.4
-        with:
-          files: |
-            admin-proxy/**
-            frontend/**
-            maker-checker/**
-            points-ledger/**
-            User/**
         
       - name: Ouput File Changes
         run: echo '${{ steps.file_changes.outputs.files }}'
