@@ -1,81 +1,117 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
-# Add permissions for workflow
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: read
-
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  pull_request:
-    branches: [ main ]
+  workflow_call:
+    inputs:
+      github_actions_oidc_role:
+        description: 'OIDC Role ARN'
+        required: true
+        type: string
+      dockerfile:
+        description: 'Dockerfile'
+        required: true
+        type: string
+      workdir:
+        description: 'Working directory'
+        required: true
+        type: string
+      repository:
+        description: 'Repository'
+        required: true
+        type: string
+      ecs_service:
+        description: 'ECS Service Name'
+        required: true
+        type: string
+      ecs_cluster:
+        description: 'ECS Cluster Name'
+        required: true
+        type: string
+      ecs_task_definition:
+        description: 'ECS Task Definition' #Path to ECS Task definition
+        required: true
+        type: string
+      container_name:
+        description: 'Container Name'
+        required: true
+        type: string
+      execution_role_arn:
+        description: 'ARN of Execution Role'
+        required: true
+        type: string
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+defaults:
+  run:
+    shell: bash
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  workflow-container:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-          
-      - name: Get Current Pull Request
-        uses: 8BitJonny/gh-get-current-pr@2.2.0
-        id: pr
-        with:
-          sha: ${{ github.event.pull_request.head.sha }}
-          filterOutClosed: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Log Current Directory && Verify all inputs are present
+        run: |
+          pwd
+          ls -la
+          echo "github_actions_oidc_role: ${{ inputs.github_actions_oidc_role }}"
+          echo "dockerfile: ${{ inputs.dockerfile }}"
+          echo "workdir: ${{ inputs.workdir }}"
+          echo "repository: ${{ inputs.repository }}"
+          echo "ecs_service: ${{ inputs.ecs_service }}"
+          echo "ecs_cluster: ${{ inputs.ecs_cluster }}"
+          echo "ecs_task_definition: ${{ inputs.ecs_task_definition }}"
+          echo "container_name: ${{ inputs.container_name }}"
+          echo "execution_role_arn: ${{ inputs.execution_role_arn }}"
+
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
       
-      - id: file_changes
-        name: File Changes
-        uses: trilom/file-changes-action@v1.2.4
-        with:
-          prNumber: ${{ steps.pr.outputs.number }}
-          pushBefore: ''
-          pushAfter: ''
-        
-      - name: Ouput File Changes
-        run: echo '${{ steps.file_changes.outputs.files }}'
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     role-to-assume: ${{ inputs.github_actions_oidc_role }}
+      #     aws-region: ap-southeast-1
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: 'maven'
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
 
-      # Runs a single command using the runners shell
-      - name: Trigger admin-proxy workflow
-        if: contains(steps.file_changes.outputs.files , 'admin-proxy/')
-        working-directory: admin-proxy
-        run: npm install && npm run test
+      # - name: Build, tag, and push Docker image to Amazon ECR
+      #   env:
+      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     REPOSITORY:  ${{ inputs.repository }}
+      #     IMAGE_TAG: ${{ github.sha }}
+      #     DOCKERFILE: ${{ inputs.dockerfile }}
+      #     WORKDIR: ${{ inputs.workdir }}
+      #   run: |
+      #     docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG $WORKDIR -f $WORKDIR/$DOCKERFILE
+      #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - name: Trigger frontend workflow
-        if: contains(steps.file_changes.outputs.files , 'frontend/')
-        working-directory: frontend
-        run: echo Hello, frontend!
-        
-      - name: Trigger Maker-checker workflow
-        if: contains(steps.file_changes.outputs.files , 'maker-checker/')
-        working-directory: maker-checker
-        run: echo Hello, maker-checker!
-        
-      - name: Trigger Points-ledger workflow
-        if: contains(steps.file_changes.outputs.files , 'points-ledger/')
-        working-directory: points-ledger
-        run: echo Hello, points-ledger!
-        
-      - name: Trigger User workflow
-        if: contains(steps.file_changes.outputs.files , 'User/')
-        working-directory: User
-        run: ./mvnw clean && ./mvnw test
+      #     - name: Build, tag, and push image to Amazon ECR
+      #     id: build-image
+      #     env:
+      #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #       IMAGE_TAG: ${{ github.sha }}
+      #     run: |
+      #       # Build a docker container and
+      #       # push it to ECR so that it can
+      #       # be deployed to ECS.
+      #       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #       echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+      #   with:
+      #     task-definition: ${{ inputs.ecs_task_definition }}
+      #     container-name: ${{ inputs.container_name }}
+      #     image: ${{ steps.build-image.outputs.image }}
+
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: ${{ inputs.ecs_service }}
+      #     cluster: ${{ inputs.ecs_cluster }}
+      #     wait-for-service-stability: true
