@@ -62,7 +62,7 @@ jobs:
           echo "ecs_task_definition: ${{ inputs.ecs_task_definition }}"
           echo "container_name: ${{ inputs.container_name }}"
           echo "execution_role_arn: ${{ inputs.execution_role_arn }}"
-
+          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
