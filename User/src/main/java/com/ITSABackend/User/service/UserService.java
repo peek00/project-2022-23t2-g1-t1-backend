@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
@@ -18,23 +19,22 @@ import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 
 @Service
 public class UserService {
     @Autowired 
     DynamoDBRepo dynamoDBRepo;
-
-    public void createTable(String tableName) throws Exception{
-        if (dynamoDBRepo.getTable(tableName) == null){
-            dynamoDBRepo.createUserTable();
-        } else {
-            System.out.println("Table already exists");
-        }
+    
+    @PostConstruct
+    public void createTable() throws Exception{
+        dynamoDBRepo.createUserTable(true);
     }
 
     public void deleteTable(String tableName) throws Exception{
@@ -188,5 +188,32 @@ public class UserService {
         return user;
     }
 
+    public User[] getAllUsers() {
+        Table table = dynamoDBRepo.getTable(AppConstant.USER);
+        ArrayList<User> users = new ArrayList<User>();
+
+        if (table != null){
+
+            try{
+                System.out.println("Reading user....");
+                ItemCollection<ScanOutcome> items = table.scan();
+                items.forEach(item -> {
+                    System.out.println(item);
+                    User user = new User();
+                    user.setUserId(item.getString("id"));
+                    user.setEmail(item.getString("email"));
+                    user.setfirstName(item.getString("firstName"));
+                    user.setlastName(item.getString("lastName"));
+                    user.setRole(item.getStringSet("userRole"));
+                    users.add(user);
+                });
+
+            } catch(Exception e){
+                System.err.println("Unable to read user");
+                System.err.println(e.getMessage());
+            }
+        }
+        return users.toArray(new User[users.size()]);
+    }
 }
 
