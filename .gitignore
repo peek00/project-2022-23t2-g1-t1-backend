@@ -8,3 +8,28 @@ __pycache__/
 */.DS_Store
 */*.bak
 */target
+*.hcl
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+# Crash log files
+crash.log
+
+# Ignore .terraform.lock.hcl if present
+.terraform.lock.hcl
+
+# Ignore override files as they are usually used to override resources locally and do not need to be pushed
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do NOT want to be ignored using ! (ex: !example_override.tf)
