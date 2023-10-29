@@ -56,4 +56,18 @@ export class PolicyController {
     }
   }
 
+  public async mapUserPolicy(req: Request, res: Response, next: NextFunction): Promise<any> {
+    try {
+      const { role } = req.user!;
+      const { pageLs } = req.body;
+      if (pageLs === undefined) {
+        throw new Error("Invalid Request");
+      }
+      const userPolicy = await PolicyService.getInstance().mapRoleActions(role, pageLs);
+      res.status(200).json(userPolicy);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
