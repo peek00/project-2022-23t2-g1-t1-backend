@@ -16,18 +16,22 @@ function Routing() {
       
       <Route exact path='/' element={<LandingPage/>}/>
       <Route path="/login" element={<LoginPage />} />
-      <Route path ="/users" element={<PrivateRoute page={"user"}/>}>
+      <Route path ="/users" element={<PrivateRoute page={"user"} permission ={"GET"}/>}>
       <Route path ="/users" element={<UserListingPage/>}/>
       </Route>
    
-      <Route path ="/addUser" element={<PrivateRoute/>}/>
+      <Route path ="/addUser" element={<PrivateRoute page={"user"} permission={"POST"}/>}>
       <Route path ="/addUsers=" element={<AddUserPage type="add" />}/>
-      <Route path ="/updateUser" element={<PrivateRoute/>}/>
+      </Route>
+      <Route path ="/updateUser" element={<PrivateRoute page ={"user"} permission={"PUT"}/>}>
       <Route path ="/updateUser=" element={<AddUserPage type="update" />}/>
-      <Route path ="/logs" element={<PrivateRoute/>}/>
+      </Route>
+      <Route path ="/logs" element={<PrivateRoute page={"logging"} permission={"GET"}/>}>
       <Route path ="/logs" element={<LogsPage />}  />
-      <Route path ="/updatePoints" element={<PrivateRoute/>}/>
+      </Route>
+      <Route path ="/updatePoints" element={<PrivateRoute page={"points"} permission={"PUT"}/>}>
       <Route path ="/updatePoints" element={<UpdatePointsPage/>}/>
+      </Route>
 
 
 
