@@ -1,15 +1,49 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Import the Cookies library
+import React, { useEffect, useState } from 'react';
+import { Outlet, Navigate } from 'react-router-dom';
+import AlertIcon from '../components/AlertIcon';
+import axios from 'axios';
 
-const PrivateRoute = () => {
-  const hasValidJWT = !!Cookies.get('jwt');
+
+
+const fetchRole = async () => {
+  try {
+    const response = await axios.get("http://localhost:8000/auth/me", {
+      withCredentials: true
+    });
+
+    // Assuming the response contains the user's role
+    var role = response.data.role;
+     role = "Owner";
+    // 
+    return role;
+  } catch (error) {
+    // Handle errors here
+    console.error("Error fetching role:", error);
+    throw error; // Optionally re-throw the error to propagate it to the caller
+  }
+};
+
+const PrivateRoute = ({ roles }) => {
+  const [userRole, setUserRole] = useState(null);
+  console.log(roles);
+
+  useEffect(() => {
+    fetchRole().then((role) => {
+      setUserRole(role);
+      localStorage.setItem("role",role);
+    });
+  }, []);
+
   
-  // Determine if authorized, from context or however you're doing it
-  // If authorized, return an outlet that will render child elements
-  // If not, return an element that will navigate to the login page
+  
 
-  return hasValidJWT ? <Outlet /> : <Navigate to="/login" exact />;
-}
+  if (roles.includes(userRole)) {
+    
+    return <Outlet />;
+  } else {
+    // Render the error message component when the user doesn't have the required role
+    return <AlertIcon message="You are not authorized to access this page." />;
+  }
+};
 
 export default PrivateRoute;
