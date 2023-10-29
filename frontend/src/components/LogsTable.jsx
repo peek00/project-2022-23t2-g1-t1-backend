@@ -18,12 +18,6 @@ const ITEMS_PER_PAGE = 5; // Set the number of items per page
 
 const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
-const TABLE_ROWS = [
-
-
-
-  // ... (your data)
-];
 
 export default function LogsTable() {
 
