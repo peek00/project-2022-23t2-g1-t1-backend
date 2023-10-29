@@ -4,26 +4,7 @@ import axios from 'axios';
 
 
 export default function SignInForm(){
-  // const loginUser = async () => {
-  //   try {
-  //     // Send a GET request to localhost:8000/auth/google
-  //     const response = await axios.get('http://localhost:8000/auth/google', {
-       
-  //     });
-  
-  //     if (response.status === 200) {
-  //       // If the response status is 200, you can consider the user signed in.
-  //       console.log('Signed in successfully');
-  //       // You might want to redirect to a new page or perform additional actions here.
-  //     } else {
-  //       console.error('Sign-in failed');
-  //       // Handle sign-in failure
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     // Handle any errors that occurred during the request
-  //   }
-  // };
+ 
   
 
   

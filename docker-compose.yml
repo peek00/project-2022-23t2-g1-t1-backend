@@ -19,8 +19,8 @@ services:
       - CLOUDWATCH_REGION=us-east-1
       - AWS_DEFAULT_REGION=local
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
-      # - CLIENT_BASE_URL=http://localhost:3000 #Update to the url of the FE
-      # - CLIENT_AUTH_REDIRECT_URL=http://localhost:3000 #Update this to the FE url with the path to redirect the client to after authentication
+      - CLIENT_BASE_URL=http://localhost:5173 #Update to the url of the FE
+      - CLIENT_AUTH_REDIRECT_URL=http://localhost:5173/users #Update this to the FE url with the path to redirect the client to after authentication
       - USER_MS=http://user:8080
       - POINTS_MS=http://points:3000
       - MAKER_CHECKER_MS=http://maker-checker:5000

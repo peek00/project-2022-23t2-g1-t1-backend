@@ -31,9 +31,9 @@ public class DynamoDBRepo {
         // Create a new user table with secondary index
         try {
             // Delete the table if it already exists
-            if (dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER) != null) {
-                deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
-            }
+            // if (dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER) != null) {
+            //     deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
+            // }
             // Attribute definitions
             ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
             attributeDefinitions.add(new AttributeDefinition().withAttributeName("id").withAttributeType(ScalarAttributeType.S));

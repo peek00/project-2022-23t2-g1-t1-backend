@@ -8,14 +8,18 @@ import AddUserPage from '../pages/AddUserPage';
 import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
 
+
+
 function Routing() {
   return (
     <Routes>
       
-          <Route exact path='/' element={<LandingPage/>}/>
+      <Route exact path='/' element={<LandingPage/>}/>
       <Route path="/login" element={<LoginPage />} />
-      <Route path ="/users" element={<PrivateRoute/>}/>
+      <Route path ="/users" element={<PrivateRoute roles={["Owner","Manager","Engineer","Product Manager"]}/>}>
       <Route path ="/users" element={<UserListingPage/>}/>
+      </Route>
+   
       <Route path ="/addUser" element={<PrivateRoute/>}/>
       <Route path ="/addUsers=" element={<AddUserPage type="add" />}/>
       <Route path ="/updateUser" element={<PrivateRoute/>}/>
