@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import AlertIcon from '../components/AlertIcon';
 import axios from 'axios';
 
-const PrivateRoute = ({ page }) => {
+const PrivateRoute = ({ page,permission }) => {
   const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
@@ -27,7 +27,8 @@ const PrivateRoute = ({ page }) => {
     fetchRole()
       .then((role) => {
         // Check if the user is authorized to access the page
-        if (role[page]['GET']) {
+        console.log(role);
+        if (role[page][permission]) {
           setAuthorized(true);
         } else {
           setAuthorized(false);
