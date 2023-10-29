@@ -1,47 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import AlertIcon from '../components/AlertIcon';
 import axios from 'axios';
 
-
-
-const fetchRole = async () => {
-  try {
-    const response = await axios.get("http://localhost:8000/auth/me", {
-      withCredentials: true
-    });
-
-    // Assuming the response contains the user's role
-    var role = response.data.role;
-     role = "Owner";
-    // 
-    return role;
-  } catch (error) {
-    // Handle errors here
-    console.error("Error fetching role:", error);
-    throw error; // Optionally re-throw the error to propagate it to the caller
-  }
-};
-
-const PrivateRoute = ({ roles }) => {
-  const [userRole, setUserRole] = useState(null);
-  console.log(roles);
+const PrivateRoute = ({ page }) => {
+  const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
-    fetchRole().then((role) => {
-      setUserRole(role);
-      localStorage.setItem("role",role);
-    });
-  }, []);
+    const fetchRole = async () => {
+      const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging"] };
+      try {
+        const response = await axios.post("http://localhost:8000/policy/permissions", body, {
+          withCredentials: true
+        });
 
-  
-  
+        // Assuming the response contains the user's role
+        localStorage.setItem("permissions", JSON.stringify(response.data));
+        return response.data; // This is the role
+      } catch (error) {
+        // Handle errors here
+        console.error("Error fetching role:", error);
+        throw error;
+      }
+    };
 
-  if (roles.includes(userRole)) {
-    
+    fetchRole()
+      .then((role) => {
+        // Check if the user is authorized to access the page
+        if (role[page]['GET']) {
+          setAuthorized(true);
+        } else {
+          setAuthorized(false);
+        }
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Authorization check error:", error);
+        setAuthorized(false);
+      });
+  }, [page]);
+
+  if (authorized === null) {
+    return null; // You can render a loading spinner or something here
+  } else if (authorized) {
     return <Outlet />;
   } else {
-    // Render the error message component when the user doesn't have the required role
     return <AlertIcon message="You are not authorized to access this page." />;
   }
 };
