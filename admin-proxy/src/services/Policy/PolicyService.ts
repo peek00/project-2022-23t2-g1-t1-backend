@@ -178,7 +178,7 @@ export class PolicyService {
     }
   }
 
-  public async getPolicy(endpoint: string, method: string): Promise<String[]> {
+  public async getPolicy(endpoint: string, method: string): Promise<string[]> {
     const policies = await this.getAllPolicies();
     const exactMatch = policies.find((policy: any) => policy.endpoint === endpoint);
     if (exactMatch && exactMatch[method]) {
@@ -191,4 +191,36 @@ export class PolicyService {
     const defaultMatch = policies.find((policy: any) => policy.endpoint === "*");
     return defaultMatch[method];
   }
+
+  public async mapRoleActions(role: string[], pageLs: string[]): Promise<any> {
+    let pageMap:{[key:string]: any} = {};
+    await Promise.all(pageLs.map(async ms => {
+      const api_endpoint =  `/api/${ms}`;
+      let permissions:{[key:string]:boolean} = {
+        GET: false,
+        POST: false,
+        PUT: false,
+        DELETE: false,
+      }
+      const methods = Object.keys(permissions);
+      await Promise.all(methods.map(async (method: string) => {
+        // Retrieve the policy for the endpoint
+        const endpointPolicy = await this.getPolicy(api_endpoint, method);
+        console.log(endpointPolicy);
+        // compare userRole and endpointPolicy
+        console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
+        // Make sure that at least one role is included in the endpoint policy
+        if (endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
+          console.log('true')
+          permissions[method] = true;
+        } else {
+          console.log('false')
+          permissions[method] = false;
+        }
+      }));
+      pageMap[ms] = permissions;
+    }));
+    return pageMap;
+  }
+
 }
