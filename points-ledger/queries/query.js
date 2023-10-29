@@ -1,9 +1,11 @@
 // import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 // import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-const config = require("../config/config.js")
+const {Redis} = require("../modules/CacheProvider/Redis");
+const config = require("../config/config.js");
 const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand, PutItemCommand, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const AWSConfig = config.aws_local_config;
+const CacheProvider = Redis.getInstance();
 const ddbClient = new DynamoDBClient({ 
     region: AWSConfig.region,
     endpoint: AWSConfig.dynamoDBEndpoint,
@@ -16,7 +18,15 @@ const ddbClient = new DynamoDBClient({
 // get all points balance for the particular userid
 async function getAllAccounts(userId) {
     try {
-        // console.log(AWS.config);
+        const redisKey = `accounts:${userId}`;
+        console.log("Calling cache");
+        const cachedData = await CacheProvider.get(redisKey);
+        console.log("called cache");
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
         const result = [];
         const input = {
             "ExpressionAttributeValues": marshall({
@@ -30,11 +40,13 @@ async function getAllAccounts(userId) {
         };
         const data = await ddbClient.send(new QueryCommand(input));
         const items = data.Items;
-        //   console.log(items);
+
         for (let item of items){
             let cleaneddata = unmarshall(item);
             result.push(cleaneddata);
         }
+        // Cache result in Redis for 10min
+        await CacheProvider.write(redisKey, JSON.stringify(result),600);
         console.log(result);
         return result;
     } catch (err) {
@@ -46,18 +58,24 @@ async function getAllAccounts(userId) {
 // returns all details of particular account
 async function getPointsBalance(pointsId) {
     try{
+        const redisKey = `pointsBalance:${pointsId}`;
+        const cachedData = await CacheProvider.get(redisKey);
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
+        // if no cached data, query dynanamodb
         const params = {
-            // TableName: 'points_ledger',
             "TableName": config.aws_table_name,
             Key: marshall( 
                 {id: pointsId }
-                // , { removeUndefinedValues: true } 
                 ) 
         }
         const data = await ddbClient.send(new GetItemCommand(params));
-        // const item = unmarshall(data.Item);
-        // const item = data.Item;
-        // return item;
+        
+        // cache result in Redis for 10min
+        await CacheProvider.write(redisKey, JSON.stringify(data,600));
         return data;
     }
     catch (err) {
@@ -67,23 +85,28 @@ async function getPointsBalance(pointsId) {
 }
 
 // check if points acc exist
-async function pointsAccExist(pointsid) {
+async function pointsAccExist(pointsId) {
     try{
+        const redisKey = `pointsBalance:${pointsId}`;
+        const cachedData = await CacheProvider.get(redisKey);
+        if (cachedData !== null) {
+            console.log("Cache hit");
+            return cachedData === 'true';
+        }
         const params = {
-            // TableName: 'points_ledger',
             "TableName": config.aws_table_name,
             Key: marshall( 
-                {id: pointsid }
-                // , { removeUndefinedValues: true } 
+                {id: pointsId }
             ) 
         }
         const data = await ddbClient.send(new GetItemCommand(params));
+        const exists = false;
         if (data.Item){
-            return true;
+            exists = true;
         }
-        else{
-            return false;
-        }
+        await CacheProvider.write(redisKey, exists.toString(),600);
+        
+        return exists;
     }
     catch (err) {
         console.log(err);
@@ -93,8 +116,6 @@ async function pointsAccExist(pointsid) {
 
 // create points account
 async function createAccount(userId, new_pointsId,inputbalance) {
-    // const new_pointsId = uuidv4();
-    // console.log(new_pointsId);
     try {
         const params = {
             "Item": {
@@ -107,6 +128,9 @@ async function createAccount(userId, new_pointsId,inputbalance) {
         }
 
         const data = await ddbClient.send(new PutItemCommand(params));
+        const redisKeyAccounts = `accounts:${userId}`;
+        await CacheProvider.remove(redisKeyAccounts);
+        console.log(`Created Points Account ${new_pointsId}`);
         return data
     }
     catch (err) {
@@ -126,11 +150,15 @@ async function updatePoints(pointsId,newbalance) {
             "Key": marshall({
                 "id": pointsId
             }),
-            // "TableName": "points_ledger",
             "TableName": config.aws_table_name,
             "UpdateExpression": "SET balance = :v1"
         }
         const data = await ddbClient.send(new UpdateItemCommand(params));
+
+        // invalidate cache for this pointsId
+        const redisKey = `pointsBalance:${pointsId}`;
+        await CacheProvider.remove(redisKey);
+
         return data;
     }
     catch (err) {
@@ -149,6 +177,10 @@ async function deleteAccount(pointsId){
             )
         }
         const data = await ddbClient.send(new DeleteItemCommand(params))
+
+        // invalidate cache for this pointsId
+        const redisKey = `pointsBalance:${pointsId}`;
+        await CacheProvider.remove(redisKey);
     }
     catch (err) {
         console.log(err);

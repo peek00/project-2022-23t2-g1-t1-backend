@@ -3,17 +3,13 @@ networks:
   vpc:
     driver: bridge
 services:
-  # points:
-  #   image: bryan/points
-  #   build: .
-  #   restart: always
-  #   ports:
-  #     - "3000:3000"
   redis:
     image: redis:alpine
     restart: always
     networks:
       - vpc
+    ports:
+      - 6379:6379
   redis-commander:
     image: rediscommander/redis-commander:latest
     environment:
@@ -50,6 +46,7 @@ services:
       - vpc
     depends_on:
       - "dynamodb-local"
+      - redis
     links:
       - "dynamodb-local"
   #   environment:
