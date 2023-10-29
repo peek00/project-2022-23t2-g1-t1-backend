@@ -134,7 +134,24 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @GetMapping(value = "/getAllUsers", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getAllUsers() {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
 
+        try {
+            response.put("logInfo", "log message");
+            response.put("data", userService.getAllUsers());
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
 
 
 
