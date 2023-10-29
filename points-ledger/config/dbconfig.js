@@ -6,13 +6,13 @@ const { DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
 
 
 const createDynamoDBClient = () => {
-  console.log(`{ 
-    region: ${process.env.AWS_REGION || "local"},
-    endpoint: ${process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000"},
-    credentials: {
-      accessKeyId: ${process.env.AWS_ACCESS_KEY_ID || "test"},
-      secretAccessKey: ${process.env.AWS_SECRET_ACCESS || "test"},
-    }`);
+//   console.log(`{ 
+//     region: ${process.env.AWS_REGION || "local"},
+//     endpoint: ${process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000"},
+//     credentials: {
+//       accessKeyId: ${process.env.AWS_ACCESS_KEY_ID || "test"},
+//       secretAccessKey: ${process.env.AWS_SECRET_ACCESS || "test"},
+//     }`);
 
   const client = new DynamoDBClient({ 
     region: process.env.AWS_REGION || "local",

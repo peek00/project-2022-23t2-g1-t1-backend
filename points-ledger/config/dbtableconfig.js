@@ -1,7 +1,7 @@
 // import { createDynamoDBClient } from "./db.js";
 // import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 // import { CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
-const { CreateTableCommand, DeleteTableCommand } = require("@aws-sdk/client-dynamodb");
+const { CreateTableCommand, DeleteTableCommand,ListTablesCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const createDynamoDBClient = require("./dbconfig.js")
 
@@ -22,7 +22,7 @@ class dbtableconfig {
 
   async initialise(tearDown = false) {
     const params = {
-        "TableName": "points_ledger_updated",
+        "TableName": "points_ledger",
         "KeySchema": [
           {
             "AttributeName": "id",
@@ -65,20 +65,23 @@ class dbtableconfig {
       };
 
     try {
-      if (tearDown) {
-        // Delete table if it exists
         const data = await this.db.send(new ListTablesCommand({}));
-        if (data.TableNames.includes("points_ledger_updated")) {
-          await this.db.send(new DeleteTableCommand({ TableName: "points_ledger_updated" }));
-          console.log("Table is deleted");
+        if (data.TableNames.includes("points_ledger")) {
+            if (tearDown) {
+              // Delete table if it exists
+              await this.db.send(new DeleteTableCommand({ TableName: "points_ledger" }));
+              console.log("Table is deleted");
+              await this.db.send(new CreateTableCommand(params));
+              console.log("Table is created");
+            }
+          } else {
+            await this.db.send(new CreateTableCommand(params));
+            console.log("Table is created");
         }
-      }
-      await this.db.send(new CreateTableCommand(params));
-      console.log("Table is created");
-    } catch (err) {
-      console.log("Error", err);
-    }
-  };
+        } catch (err) {
+        console.log("Error", err);
+        }
+    };
 }
 
 module.exports = dbtableconfig;
