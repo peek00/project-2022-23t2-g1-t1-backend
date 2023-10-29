@@ -24,9 +24,9 @@ public class userServiceTest {
     // Mock get table
     when(dynamoDBRepo.getTable(Mockito.anyString())).thenReturn(null);
     // Invoke createTable method
-    userService.createTable("user");
+    userService.createTable();
     // Assert createUserTable is called
-    Mockito.verify(dynamoDBRepo).createUserTable();
+    Mockito.verify(dynamoDBRepo).createUserTable(true);
   }
 
   @Test
