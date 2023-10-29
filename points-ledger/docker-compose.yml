@@ -13,7 +13,7 @@ services:
   redis-commander:
     image: rediscommander/redis-commander:latest
     environment:
-      - REDIS_HOSTS=redis
+      - REDIS_HOST=redis
       - HTTP_USER=default
       - HTTP_PASSWORD=password
     ports:

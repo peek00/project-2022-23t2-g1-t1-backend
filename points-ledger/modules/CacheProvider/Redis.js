@@ -4,13 +4,12 @@ const redis = require('redis')
 
 const username = process.env.REDIS_USER || "default";
 const password = process.env.REDIS_PASS || "password";
-const host = process.env.REDIS_HOST || "localhost";
+const host = process.env.REDIS_HOST || "redis";
 const port = Number(process.env.REDIS_PORT) || 6379;
 
 class Redis {
     constructor() {
         this.client = redis.createClient({
-        //   url: `redis://${username}:${password}@${host}:${port}`,
         url: `redis://${username}:${password}@${host}:${port}`,
         legacyMode: true,
         });
