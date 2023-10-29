@@ -12,6 +12,27 @@ export default function TopBar(){
     setSettings(!settings);
   }
 
+  const signOut = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/auth/logout", {
+        withCredentials: true
+      });
+  
+      // Assuming the response contains the user's role
+     
+      // 
+
+      window.location.href = "/"; 
+      console.log(response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Cannot log out of auth:", error);
+      throw error; // Optionally re-throw the error to propagate it to the caller
+    }
+  };
+
+  
+
 
     return (
        
@@ -41,13 +62,13 @@ export default function TopBar(){
   </div>
 
  
- {settings&& (<div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+ {settings&& (<div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" action="http://localhost:8000/auth/logout">
     <div class="py-1" role="none">
      
      
+    
       
-      
-        <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm hover:cusor" role="menuitem" tabindex="-1" id="menu-item-3"><Link to="/">Sign Out</Link></button>
+        <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm hover:cusor" role="menuitem" tabindex="-1" id="menu-item-3" onClick={signOut}>Sign Out</button>
      
     </div>
   </div>)}

@@ -16,7 +16,7 @@ function Routing() {
       
       <Route exact path='/' element={<LandingPage/>}/>
       <Route path="/login" element={<LoginPage />} />
-      <Route path ="/users" element={<PrivateRoute roles={["Owner","Manager","Engineer","Product Manager"]}/>}>
+      <Route path ="/users" element={<PrivateRoute page={"user"}/>}>
       <Route path ="/users" element={<UserListingPage/>}/>
       </Route>
    
