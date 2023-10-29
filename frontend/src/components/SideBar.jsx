@@ -26,9 +26,9 @@ export default function SideBar() {
 
 
           <NavLink
-            to="/addUser"
+            to="/users/add"
             activeClassName="active"
-            className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${activeLink === '/addUser' ? 'opacity-100 font-bold' : 'opacity-60'}`}
+            className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${activeLink === '/user/add' ? 'opacity-100 font-bold' : 'opacity-60'}`}
           >
             Enroll User
           </NavLink>
