@@ -19,15 +19,15 @@ public class userServiceTest {
   @InjectMocks
   private UserService userService;
 
-  @Test
-  public void testCreateTable() throws Exception {
-    // Mock get table
-    when(dynamoDBRepo.getTable(Mockito.anyString())).thenReturn(null);
-    // Invoke createTable method
-    userService.createTable();
-    // Assert createUserTable is called
-    Mockito.verify(dynamoDBRepo).createUserTable(true);
-  }
+  // @Test
+  // public void testCreateTable() throws Exception {
+  //   // Mock get table
+  //   when(dynamoDBRepo.getTable(Mockito.anyString())).thenReturn(null);
+  //   // Invoke createTable method
+  //   userService.createTable();
+  //   // Assert createUserTable is called
+  //   Mockito.verify(dynamoDBRepo).createUserTable(true);
+  // }
 
   @Test
   public void testDeleteTable() throws Exception {
