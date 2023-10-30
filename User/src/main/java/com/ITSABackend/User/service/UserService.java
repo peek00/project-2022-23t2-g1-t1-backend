@@ -46,11 +46,6 @@ public class UserService {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
         try{
-            // System.out.println("On try");
-            // System.out.println(user.getUserId());
-            // System.out.println(user.getfirstName());
-            // System.out.println(user.getlastName());
-
             String id = UUID.randomUUID().toString();
 
             PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("id", id)
@@ -90,7 +85,7 @@ public class UserService {
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
                     // Set String array
-                    user.setRole(outcome.getStringSet("role"));
+                    user.setRole(outcome.getStringSet("userRole"));
                 }
 
                 return user;
