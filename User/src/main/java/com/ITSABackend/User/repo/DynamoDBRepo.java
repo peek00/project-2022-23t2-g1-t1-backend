@@ -76,6 +76,54 @@ public class DynamoDBRepo {
         }
     }
 
+    public void createRoleTable(boolean restart) throws Exception {
+        // Create a new user table with secondary index
+        boolean tableExists = false;
+        try {
+            // get list of tables
+            TableCollection<ListTablesResult> table = dynamoDBConfig.getDynamoDB().listTables();
+
+            // Check if table already exists
+            for (Table t : table) {
+                if (t.getTableName().equals(AppConstant.ROLE)) {
+                    tableExists = true;
+                    break;
+                }
+            }
+            // Delete the table if it already exists
+            if (tableExists && restart) {
+                deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE).getTableName());
+            }
+            // Attribute definitions
+            ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
+            attributeDefinitions.add(new AttributeDefinition().withAttributeName("roleType").withAttributeType(ScalarAttributeType.S));
+            // Key schema for table
+            ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("roleType").withKeyType(KeyType.HASH)); // Partition key
+            // Initial provisioned throughput settings for the indexes
+            ProvisionedThroughput ptIndex = new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L);
+
+            // // CreateDateIndex
+            // GlobalSecondaryIndex createEmailIndex = new GlobalSecondaryIndex().withIndexName("email-index")
+            //     .withProvisionedThroughput(ptIndex)
+            //     .withKeySchema(new KeySchemaElement().withAttributeName("email").withKeyType(KeyType.HASH))
+            //     .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
+
+            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.ROLE)
+                .withProvisionedThroughput(
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
+
+            System.out.println("Creating table " + AppConstant.ROLE + "...");
+            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+            
+        } catch (Exception e) {
+            System.err.println("Cannot create the table");
+            System.err.println(e.getMessage());
+            throw new Exception("Error has occured");
+        }
+    }
+
     public Table getTable(String tableName){
         Table table = dynamoDBConfig.getDynamoDB().getTable(tableName);
         return table;
