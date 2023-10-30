@@ -15,8 +15,10 @@ function authorize() {
         }
         const { role } = user;
         // Make user available in req.user
-        console.log(req.method as HttpMethod, req.path)
-        authorisationService.authorize(role, req.method as HttpMethod, req.path).then(() => {
+        // console.log(req.method as HttpMethod, req.path)
+        let url = req.url.replace(process.env.API_BASE_URL as string, "")
+        console.log(req.method as HttpMethod, url);
+        authorisationService.authorize(role, req.method as HttpMethod, url).then(() => {
           req.user = user;
           console.log("authorisationService.authorize", req.user);
           next();
