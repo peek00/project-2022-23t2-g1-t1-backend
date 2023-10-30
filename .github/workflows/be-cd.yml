@@ -79,7 +79,7 @@ jobs:
     if: contains(needs.filechange.outputs.files , 'maker-checker/')
     uses: ./.github/workflows/build.yml
     with:
-      dockerfile: 'maker-checker.Dockerfile'
+      dockerfile: 'makerchecker.Dockerfile'
       workdir: 'maker-checker'
       repository: 'backend-repository'
       ecs_service: 'maker-checker-service'
