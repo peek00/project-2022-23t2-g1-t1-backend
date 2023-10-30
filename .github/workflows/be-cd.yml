@@ -53,7 +53,7 @@ jobs:
     with:
       dockerfile: 'Dockerfile'
       workdir: 'admin-proxy'
-      repository: ${{ github.repository }}
+      repository: 'backend-repository'
       ecs_service: 'admin-proxy-service'
       ecs_cluster: 'admin-proxy-cluster'
       ecs_task_definition: '/.infra/ecs/adminProxyTaskDefinition.json'
@@ -67,7 +67,7 @@ jobs:
     with:
       dockerfile: 'Dockerfile'
       workdir: 'logging'
-      repository: ${{ github.repository }}
+      repository: 'backend-repository'
       ecs_service: 'logging-service'
       ecs_cluster: 'logging-service-cluster'
       ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
@@ -81,7 +81,7 @@ jobs:
     with:
       dockerfile: 'maker-checker.Dockerfile'
       workdir: 'maker-checker'
-      repository: ${{ github.repository }}
+      repository: 'backend-repository'
       ecs_service: 'maker-checker-service'
       ecs_cluster: 'maker-checker-cluster'
       ecs_task_definition: '/.infra/ecs/makerCheckerTaskDefinition.json'
@@ -95,7 +95,7 @@ jobs:
     with:
       dockerfile: 'Dockerfile'
       workdir: 'points-ledger'
-      repository: ${{ github.repository }}
+      repository: 'backend-repository'
       ecs_service: 'points-service'
       ecs_cluster: 'points-cluster'
       ecs_task_definition: '/.infra/ecs/pointsLedgerTaskDefinition.json'
@@ -109,7 +109,7 @@ jobs:
     with:
       dockerfile: 'Dockerfile'
       workdir: 'User'
-      repository: ${{ github.repository }}
+      repository: 'backend-repository'
       ecs_service: 'user-service'
       ecs_cluster: 'user-cluster'
       ecs_task_definition: '/.infra/ecs/userTaskDefinition.json'
