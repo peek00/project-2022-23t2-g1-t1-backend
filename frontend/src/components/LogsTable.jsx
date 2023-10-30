@@ -20,6 +20,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
 
 export default function LogsTable() {
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     // This code will run when the component mounts
@@ -47,7 +48,7 @@ export default function LogsTable() {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [data, setData] = useState([]);
+
   const TABLE_ROWS = data;
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -76,6 +77,7 @@ export default function LogsTable() {
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
+                
                 {TABLE_HEAD.map((head) => (
                   <th
                     key={head}
@@ -93,7 +95,7 @@ export default function LogsTable() {
               </tr>
             </thead>
             <tbody>
-              {displayedRows.map(
+              {displayedRows && displayedRows.length > 0 && displayedRows.map(
                 ({
                   timestamp,
                   userId,
