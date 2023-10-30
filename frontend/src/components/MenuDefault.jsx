@@ -15,6 +15,7 @@ export default function MenuDefault() {
     // Fetch the role from localStorage or an API here
     const storedRole = JSON.parse(localStorage.getItem("permissions"));
     console.log(storedRole);
+    setRole(storedRole);
     
   }, []);
 
