@@ -9,7 +9,7 @@ class ApprovalStatus(str, Enum):
     APPROVED = "approved"
     REJECTED = "rejected"
     WITHDRAWN = "withdrawn"
-    EXPIRED = "expired"
+    # EXPIRED = "expired"
 
 class ApprovalRequest(BaseModel):
     uid: str = Field(default_factory=lambda: str(uuid4()))

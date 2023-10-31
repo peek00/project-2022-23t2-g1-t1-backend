@@ -25,8 +25,11 @@ class ApprovalRequestRepository:
     def get_pending_approval_requests(self):
         try:
             table = self.__db.Table('approval_request')
+
+            current_time = str(datetime.now().isoformat())
+
             response = table.scan(
-                FilterExpression=Attr("status").eq('pending')
+                FilterExpression=Attr("status").eq('pending') & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
             return items
@@ -60,12 +63,11 @@ class ApprovalRequestRepository:
         # Untested 
         try:
             table = self.__db.Table('approval_request')
-            
-            # Get the current datetime
-            current_time = datetime.now().isoformat()
+
+            current_time = str(datetime.now().isoformat())
             
             # Define the filter expression to check for pending items and not expired items
-            filter_expression = Attr("status").eq('pending') & Attr("request_expiry").gt(current_time)
+            filter_expression = Attr("status").eq('pending') & Attr("request_expiry").lt(current_time)
             
             response = table.scan(FilterExpression=filter_expression)
             items = response.get('Items', [])
@@ -107,9 +109,11 @@ class ApprovalRequestRepository:
     def get_pending_approval_requests_by_requestor_id(self, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
+
+            current_time = str(datetime.now().isoformat())
             response = table.scan(
                 FilterExpression=Attr("requestor_id").eq(approver_id) & Attr("status").eq('pending')
-
+                & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
             return items
@@ -146,14 +150,8 @@ class ApprovalRequestRepository:
         try:
             table = self.__db.Table('approval_request')
             item = table.get_item(Key={'uid': data.uid}).get('Item')
-
-            # Compare the requestor uuid with the one in the database
-            if item.get('requestor_id') != data.requestor_id:
-                raise ValidationError("Only original requestor can update request!")
-            
             # Update the item
             for key, value in data.dict().items():
-                # Can add additional validation before
                 if value == None:
                     pass
                 else:
@@ -170,29 +168,10 @@ class ApprovalRequestRepository:
         try:
             table = self.__db.Table('approval_request')
             item = table.get_item(Key={'uid': data.uid}).get('Item')
-
-            # Check if requestor is the same as approver
-            if item.get('requestor_id') == data.approver_id:
-                raise ValidationError("Requestor cannot be the same as the approver!")
-            
-            # Check if request has been approved / rejected / etc
-            if item.get('status') != 'pending':
-                raise ValidationError("Request has already been resolved!")
-
-            # Check if item is not expired
-            if item.get('request_expiry') < data.resolution_at:
-                raise ValidationError("Request has expired!")
-
             # Update the item
             for key, value in data.model_dump().items():
                 # Can add additional validation before
                 item[key] = value
-
-            # Send out call to do whatever the request contains
-            if item.get('status') == 'approved':
-                # TODO: Japheth do things here
-                # Make a call to points storage to update transaction
-                pass
             response = table.put_item(Item=item)
             return response
         except ClientError as e:
@@ -208,22 +187,6 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(Key={'uid': data.uid}).get('Item')
 
-            # Check if requestor is the same as approver
-            if item.get('requestor_id') != data.approver_id:
-                raise ValidationError("Withdrawer must be the same as the requestor!")
-
-            # Check if request has been approved / rejected / etc
-            if item.get('status') != 'pending':
-                raise ValidationError("Request has already been resolved!")
-
-            # Check if item is not expired
-            if item.get('request_expiry') < data.resolution_at:
-                raise ValidationError("Request has expired!")
-
-            # Confirm its a withdraw status
-            if data.status != 'withdrawn':
-                # Do something
-                raise ValidationError("Incorrect status type for request!")
             # Update the item
             for key, value in data.model_dump().items():
                 # Can add additional validation before
@@ -242,13 +205,6 @@ class ApprovalRequestRepository:
         """
         try:
             table = self.__db.Table('approval_request')
-
-            # Check if deleter is the requestor
-            item = table.get_item(Key={'uid': data.uid}).get('Item')
-            # Compare the requestor uuid with the one in the database
-            if item.get('requestor_id') == data.approver_id:
-                raise ValidationError("Only original requestor can delete request!")
-
             # Send out call to do whatever the request contains
             response = table.delete_item(Key={'uid': data.uid})
             return response

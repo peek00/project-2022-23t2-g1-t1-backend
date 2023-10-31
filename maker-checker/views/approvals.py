@@ -3,15 +3,20 @@ from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResp
 from models.approval_request_repository import ApprovalRequestRepository, ValidationError
 from controllers.db import initialize_db
 from botocore.exceptions import ClientError
+from datetime import datetime
 
 router = APIRouter(
   prefix = "/approval",
   tags = ["Approvals"],
 )
 
-def authorized_request():
-    # Pseudo function to check if the user is authenticated and authoriuzed
-    return True
+
+def isExpired(expiry_date:str):
+    """
+    Takes in a string in isoformat and uses current time 
+    to determine if it is expired.
+    """
+    return datetime.now() > datetime.fromisoformat(expiry_date)
 
 db = initialize_db()
 approval_request_repository = ApprovalRequestRepository(db)
@@ -153,11 +158,14 @@ def create_approval_requests(
     data: ApprovalRequest,
 ):
     try:
-        if authorized_request():
-            # TODO : Put in validation  that data has request details
-            response = approval_request_repository.create_approval_request(data)
-            # TODO: Japheth send email notifications here
-            return response
+        # TODO : Put in validation  that data has request details
+        result = approval_request_repository.create_approval_request(data)
+        # TODO: Japheth send email notifications here
+        response = {
+            "logs_info" : f"ID {data.requestor_id} created a request with ID {data.uid} for {data.approval_role} approval.",
+            "result" : result
+        }
+        return response
     except ValidationError  as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -170,8 +178,30 @@ def update_approval_request(
     data: ApprovalUpdate,
 ):
     try:
-        if authorized_request():
-            return approval_request_repository.update_approval_request(data)
+        # Get the original request
+        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        # Check if request exists
+        if original_request == None:
+            raise ValueError("Request does not exist.")
+        # Check if requestID is the same, only the original requestor can update
+        if original_request["requestor_id"] != data.requestor_id:
+            raise ValueError("Requestor ID does not match the original requestor ID.")
+        # Check if request is pending, only pending requests can be updated
+        if original_request['status'] != "pending":
+            raise ValueError("Request is not pending, cannot be updated.")
+        # Check if request is expired, only pending requests can be updated
+        if isExpired(original_request["request_expiry"]):
+            raise ValueError("Request is expired, cannot be updated.")
+        
+        result = approval_request_repository.update_approval_request(data)
+        print("We got here?")
+        response = {
+            "logs_info" : f"ID {data.requestor_id} updated Request ID {data.uid}, Request Status is now {data.status}.",
+            "result" : result
+        }
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -184,8 +214,27 @@ def withdraw_approval_request(
     data: ApprovalResponse,
 ):
     try:
-        if authorized_request():
-            return approval_request_repository.withdraw_approval_request(data)
+        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+       
+        if original_request == None:
+            raise ValueError("Request does not exist.")
+        if original_request["requestor_id"] != data.approver_id:
+            raise ValueError("Requestor ID does not match the original requestor ID.")
+        if original_request['status'] != "pending":
+            raise ValueError("Request is not pending, cannot be withdrawn.")
+        if isExpired(original_request["request_expiry"]):
+            raise ValueError("Request is expired, cannot be withdrawn.")
+        if data.status != "withdrawn":
+            raise ValueError("Request can only be withdrawn.")
+        
+        result = approval_request_repository.withdraw_approval_request(data)
+        response = {
+            "logs_info" : f"ID {data.requestor_id} withdrew Request ID {data.uid}",
+            "result" : result
+        }
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -198,8 +247,24 @@ def delete_approval_request(
     data: DeleteRequest,
 ):
     try:
-        if authorized_request():
-            return approval_request_repository.delete_approval_request(data)
+        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        if original_request == None:
+            raise ValueError("Request does not exist.")
+        if original_request["requestor_id"] != data.requestor_id:
+            raise ValueError("Requestor ID does not match the original requestor ID.")
+        if original_request['status'] != "pending":
+            raise ValueError("Request is not pending, cannot be deleted.")
+        if isExpired(original_request["request_expiry"]):
+            raise ValueError("Request is expired, cannot be deleted.")
+        
+        result = approval_request_repository.delete_approval_request(data)
+        response = {
+            "logs_info" : f"ID {data.requestor_id} deleted Request ID {data.uid}",
+            "result" : result
+        }
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -212,12 +277,36 @@ def delete_approval_request(
 # =================== START: CHECKER requests =======================
 
 @router.post("/response")
-def approve_approval_request(
+def approve_or_reject_approval_request(
     data: ApprovalResponse,
 ):
     try: 
-        if authorized_request():
-            return approval_request_repository.approve_or_reject_approval_request(data)
+        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        if original_request["requestor_id"] == data.approver_id:
+            raise ValueError("Requestor cannot be the approver.")
+        if original_request['status'] != "pending":
+            raise ValueError("Request is not pending, cannot be updated.")
+        if isExpired(original_request["request_expiry"]):
+            raise ValueError("Request is expired, cannot be updated.")
+        
+        if data.status == "approved":
+            action = "approved"
+            # TODO: Japheth do things here
+            # Make a call to points storage to update transaction
+        elif data.status == "rejected":
+            action = "rejected"
+
+        #Only update DB if above call to other microservice is successful
+        result = approval_request_repository.approve_or_reject_approval_request(data)
+
+        response = {
+            "logs_info" : f"ID {data.requestor_id} {action} Request ID {data.uid}",
+            "result" : result
+        }
+        return response
+    
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
