@@ -11,7 +11,6 @@ from unittest.mock import patch, MagicMock
 import unittest.mock as mock
 from botocore.exceptions import ClientError
 
-
 from models.approval_request_repository import ApprovalRequestRepository
 
 def get_approval_request_repository():
@@ -29,81 +28,50 @@ def initialize_client(mock_initialize_db):
 
 client = initialize_client()
 
-# # Mock initialize_db function
-# @patch('views.approvals.initialize_db')
-# def test_healthcheck(mock_initialize_db):
-#     # Set the return values for the mocked functions if necessary
-#     mock_initialize_db.return_value = 'mocked_db'
-#     with TestClient(app) as client:
-#         response = client.get("/approval/")
-#         assert response.status_code == 200
-#         assert response.json() == {"m essage": "Welcome to the approvals API! Endpoint is working."}
+# Mock initialize_db function
+def test_healthcheck():
+    # Set the return values for the mocked functions if necessary
+    response = client.get("/approval/")
+    assert response.status_code == 200
 
-# # ================================================= Approval Actions =================================================
+# # ================================================= Get Actions =================================================
+@patch("views.approvals.approval_request_repository.get_all_approval_requests")
+def test_success_get_all_request(mock_get_approval_requests):
+    """
+    Test that get_all_approval_requests is called and returns a 200 status code.
+    """
+    mock_get_approval_requests.return_value = True
+    response = client.get("/approval/get-all?company_id=test")
+    mock_get_approval_requests.assert_called()
+    assert response.status_code == 200
 
-# @patch("views.approvals.approval_request_repository.create_approval_request")
-# def test_success_create_approval_requests(mock_create_approval_request):
-#     mock_create_approval_request.return_value = True
-#     response = client.post(
-#         "/approval/create",
-#         json={
-#             "requestor_id": "abc-12345",
-#             "request_type": "Transaction",
-#             "request_details": {
-#                 "amount" : 100,
-#                 "increment" : "False",
-#                 "account_id" : 456789
-#             },
-#             "status": "pending",
-#             "comments": "Optional comment for this particular request",
-#             "request_title": "Optional title for this particular request",
-#             "approval_role" : "ADMIN"
-#         }
-#     )
-#     mock_create_approval_request.assert_called()
-#     assert response.status_code == 200
+@patch("views.approvals.approval_request_repository.get_all_approval_requests")
+def test_failure_missing_company_id_get_all_request(mock_get_approval_requests):
+    """
+    Test that missing company_id returns a 400 status code.
+    """
+    mock_get_approval_requests.return_value = True
+    response = client.get("/approval/get-all")
+    assert response.status_code == 400
 
-# def test_invalid_details_create_approval_requests():
-#     response = client.post(
-#         "/approval/create",
-#         json={
-#             "requestor_id": "abc-12345",
-#             "request_type": "Transaction",
-#             "request_details": {
-#                 "amount" : 100,
-#                 "increment" : False,
-#                 "account_id" : 456789
-#             },
-#             "status": "pending",
-#         }
-#     )
-#     assert response.status_code == 422
+@patch("views.approvals.approval_request_repository.get_all_approval_requests")
+def test_failure_client_error_get_all_request(mock_get_approval_requests):
+    """
+    Test that ClientError returns a 500 status code.
+    """
+    mock_get_approval_requests.side_effect = ClientError({
+        "Error" : {
+            "Message" : "Mocking ClientError"
+        }
+    }, "Mock")
+    response = client.get("/approval/get-all?company_id=test")
+    assert response.status_code == 500
 
-# @patch("views.approvals.approval_request_repository.create_approval_request")
-# def test_client_error_create_approval_requests(mock_create_approval_request):
-#     mock_create_approval_request.side_effect = ClientError({
-#         "Error" : {
-#             "Message" : "Mocking ClientError"
-#         }
-#     }, "Mock")
-#     response = client.post(
-#         "/approval/create",
-#         json={
-#             "requestor_id": "abc-12345",
-#             "request_type": "Transaction",
-#             "request_details": {
-#                 "amount" : 100,
-#                 "increment" : False,
-#                 "account_id" : 456789
-#             },
-#             "status": "pending",
-#             "comments": "Optional comment for this particular request",
-#             "request_title": "Optional title for this particular request",
-#             "approval_role" : "ADMIN"
-#         }
-#     )
-#     mock_create_approval_request.assert_called()
-#     assert response.status_code == 500
-
-# if __name__ == "__main__":
-#     pytest.main()
+@patch("views.approvals.approval_request_repository.get_all_approval_requests")
+def test_failuer_exception_get_all_request(mock_get_approval_requests):
+    """
+    Test that Exception returns a 500 status code.
+    """
+    mock_get_approval_requests.side_effect = Exception
+    response = client.get("/approval/get-all?company_id=test")
+    assert response.status_code == 500

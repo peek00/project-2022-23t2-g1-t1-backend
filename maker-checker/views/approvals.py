@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import ValidationError
+
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
-from models.approval_request_repository import ApprovalRequestRepository, ValidationError
+from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db
 from botocore.exceptions import ClientError
 from datetime import datetime
@@ -30,11 +32,13 @@ async def healthcheck():
 # =================== START: GET requests =======================
 @router.get("/get-all", response_model=None)
 async def get_all_requests(
-    company_id: str
+    company_id: str = None
 ):
     try:
+        if company_id == None:
+            raise ValueError("Company ID is required.")
         return approval_request_repository.get_all_approval_requests(company_id)
-    except ValidationError as e:
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
