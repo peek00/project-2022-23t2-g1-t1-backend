@@ -4,11 +4,6 @@ from boto3.dynamodb.conditions import Key, Attr  # Import Key and Attr
 from models.ApprovalRequest import ApprovalResponse, DeleteRequest
 from datetime import datetime
 
-
-class ValidationError(Exception):
-    pass
-
-
 class ApprovalRequestRepository:
     def __init__(self, db: ServiceResource) -> None:
         # db resource will be injected when this repository is created in the main.py
