@@ -47,6 +47,19 @@ class ApprovalRequestRepository:
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
+        
+    def get_approved_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("status").eq('approved')
+                & Attr("company_id").eq(company_id)
+                & Attr("requestor_id").eq(requestor_id)
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
 
     def get_rejected_approval_requests(self, company_id: str):
         try:
@@ -60,9 +73,21 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
+    def get_rejected_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+        try:
+            table = self.__db.Table('approval_request')
+            response = table.scan(
+                FilterExpression=Attr("status").eq('rejected')
+                & Attr("company_id").eq(company_id)
+                & Attr("requestor_id").eq(requestor_id)
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
+
     def get_expired_approval_requests(self, company_id: str):
         # Check if item is not expired
-        # Untested
         try:
             table = self.__db.Table('approval_request')
 
@@ -77,7 +102,26 @@ class ApprovalRequestRepository:
             items = response.get('Items', [])
             return items
         except ClientError as e:
-            raise ValueError(e.response['Error']['Message'])\
+            raise ValueError(e.response['Error']['Message'])
+        
+    def get_expired_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+        # Check if item is not expired
+        try:
+            table = self.__db.Table('approval_request')
+
+            current_time = str(datetime.now().isoformat())
+
+            # Define the filter expression to check for pending items and not expired items
+            response = table.scan(
+                FilterExpression=Attr("status").eq('pending')
+                & Attr("request_expiry").lt(current_time)
+                & Attr("company_id").eq(company_id)
+                & Attr("requestor_id").eq(requestor_id)
+            )
+            items = response.get('Items', [])
+            return items
+        except ClientError as e:
+            raise ValueError(e.response['Error']['Message'])
 
 
     def get_approval_request_by_uid(self, company_id: str, uid: str):
@@ -140,10 +184,11 @@ class ApprovalRequestRepository:
     def get_non_pending_approval_requests(self, company_id: str,):
         try:
             table = self.__db.Table('approval_request')
+            current_time = str(datetime.now().isoformat())
             response = table.scan(
                 FilterExpression=Attr("status").ne('pending')
                 & Attr("company_id").eq(company_id)
-
+                & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
             return items
@@ -153,11 +198,12 @@ class ApprovalRequestRepository:
     def get_non_pending_approval_requests_by_requestor_id(self, company_id: str, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
+            current_time = str(datetime.now().isoformat())
             response = table.scan(
                 FilterExpression=Attr("requestor_id").eq(approver_id)
                 & Attr("status").ne('pending')
                 & Attr("company_id").eq(company_id)
-
+                & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
             return items
