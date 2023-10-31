@@ -34,6 +34,65 @@ async def healthcheck():
 async def get_all_requests(
     company_id: str = None
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and returns all requests made in the company table.
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of every requests made in the company.
+    If the company ID does not exist, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-all?company_id=ascenda
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T05:13:10.303989",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T05:13:10.304010",
+                "status": "pending"
+            },
+            {
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "pending"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
         if company_id == None:
             raise ValueError("Company ID is required.")
@@ -47,10 +106,79 @@ async def get_all_requests(
     
 @router.get("/get-pending")
 def get_pending_requests(
-    company_id: str,
+    company_id: str = None,
     requestor_id: str = None,
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and Optional requestor ID.
+
+    If requestor ID is provided, it will return all pending requests 
+    that are NOT EXPIRED MADE BY THE REQUESTOR in the company table.
+
+    If requestor ID is NOT provided, it will return all pending requests
+    that are NOT EXPIRED in the company table.
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Optional requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of non expired, pending requests
+    either made by a specific requestor or all of them.
+    If no requests match, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-pending?requestor_id=admin1&company_id=ascenda
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T05:13:10.303989",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T05:13:10.304010",
+                "status": "pending"
+            },
+            {
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "pending"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None:
+            raise ValueError("Company ID is required.")
         if requestor_id:
             return approval_request_repository.get_pending_approval_requests_by_requestor_id(company_id, requestor_id)
         return approval_request_repository.get_pending_approval_requests(company_id)
@@ -63,10 +191,82 @@ def get_pending_requests(
     
 @router.get("/get-not-pending")
 def get_not_pending_requests_by_requestor_id(
-    company_id: str,
+    company_id: str = None,
     requestor_id: str = None,
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and Optional requestor ID.
+
+    Not pending requests are requests that have been approved, rejected, 
+    withdrawn or expired. Expired requests may have status PENDING.
+
+    If requestor ID is provided, it will return all not pending requests 
+    that are NOT EXPIRED MADE BY THE REQUESTOR in the company table.
+
+    If requestor ID is NOT provided, it will return all not pending requests
+    that are NOT EXPIRED in the company table.
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Optional requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of not pending requests
+    either made by a specific requestor or all of them.
+    If no requests match, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-not-pending?requestor_id=admin1&company_id=ascenda
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T05:13:10.303989",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T05:13:10.304010",
+                "status": "pending"
+            },
+            {
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "pending"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None:
+            raise ValueError("Company ID is required.")
         if requestor_id:
             return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(company_id, requestor_id)
         return approval_request_repository.get_non_pending_approval_requests(requestor_id)
@@ -80,8 +280,67 @@ def get_not_pending_requests_by_requestor_id(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get-approved")
-def get_approved_requests(company_id:str):
+def get_approved_requests(
+    company_id:str = None,
+    requestor_id:str = None,
+    ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and Optional requestor ID.
+
+    If requestor ID is provided, it will return all approved requests 
+    MADE BY THE REQUESTOR in the company table.
+
+    If requestor ID is NOT provided, it will return all approved requests
+    in the company table.
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Optional requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of approved requests
+    either made by a specific requestor or all of them.
+    If no requests match, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-approved?company_id=ascenda
+    GET /approval/get-approved?company_id=ascenda&requestor_id=admin1
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "comments": "Be civil",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "requestor_id": "admin1",
+                "approver_id": "abc-567",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "request_title": "Optional title for this particular request",
+                "approval_role": "ADMIN",
+                "resolution_at": "2023-10-31T12:11:06.940408",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "approved"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None:
+            raise ValueError("Company ID is required.")
+        if requestor_id:
+            return approval_request_repository.get_approved_approval_requests_by_requestor_id(company_id, requestor_id)
         return approval_request_repository.get_approved_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -91,8 +350,67 @@ def get_approved_requests(company_id:str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get-rejected")
-def get_rejected_requests(company_id:str):
+def get_rejected_requests(
+    company_id:str = None,
+    requestor_id:str = None
+    ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and Optional requestor ID.
+
+    If requestor ID is provided, it will return all rejected requests 
+    MADE BY THE REQUESTOR in the company table.
+
+    If requestor ID is NOT provided, it will return all rejected requests
+    in the company table.
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Optional requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of rejected requests
+    either made by a specific requestor or all of them.
+    If no requests match, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-rejected?company_id=ascenda
+    GET /approval/get-rejected?company_id=ascenda&requestor_id=admin1
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "comments": "Be civil",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "requestor_id": "admin1",
+                "approver_id": "abc-567",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "request_title": "Optional title for this particular request",
+                "approval_role": "ADMIN",
+                "resolution_at": "2023-10-31T12:11:06.940408",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "rejected"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None:
+            raise ValueError("Company ID is required.")
+        if requestor_id:
+            return approval_request_repository.get_rejected_approval_requests_by_requestor_id(company_id, requestor_id)
         return approval_request_repository.get_rejected_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -102,8 +420,65 @@ def get_rejected_requests(company_id:str):
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-expired")
-def get_expired_requests(company_id:str):
+def get_expired_requests(
+    company_id:str = None,
+    requestor_id:str = None
+    ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and Optional requestor ID.
+
+    If requestor ID is provided, it will return all expired requests 
+    that are PENDING MADE BY THE REQUESTOR in the company table.
+
+    If requestor ID is NOT provided, it will return all expired requests 
+    that are PENDING in the company table.
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Optional requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of expired requests that are still pending
+    either made by a specific requestor or all of them.
+    If no requests match, it will return an empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-expired?company_id=ascenda
+    GET /approval/get-expired?company_id=ascenda&requestor_id=admin1
+    ```
+    #### Response:
+    ```
+        [
+            {
+                "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+                "comments": "Optional comment for this particular request",
+                "company_id": "bankofamericapleasehireme",
+                "request_type": "Transaction",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "admin1",
+                "created_at": "2023-10-31T07:49:20.158263",
+                "request_details": {
+                    "increment": "False",
+                    "amount": 100,
+                    "account_id": 456789
+                },
+                "approval_role": "ADMIN",
+                "request_expiry": "2023-11-05T07:49:20.158278",
+                "status": "pending"
+            }
+        ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None: 
+            raise ValueError("Company ID is required.")
+        if requestor_id:
+            return approval_request_repository.get_expired_approval_requests_by_requestor_id(company_id, requestor_id)
         return approval_request_repository.get_expired_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -114,10 +489,58 @@ def get_expired_requests(company_id:str):
     
 @router.get("/get-by-id")
 def get_request_by_id(
-    company_id: str,
-    request_id: str,
+    company_id: str = None,
+    request_id: str = None,
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and request ID 
+    and returns the request details.
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `request_id`: Request ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing details of the request.
+    If request is not found, return 404.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-by-id?company_id=ascenda
+    GET /approval/get-by-id?company_id=ascenda&request_id=66c0bef1-ff98-4507-9b58-9908bc49fc26
+    ```
+    #### Response:
+    ```
+       {
+            "comments": Be Civil",
+            "company_id": "bankofamericapleasehireme",
+            "request_type": "Transaction",
+            "requestor_id": "admin1",
+            "approver_id": "abc-567",
+            "created_at": "2023-10-31T07:49:20.158263",
+            "request_details": {
+                "increment": "False",
+                "amount": 100,
+                "account_id": 456789
+            },
+            "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+            "request_title": "Optional title for this particular request",
+            "approval_role": "ADMIN",
+            "resolution_at": "2023-10-31T12:11:06.940408",
+            "request_expiry": "2023-11-05T07:49:20.158278",
+            "status": "approved"
+        }
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `404 Not Found`: The request was not found.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None or request_id == None:
+            raise ValueError("Company ID and request_id is required.")
         return approval_request_repository.get_approval_request_by_uid(company_id, request_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -130,10 +553,56 @@ def get_request_by_id(
     
 @router.get("/get-by-requestor")
 def get_request_by_requestor_id(
-    company_id: str,
-    requestor_id: str,
+    company_id: str = None,
+    requestor_id: str = None,
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and requestor ID 
+    and returns the request made by requestor.
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `requestor_id`: Requestor ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of requests made by the requestor.
+    If non, return empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-by-requestor?company_id=ascenda&requestor_id=admin1
+    ```
+    #### Response:
+    ```
+    [
+        {
+            "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
+            "comments": "Optional comment for this particular request",
+            "company_id": "bankofamericapleasehireme",
+            "request_type": "Transaction",
+            "request_title": "Optional title for this particular request",
+            "requestor_id": "admin1",
+            "created_at": "2023-10-31T05:13:10.303989",
+            "request_details": {
+                "increment": "False",
+                "amount": 100,
+                "account_id": 456789
+            },
+            "approval_role": "ADMIN",
+            "request_expiry": "2023-11-05T05:13:10.304010",
+            "status": "pending"
+        }, ...
+    ]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None and requestor_id == None:
+            raise ValueError("Company ID and requestor_id is required.")
         return approval_request_repository.get_approval_request_by_requestor_id(company_id, requestor_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -146,10 +615,58 @@ def get_request_by_requestor_id(
     
 @router.get("/get-by-approver")
 def get_request_by_approver_id(
-    company_id: str,
-    approver_id: str,
+    company_id: str = None,
+    approver_id: str = None,
 ):
+    """
+    ### Description:
+    This endpoint takes in a company ID and approver ID 
+    and returns all request responded by the approver. 
+
+    ### Parameters:
+    `company_id`: Company ID.<br /><br />
+    `approver_id`: Approver ID.<br /><br />
+
+    ### Returns:
+    A JSON object containing a list of requests responded by the approver.
+    If non, return empty list.
+    
+    ### Example:
+    #### Request:
+    ```
+    GET /approval/get-by-approver?company_id=ascenda&requestor_id=admin1
+    ```
+    #### Response:
+    ```
+    [
+    {
+        "comments": "Be civil",
+        "company_id": "bankofamericapleasehireme",
+        "request_type": "Transaction",
+        "requestor_id": "admin1",
+        "approver_id": "abc-567",
+        "created_at": "2023-10-31T07:49:20.158263",
+        "request_details": {
+            "increment": "False",
+            "amount": 100,
+            "account_id": 456789
+        },
+        "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
+        "request_title": "Optional title for this particular request",
+        "approval_role": "ADMIN",
+        "resolution_at": "2023-10-31T12:11:06.940408",
+        "request_expiry": "2023-11-05T07:49:20.158278",
+        "status": "approved"
+    }
+]
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        if company_id == None or approver_id == None:
+            raise ValueError("Company ID and approver_id is required.")
         return approval_request_repository.get_approval_request_by_approver_id(company_id, approver_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -164,12 +681,74 @@ def get_request_by_approver_id(
 # =================== END: GET requests =======================
 
 # =================== START: REQUESTOR requests =======================
+def validate_create_request_body(data):
+    if data.requestor_id == None:
+        raise ValueError("Requestor ID is required.")
+    if data.company_id == None:
+        raise ValueError("Company ID is required.")
+    if data.request_type == None:
+        raise ValueError("Request Type is required.")
+    if data.request_details == None:
+        raise ValueError("Request Details is required.")
+    if data.status == None:
+        raise ValueError("Status is required.")
+    if data.approval_role == None:
+        raise ValueError("Approval Role is required.")
+    #TODO
+    return True
 
 @router.post("/create", response_model=None)
 def create_approval_requests(
     data: ApprovalRequest,
 ):
+    """
+    ### Description:
+    This endpoint takes in JSON payload and creates a new request.
+    Approver_id and company_id is embedded into payload.
+    Request_detail block can change depending on request type.
+    Approval_role refers to who can approve and will get notifications.
+
+    ### Parameters:
+    Embedded in body.
+
+    ### Body::
+    {
+        "requestor_id": "admin1",
+        "company_id":"bankofamericapleasehireme",
+        "request_type": "Transaction",
+        "request_details": {
+            "amount" : 100,
+            "increment" : "False",
+            "account_id" : 456789
+        },
+        "status": "pending",
+        "comments": "Optional comment for this particular request",
+        "request_title": "Optional title for this particular request",
+        "approval_role" : "ADMIN"
+    }
+
+    ### Returns:
+    Success message.
+    
+    ### Example:
+    #### Request:
+    ```
+    POST /approval/create
+    ```
+    #### Response:
+    ```
+    {
+        "logInfo": "ID admin1 created a request with ID 48e7744f-03e8-42cb-af9a-2cf610303f0a for ADMIN approval.",
+        "request_id": "48e7744f-03e8-42cb-af9a-2cf610303f0a",
+        "message": "Created!"
+    }
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+        validate_create_request_body(data)
         # TODO : Put in validation  that data has request details
         result = approval_request_repository.create_approval_request(data)
         # TODO: Japheth send email notifications here
@@ -179,7 +758,7 @@ def create_approval_requests(
             "message": "Created!"
         }
         return response
-    except ValidationError  as e:
+    except (ValidationError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -190,9 +769,54 @@ def create_approval_requests(
 def update_approval_request(
     data: ApprovalUpdate,
 ):
+    """
+    ### Description:
+    This endpoint takes in JSON payload and updates an existing request.
+    Requestor_id and company_id is embedded into payload.
+    Updater must be same as requestor, and request cannot be resolved 
+    or expired.
+
+    ### Parameters:
+    Embedded in body.
+
+    ### Body::
+    {
+        "uid": "b47204b2-3310-46d4-bb7d-911a969578a3",
+        "company_id": "bankofamericapleasehireme",
+        "requestor_id": "admin1",
+        "request_type": "Transaction",
+        "request_details": {
+            "account_id": "1221312312sada3",
+            "increment" : "False",
+            "amount": "100",
+        },
+        "request_expiry": "2022-11-15T05:16:49.626324",
+        "status": "pending"
+    }
+
+    ### Returns:
+    Success message.
+    
+    ### Example:
+    #### Request:
+    ```
+    POST /approval/update
+    ```
+    #### Response:
+    ```
+    {
+        "logInfo": "ID admin1 created a request with ID 48e7744f-03e8-42cb-af9a-2cf610303f0a for ADMIN approval.",
+        "result": "Successfully updated request 48e7744f-03e8-42cb-af9a-2cf610303f0a!"
+    }
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
+
         # Get the original request
-        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
         # Check if request exists
         if original_request == None:
             raise ValueError("Request does not exist.")
@@ -206,10 +830,10 @@ def update_approval_request(
         if isExpired(original_request["request_expiry"]):
             raise ValueError("Request is expired, cannot be updated.")
         
-        result = approval_request_repository.update_approval_request(data)
+        approval_request_repository.update_approval_request(data)
         response = {
             "logInfo" : f"ID {data.requestor_id} updated Request ID {data.uid}, Request Status is now {data.status}.",
-            "result" : result
+            "result" : f"Successfully updated request {data.uid}!"
         }
         return response
     except ValueError as e:
@@ -225,8 +849,46 @@ def update_approval_request(
 def withdraw_approval_request(
     data: ApprovalResponse,
 ):
+    """
+    ### Description:
+    This endpoint takes in JSON payload and withdraws an existing request.
+    Requestor_id and company_id is embedded into payload.
+    Withdrawer must be same as requestor, and request cannot be resolved 
+    or expired.
+
+    ### Parameters:
+    Embedded in body.
+
+    ### Body::
+   {
+        "uid": "48e7744f-03e8-42cb-af9a-2cf610303f0a",
+        "status" : "withdrawn",
+        "approver_id": "admin1",
+        "comments" : "Eat Optional",
+        "company_id": "bankofamericapleasehireme"
+    }
+
+    ### Returns:
+    Success message.
+    
+    ### Example:
+    #### Request:
+    ```
+    POST /approval/withdraw
+    ```
+    #### Response:
+    ```
+    {
+        "logInfo": "ID admin1 withdrew Request ID 48e7744f-03e8-42cb-af9a-2cf610303f0a.",
+        "result": "Withdrawn!"    
+    }
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try:
-        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
        
         if original_request == None:
             raise ValueError("Request does not exist.")
@@ -239,10 +901,11 @@ def withdraw_approval_request(
         if data.status != "withdrawn":
             raise ValueError("Request can only be withdrawn.")
         
-        result = approval_request_repository.withdraw_approval_request(data)
+        approval_request_repository.withdraw_approval_request(data)
+
         response = {
-            "logInfo" : f"ID {data.requestor_id} withdrew Request ID {data.uid}",
-            "result" : result
+            "logInfo" : f"ID {data.approver_id} withdrew Request ID {data.uid}",
+            "result" : "Successfuly withdrawn request {data.uid}."
         }
         return response
     except ValueError as e:
@@ -258,6 +921,9 @@ def withdraw_approval_request(
 def delete_approval_request(
     data: DeleteRequest,
 ):
+    """
+    Undocumented, but refrain from using
+    """
     try:
         original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
         if original_request == None:
@@ -292,8 +958,48 @@ def delete_approval_request(
 def approve_or_reject_approval_request(
     data: ApprovalResponse,
 ):
+    """
+    ### Description:
+    This endpoint takes in JSON payload and approves or rejects an existing request.
+    Approver_id and company_id is embedded into payload.
+    Approver must be different as requestor, and request cannot be resolved 
+    or expired.
+
+    ### Parameters:
+    Embedded in body.
+
+    ### Body::
+    {
+        "uid": "66c0bef1-ff98-4507-9b58-29908bc49fc26",
+        "status" : "approved",
+        "approver_id": "abc-567",
+        "comments" : "Optional",
+        "company_id":"bankofamericapleasehireme"
+    }
+
+    ### Returns:
+    Success message.
+    
+    ### Example:
+    #### Request:
+    ```
+    POST /approval/create
+    ```
+    #### Response:
+    ```
+    {
+        "logInfo": "ID admin1 approved Request ID 48e7744f-03e8-42cb-af9a-2cf610303f0a.",
+        "result": "Successfully approved Request ID 48e7744f-03e8-42cb-af9a-2cf610303f0a."    
+    }
+    ```
+    ### Errors:
+    `400 Bad Request`: The request was invalid or cannot be otherwise served. An accompanying error message will explain further.<br /><br />
+    `403 Forbidden`: The request was not made by the approver OR 404 not found (not added yet).<br /><br />
+    `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
+    """
     try: 
-        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        #TODO Might be throwing same error for 404 and 403
+        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
         if original_request["requestor_id"] == data.approver_id:
             raise ValueError("Requestor cannot be the approver.")
         if original_request['status'] != "pending":
@@ -309,16 +1015,16 @@ def approve_or_reject_approval_request(
             action = "rejected"
 
         #Only update DB if above call to other microservice is successful
-        result = approval_request_repository.approve_or_reject_approval_request(data)
+        approval_request_repository.approve_or_reject_approval_request(data)
 
         response = {
-            "logInfo" : f"ID {data.requestor_id} {action} Request ID {data.uid}",
-            "result" : result
+            "logInfo" : f"ID {data.approver_id} {action} Request ID {data.uid}",
+            "result" : f"Successfully {action} Request ID {data.uid}!"
         }
         return response
     
     except ValueError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
