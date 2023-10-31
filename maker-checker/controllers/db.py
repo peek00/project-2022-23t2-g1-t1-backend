@@ -13,8 +13,8 @@ def initialize_db() -> ServiceResource:
     # If developing locally
     if aws_access_key_id == None:
         ddb = boto3.resource('dynamodb',
-                                endpoint_url=dynamodb_endpoint_url,
-                                region_name=aws_region,                 # Replace with your AWS region
+                                endpoint_url="http://db:8000",
+                                region_name='example',                 # Replace with your AWS region
                                 aws_access_key_id='example',           # Replace with your AWS access key ID
                                 aws_secret_access_key='example'
                             ) 
