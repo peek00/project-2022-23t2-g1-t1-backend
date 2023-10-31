@@ -1,17 +1,17 @@
-import { createClient, RedisClientType, SetOptions } from "redis";
-import { promisify } from "util";
+const { promisify } = require("util");
+// const { createClient, RedisClientType, SetOptions } = require('redis');
 const redis = require('redis')
 
 const username = process.env.REDIS_USER || "default";
 const password = process.env.REDIS_PASS || "password";
-const host = process.env.REDIS_HOST || "localhost";
+const host = process.env.REDIS_HOST || "redis";
 const port = Number(process.env.REDIS_PORT) || 6379;
 
-export class Redis {
+class Redis {
     constructor() {
         this.client = redis.createClient({
-          url: `redis://${username}:${password}@${host}:${port}`,
-          legacyMode: true,
+        url: `redis://${username}:${password}@${host}:${port}`,
+        legacyMode: true,
         });
         this.client.connect().then(() => {
           this.connected = true;
@@ -62,3 +62,5 @@ export class Redis {
         return true;
     }
 }
+
+module.exports = { Redis }; 
