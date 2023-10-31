@@ -30,9 +30,10 @@ async def healthcheck():
 # =================== START: GET requests =======================
 @router.get("/get-all", response_model=None)
 async def get_all_requests(
+    company_id: str
 ):
     try:
-        return approval_request_repository.get_all_approval_requests()
+        return approval_request_repository.get_all_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -42,12 +43,13 @@ async def get_all_requests(
     
 @router.get("/get-pending")
 def get_pending_requests(
+    company_id: str,
     requestor_id: str = None,
 ):
     try:
         if requestor_id:
-            return approval_request_repository.get_pending_approval_requests_by_requestor_id(requestor_id)
-        return approval_request_repository.get_pending_approval_requests()
+            return approval_request_repository.get_pending_approval_requests_by_requestor_id(company_id, requestor_id)
+        return approval_request_repository.get_pending_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -56,11 +58,14 @@ def get_pending_requests(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-not-pending")
-def get_not_pending_requests(
-    requestor_id: str,
+def get_not_pending_requests_by_requestor_id(
+    company_id: str,
+    requestor_id: str = None,
 ):
     try:
-        return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(requestor_id)
+        if requestor_id:
+            return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(company_id, requestor_id)
+        return approval_request_repository.get_non_pending_approval_requests(requestor_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -71,9 +76,9 @@ def get_not_pending_requests(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get-approved")
-def get_approved_requests():
+def get_approved_requests(company_id:str):
     try:
-        return approval_request_repository.get_approved_approval_requests()
+        return approval_request_repository.get_approved_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -82,9 +87,9 @@ def get_approved_requests():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get-rejected")
-def get_rejected_requests():
+def get_rejected_requests(company_id:str):
     try:
-        return approval_request_repository.get_rejected_approval_requests()
+        return approval_request_repository.get_rejected_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -93,9 +98,9 @@ def get_rejected_requests():
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-expired")
-def get_expired_requests():
+def get_expired_requests(company_id:str):
     try:
-        return approval_request_repository.get_expired_approval_requests()
+        return approval_request_repository.get_expired_approval_requests(company_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -105,10 +110,11 @@ def get_expired_requests():
     
 @router.get("/get-by-id")
 def get_request_by_id(
+    company_id: str,
     request_id: str,
 ):
     try:
-        return approval_request_repository.get_approval_request_by_uid(request_id)
+        return approval_request_repository.get_approval_request_by_uid(company_id, request_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -120,10 +126,11 @@ def get_request_by_id(
     
 @router.get("/get-by-requestor")
 def get_request_by_requestor_id(
+    company_id: str,
     requestor_id: str,
 ):
     try:
-        return approval_request_repository.get_approval_request_by_requestor_id(requestor_id)
+        return approval_request_repository.get_approval_request_by_requestor_id(company_id, requestor_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -135,10 +142,11 @@ def get_request_by_requestor_id(
     
 @router.get("/get-by-approver")
 def get_request_by_approver_id(
+    company_id: str,
     approver_id: str,
 ):
     try:
-        return approval_request_repository.get_approval_request_by_approver_id(approver_id)
+        return approval_request_repository.get_approval_request_by_approver_id(company_id, approver_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -162,8 +170,9 @@ def create_approval_requests(
         result = approval_request_repository.create_approval_request(data)
         # TODO: Japheth send email notifications here
         response = {
-            "logs_info" : f"ID {data.requestor_id} created a request with ID {data.uid} for {data.approval_role} approval.",
-            "result" : result
+            "logInfo" : f"ID {data.requestor_id} created a request with ID {data.uid} for {data.approval_role} approval.",
+            "request_id" : data.uid,
+            "message": "Created!"
         }
         return response
     except ValidationError  as e:
@@ -194,9 +203,8 @@ def update_approval_request(
             raise ValueError("Request is expired, cannot be updated.")
         
         result = approval_request_repository.update_approval_request(data)
-        print("We got here?")
         response = {
-            "logs_info" : f"ID {data.requestor_id} updated Request ID {data.uid}, Request Status is now {data.status}.",
+            "logInfo" : f"ID {data.requestor_id} updated Request ID {data.uid}, Request Status is now {data.status}.",
             "result" : result
         }
         return response
@@ -229,7 +237,7 @@ def withdraw_approval_request(
         
         result = approval_request_repository.withdraw_approval_request(data)
         response = {
-            "logs_info" : f"ID {data.requestor_id} withdrew Request ID {data.uid}",
+            "logInfo" : f"ID {data.requestor_id} withdrew Request ID {data.uid}",
             "result" : result
         }
         return response
@@ -259,7 +267,7 @@ def delete_approval_request(
         
         result = approval_request_repository.delete_approval_request(data)
         response = {
-            "logs_info" : f"ID {data.requestor_id} deleted Request ID {data.uid}",
+            "logInfo" : f"ID {data.requestor_id} deleted Request ID {data.uid}",
             "result" : result
         }
         return response
@@ -300,7 +308,7 @@ def approve_or_reject_approval_request(
         result = approval_request_repository.approve_or_reject_approval_request(data)
 
         response = {
-            "logs_info" : f"ID {data.requestor_id} {action} Request ID {data.uid}",
+            "logInfo" : f"ID {data.requestor_id} {action} Request ID {data.uid}",
             "result" : result
         }
         return response
