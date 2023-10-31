@@ -5,6 +5,7 @@ from boto3.resources.base import ServiceResource
 from controllers.generate_schema import create_approval_request_table, populate_db
 
 def initialize_db() -> ServiceResource:
+
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
     aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     aws_region = os.getenv('AWS_REGION')
