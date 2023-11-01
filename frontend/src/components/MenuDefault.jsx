@@ -8,7 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
-import { useUserContext } from "../context/UserContext";
+import { useUserContext } from "../context/userContext";
 
 export default function MenuDefault({firstName,lastName,email}) {
   const [role, setRole] = useState(null);
