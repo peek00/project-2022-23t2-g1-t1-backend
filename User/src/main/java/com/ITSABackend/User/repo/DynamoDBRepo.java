@@ -49,13 +49,19 @@ public class DynamoDBRepo {
             if (tableExists && restart) {
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
             }
-            // Attribute definitions
-            ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
-            attributeDefinitions.add(new AttributeDefinition().withAttributeName("id").withAttributeType(ScalarAttributeType.S));
-            attributeDefinitions.add(new AttributeDefinition().withAttributeName("email").withAttributeType(ScalarAttributeType.S));
+
             // Key schema for table
             ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
-            tableKeySchema.add(new KeySchemaElement().withAttributeName("id").withKeyType(KeyType.HASH)); // Partition key
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("userID").withKeyType(KeyType.HASH)); // Partition Key
+            // tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.RANGE));// SORT KEY
+            
+            // Attribute definitions
+            ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
+            attributeDefinitions.add(new AttributeDefinition().withAttributeName("userID").withAttributeType(ScalarAttributeType.S));
+            // attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
+            attributeDefinitions.add(new AttributeDefinition().withAttributeName("email").withAttributeType(ScalarAttributeType.S));
+            
+            
             // Initial provisioned throughput settings for the indexes
             ProvisionedThroughput ptIndex = new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L);
 

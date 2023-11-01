@@ -58,8 +58,9 @@ public class UserController {
                                  .collect(Collectors.toSet());
             
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
+
             if (isValidRoles){
-                 String userId = userService.createUser(user);
+                String userId = userService.createUser(user);
                 response.put("logInfo", "User created successfully");
                 response.put("userId", userId);
             }
@@ -79,7 +80,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
-    @Cacheable(key = "#id", value = "User")
+    // @Cacheable(key = "#id", value = "User")
     public ResponseEntity<Map<String, Object>> getUser(@PathParam("id") String id) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
