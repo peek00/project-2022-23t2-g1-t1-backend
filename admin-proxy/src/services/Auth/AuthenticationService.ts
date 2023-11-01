@@ -9,6 +9,7 @@ export interface UserWithToken {
   id: string;
   role: string[];
   token: string;
+  companyId?: string;
 }
 
 export class AuthenticationService {
@@ -30,12 +31,12 @@ export class AuthenticationService {
     // Invoke User Proxy to retrieve user details
     try {
       const user = await this.findUserByEmail(email);
-      const { id, role = [] } = user;
+      const { id, role = [], companyId } = user;
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(id);
       const response = { ...user, token };
       await this.cacheProvider.write(id, JSON.stringify(response), 60 * 60 * 1); // 1 hour
-      return { id, role, token };
+      return { id, role, companyId, token };
     } catch (error) {
       throw error;
     }
@@ -62,15 +63,15 @@ export class AuthenticationService {
     const userData = await this.cacheProvider.get(id);
 
     if (userData) {
-      const { id, role, token } = JSON.parse(userData);
-      return { id, role, token };
+      const { id, role, companyId, token } = JSON.parse(userData);
+      return { id, role, companyId, token };
     } else {
       throw new Error("User Session not found");
     }
   }
   public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {
     const token = this.jwtService.generateToken("temporary");
-    const response = { id: "temporary", role: roleLs, token };
+    const response = { id: "temporary", role: roleLs, companyId: 'test-company-id', token };
     await this.cacheProvider.write("temporary", JSON.stringify(response), 60 * 3); // 3 minutes
     return response;
   }
