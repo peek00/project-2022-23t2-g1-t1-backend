@@ -3,7 +3,7 @@ dotenv.config();
 
 const config = {
 // module.exports = {
-    aws_table_name: 'points_ledger',
+    aws_table_name: 'new-points-ledger',
     aws_local_config: {
       //Provide details for local configuration
         region: process.env.AWS_DEFAULT_REGION || 'local',

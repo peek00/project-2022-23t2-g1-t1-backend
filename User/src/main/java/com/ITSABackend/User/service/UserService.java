@@ -183,7 +183,7 @@ public class UserService {
         return user;
     }
 
-    public User[] getAllUsers() {
+    public User[] getAllUsers(String role) {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         ArrayList<User> users = new ArrayList<User>();
 
@@ -191,7 +191,10 @@ public class UserService {
 
             try{
                 System.out.println("Reading user....");
-                ItemCollection<ScanOutcome> items = table.scan();
+                // Create FilterExpression
+                String filterExpression = "contains(userRole, :userRole)";
+                ValueMap valueMap = new ValueMap().withString(":userRole", role);
+                ItemCollection<ScanOutcome> items = table.scan(filterExpression, "id, firstName, lastName, email, userRole", null, valueMap);
                 items.forEach(item -> {
                     System.out.println(item);
                     User user = new User();

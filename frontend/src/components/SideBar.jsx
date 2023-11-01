@@ -13,7 +13,7 @@ export default function SideBar() {
   return (
     <div className="min-h-screen w-[100%] z-50 relative">
       <div>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center ">
           <Link to="/users"><img src="/footerLogo.svg" className="h-[100px] w-[100px]" /></Link>
 
           <NavLink
@@ -28,7 +28,7 @@ export default function SideBar() {
           <NavLink
             to="/users/add"
             activeClassName="active"
-            className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${activeLink === '/user/add' ? 'opacity-100 font-bold' : 'opacity-60'}`}
+            className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${activeLink === '/users/add' ? 'opacity-100 font-bold' : 'opacity-60'}`}
           >
             Enroll User
           </NavLink>
