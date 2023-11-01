@@ -4,9 +4,6 @@ import TopBar from '../components/TopBar';
 import UpdateUserForm from '../components/UpdateUserForm';
 import AddUserForm from '../components/AddUserForm';
 
-
-
-  
 export default function AddUserPage(props) {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
@@ -20,8 +17,8 @@ export default function AddUserPage(props) {
 
     return(
 
-        <div className='min-h-screen min-w-full'>
-    <div className='container relative min-w-full min-h-screen'>
+        <div className='min-h-screen h-screen min-w-full overflow-y-auto'>
+    <div className='container relative min-w-full min-h-screen overflow-y-auto'>
       <div className="w-[80%] relative min-h-full ">
       <TopBar/>
       <img
@@ -52,7 +49,7 @@ export default function AddUserPage(props) {
 
 
         </div>
-      <div className='min-h-screen flex w-[20%] bg-[#1C2434]'>
+      <div className='min-h-screen overflow-y-auto flex w-[20%] '>
         <SideBar/>
       </div>
     </div>
@@ -61,9 +58,3 @@ export default function AddUserPage(props) {
   )
 
 }
-
-
-
-
-
-

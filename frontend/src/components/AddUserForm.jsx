@@ -53,7 +53,7 @@ export default function AddUserForm() {
 
 
   return (
-    <div className="absolute overflow-x-auto w-[100%] mt-[30%] bg-[#F5F5F5] rounded-2xl">
+    <div className="absolute  w-[80%] mt-[30%] bg-[#F5F5F5] rounded-2xl">
       <form onSubmit={handleAdd} className="p-10 text-center">
         <div className="row flex gap-12">
           <div className="mb-6 ml-12">
