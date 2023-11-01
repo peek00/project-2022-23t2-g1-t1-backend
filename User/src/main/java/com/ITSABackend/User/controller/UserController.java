@@ -1,11 +1,17 @@
 package com.ITSABackend.User.controller;
 
 
+import com.ITSABackend.User.models.Role;
 import com.ITSABackend.User.models.User;
+import com.ITSABackend.User.service.RoleService;
 import com.ITSABackend.User.service.UserService;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 // import java.util.HashMap;
 // import java.util.Map;
@@ -37,6 +43,9 @@ public class UserController {
     @Autowired
     UserService userService;
     
+    @Autowired 
+    RoleService roleService;
+
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
@@ -124,8 +133,30 @@ public class UserController {
         HttpStatus status = HttpStatus.OK;
 
         try {
-            userService.updateUser(user, id);
-            response.put("logInfo", "User updated successfully");
+            Role[] allRoles = roleService.getRoles();
+            Set<String> userRoles = new HashSet<>();
+            userRoles.add("Owner");
+
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                 .map(Role::getRoleName)
+                                 .collect(Collectors.toSet());
+            
+
+            System.out.println(validRoleNames);
+            System.out.println(userRoles);
+            System.out.println("Checking");
+            
+            boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
+
+            if(isValidRoles){
+                userService.updateUser(user, id);
+                response.put("logInfo", "User updated successfully");
+            }
+            else{
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
+            }
+            
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
             response.put("logInfo", "Error occurred while updating user");
@@ -159,3 +190,4 @@ public class UserController {
     }
 
 }
+
