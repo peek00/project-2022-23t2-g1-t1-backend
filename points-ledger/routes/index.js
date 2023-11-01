@@ -15,8 +15,9 @@ router.get('/', function(req, res, next) {
 // takes in a particular user_id
 router.get('/allaccounts', async(req,res) => {
   console.log(req.headers);
+  const companyId = req.headers.companyid;
   const userId = req.headers.userid;
-  allquery.getAllAccounts(userId)
+  allquery.getAllAccounts(userId,companyId)
   .then((results) => {
     console.log("Results: ", results);
     if (results.length==0) {
@@ -49,24 +50,25 @@ router.get('/allaccounts', async(req,res) => {
 // takes in a particular points account's id
 router.get('/accdetails', async (req,res) => {
   console.log(req.headers);
-  const pointsId = req.headers.pointsid;
+  const companyId = req.headers.companyid;
+  const pointsId = req.body.pointsid;
+  // const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
-  allquery.getPointsBalance(pointsId)
+  allquery.getPointsBalance(companyId,pointsId)
   .then((results) => {
     console.log("Results: ", results);
-    if (!results.Item){
+    if (results == null ){
       res.status(400).json({
-        "code" : 400,
-        "data": results,
-        "message": "No record of points account found."
-      })
+            "code" : 400,
+            "data": results,
+            "message": "No record of points account found."
+          })
     }
-    const returnres = unmarshall(results.Item);
     res.status(200).json({
       "code" : 200,
       "logs_info": "Accessed '/accdetails' for points account {pointsId}, status: 200",
-      "data" : returnres,
+      "data" : results,
       "message" : "Success"
     });
   })
@@ -84,10 +86,11 @@ router.get('/accdetails', async (req,res) => {
 // takes in a particular points account's id
 router.get('/validate', async (req,res) => {
   console.log(req.headers);
-  const mainId = req.headers.mainid;
+  const companyId = req.headers.companyid;
+  const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
-  allquery.pointsAccExist(mainId)
+  allquery.pointsAccExist(companyId,pointsId)
   .then((results) => {
     console.log(results);
     res.send(results);
@@ -106,16 +109,21 @@ router.get('/validate', async (req,res) => {
 // takes in user_id and input balance 
 router.post('/createAccount', async (req,res) => {
   console.log(req.headers);
+  const companyId = req.headers.companyid;
   const userId = req.headers.userid;
-  const inputbalance = req.headers.balance;
+  const inputbalance = req.body.balance;
+  // const inputbalance = req.headers.balance;
   const new_pointsId = uuidv4();
+  console.log(companyId);
+  console.log(userId)
+  console.log(inputbalance)
   console.log("uuid: " + new_pointsId)
-  allquery.pointsAccExist(new_pointsId)
+  allquery.pointsAccExist(companyId, new_pointsId)
   .then((results) => {
     if (!results) {
       console.log("valid unique points_balance id");
       // if no such points_id balance
-      allquery.createAccount(userId, new_pointsId, inputbalance)
+      allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
       .then((newresults) => {
         const status = newresults.$metadata.httpStatusCode;
         if (status ==200) {
@@ -159,12 +167,14 @@ router.post('/createAccount', async (req,res) => {
 // takes in pointsId
 router.delete('/deleteAccount', function(req,res){
   console.log(req.headers);
-  const pointsId = req.headers.pointsid;
-  allquery.pointsAccExist(pointsId)
+  const companyId = req.headers.companyid;
+  const pointsId = req.body.pointsid;
+  // const pointsId = req.headers.pointsid;
+  allquery.pointsAccExist(companyId,pointsId)
   .then((ifexist) => {
     // if points account exist, then proceed with deleting
     if (ifexist) {
-      allquery.deleteAccount(pointsId)
+      allquery.deleteAccount(companyId, pointsId)
       .then((results) => {
         // const status = results.$metadata.httpStatusCode;
         // if (status==200){
@@ -203,12 +213,15 @@ router.delete('/deleteAccount', function(req,res){
 // sample input = {"mainId": "2f5687c7-af51-4d79-9a38-9eef5a3c42b8","newbalance": 5000}
 router.put('/updatebalance', async (req,res) => {
   console.log(req.headers);
-  const pointsId = req.headers.pointsid;
-  const balance = req.headers.newbalance;
-  allquery.pointsAccExist(pointsId)
+  const companyId = req.headers.companyid;
+  const pointsId = req.body.pointsid;
+  const balance = req.body.newbalance;
+  // const pointsId = req.headers.pointsid;
+  // const balance = req.headers.newbalance;
+  allquery.pointsAccExist(companyId, pointsId)
   .then((results) => {
     if (results){
-      allquery.updatePoints(pointsId,balance)
+      allquery.updatePoints(companyId,pointsId,balance)
       .then((newresults) => {
         const status = newresults.$metadata.httpStatusCode;
         if (status == 200) {

@@ -22,22 +22,34 @@ class dbtableconfig {
 
   async initialise(tearDown = false) {
     const params = {
-        "TableName": "points_ledger",
+        "TableName": "new-points-ledger",
         "KeySchema": [
           {
-            "AttributeName": "id",
+            "AttributeName": "company_id",
             "KeyType": "HASH"
-          }
+        },
+        {
+            "AttributeName": "id",
+            "KeyType": "RANGE"
+        }
         ],
         "BillingMode": "PROVISIONED",
         "AttributeDefinitions": [
           {
-            "AttributeName": "id",
+            "AttributeName": "company_id",
             "AttributeType": "S"
+          },
+          {
+              "AttributeName": "id",
+              "AttributeType": "S"
           },
           {
             "AttributeName": "user_id",
             "AttributeType": "S"
+          },
+          {
+            "AttributeName": "balance",
+            "AttributeType": "N"
           }
         ],
         "ProvisionedThroughput": {
@@ -49,9 +61,13 @@ class dbtableconfig {
             "IndexName": "user_id",
             "KeySchema": [
               {
-                "AttributeName": "user_id",
+                "AttributeName": "company_id",
                 "KeyType": "HASH"
-              }
+              },
+              {
+                "AttributeName": "user_id",
+                "KeyType": "RANGE"
+              } 
             ],
             "Projection": {
               "ProjectionType": "ALL"
@@ -66,10 +82,10 @@ class dbtableconfig {
 
     try {
         const data = await this.db.send(new ListTablesCommand({}));
-        if (data.TableNames.includes("points_ledger")) {
+        if (data.TableNames.includes("new-points-ledger")) {
             if (tearDown) {
               // Delete table if it exists
-              await this.db.send(new DeleteTableCommand({ TableName: "points_ledger" }));
+              await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
               await this.db.send(new CreateTableCommand(params));
               console.log("Table is created");
