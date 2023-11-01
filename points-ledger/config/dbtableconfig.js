@@ -22,63 +22,60 @@ class dbtableconfig {
 
   async initialise(tearDown = false) {
     const params = {
-        "TableName": "new-points-ledger",
-        "KeySchema": [
+      "TableName": "new-points-ledger",
+      "KeySchema": [
           {
-            "AttributeName": "company_id",
-            "KeyType": "HASH"
-        },
-        {
-            "AttributeName": "id",
-            "KeyType": "RANGE"
-        }
-        ],
-        "BillingMode": "PROVISIONED",
-        "AttributeDefinitions": [
+              "AttributeName": "company_id",
+              "KeyType": "HASH"
+          },
           {
-            "AttributeName": "company_id",
-            "AttributeType": "S"
+              "AttributeName": "id",
+              "KeyType": "RANGE"
+          }
+      ],
+      "BillingMode": "PROVISIONED",
+      "AttributeDefinitions": [
+          {
+              "AttributeName": "company_id",
+              "AttributeType": "S"
           },
           {
               "AttributeName": "id",
               "AttributeType": "S"
           },
           {
-            "AttributeName": "user_id",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "balance",
-            "AttributeType": "N"
+              "AttributeName": "user_id",
+              "AttributeType": "S"
           }
-        ],
-        "ProvisionedThroughput": {
+      ],
+      "ProvisionedThroughput": {
           "ReadCapacityUnits": 1,
           "WriteCapacityUnits": 1
-        },
-        "GlobalSecondaryIndexes": [
+      },
+      "GlobalSecondaryIndexes": [
           {
-            "IndexName": "user_id",
-            "KeySchema": [
-              {
-                "AttributeName": "company_id",
-                "KeyType": "HASH"
+              "IndexName": "user_id",
+              "KeySchema": [
+                  {
+                      "AttributeName": "company_id",
+                      "KeyType": "HASH"
+                  },
+                  {
+                      "AttributeName": "user_id",
+                      "KeyType": "RANGE"
+                  }
+              ],
+              "Projection": {
+                  "ProjectionType": "ALL"
               },
-              {
-                "AttributeName": "user_id",
-                "KeyType": "RANGE"
-              } 
-            ],
-            "Projection": {
-              "ProjectionType": "ALL"
-            },
-            "ProvisionedThroughput": {
-              "ReadCapacityUnits": 1,
-              "WriteCapacityUnits": 1
-            }
+              "ProvisionedThroughput": {
+                  "ReadCapacityUnits": 1,
+                  "WriteCapacityUnits": 1
+              }
           }
-        ]
-      };
+      ]
+  };
+  
 
     try {
         const data = await this.db.send(new ListTablesCommand({}));
