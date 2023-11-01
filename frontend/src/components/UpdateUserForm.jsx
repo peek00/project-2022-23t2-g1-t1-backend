@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useUserContext } from '../context/userContext';
 
 export default function UpdateUserForm() {
+
+
+    const { userData, updateUserData } = useUserContext();
+    console.log(userData);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    email: userData.email,
     role: 'Customer',
     startingPoints: '',
   });

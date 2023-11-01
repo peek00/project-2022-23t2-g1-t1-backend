@@ -8,8 +8,11 @@ import {
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 
-export default function MenuDefault() {
+import { useUserContext } from "../context/UserContext";
+
+export default function MenuDefault({firstName,lastName,email}) {
   const [role, setRole] = useState(null);
+  const { userData, updateUserData } = useUserContext();
 
   useEffect(() => {
     // Fetch the role from localStorage or an API here
@@ -27,12 +30,14 @@ export default function MenuDefault() {
       <MenuList className="">
         {role && role.user && role.user.PUT && (
           <MenuItem>
-            <Link to="/users/update">Edit User Details</Link>
+           <Link to="/users/update" onClick={() => {
+  updateUserData(firstName,lastName,email);
+}}>Edit User Details</Link>
           </MenuItem>
         )}
         {role && role.points && role.points.PUT && (
           <MenuItem>
-            <Link to="/updatePoints">Update User Points</Link>
+            <Link to="/updatePoints" >Update User Points</Link>
           </MenuItem>
         )}
       </MenuList>
