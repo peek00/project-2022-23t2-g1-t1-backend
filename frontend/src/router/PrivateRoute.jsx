@@ -19,7 +19,7 @@ const PrivateRoute = ({ page,permission }) => {
         return response.data; // This is the role
       } catch (error) {
         // Handle errors here
-        console.error("Error fetching role now:", error);
+        console.error("Error fetching role:", error);
         throw error;
       }
     };
