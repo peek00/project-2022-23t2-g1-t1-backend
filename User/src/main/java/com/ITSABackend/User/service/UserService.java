@@ -80,21 +80,22 @@ public class UserService {
 
     }
 
-    public User getUserById(String id){
+    public User getUserById(String companyId, String userId) {
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         System.out.println("Getting User from the DB");
-        System.out.println(id);
-
-        if (table != null){
-            GetItemSpec spec = new GetItemSpec().withPrimaryKey("userID", id);
-
-            try{
+        System.out.println(userId);
+    
+        if (table != null) {
+            GetItemSpec spec = new GetItemSpec()
+                    .withPrimaryKey("companyID", companyId, "userID", userId);
+    
+            try {
                 System.out.println("Reading user....");
                 Item outcome = table.getItem(spec);
                 System.out.println(outcome);
-
-                if (outcome != null){
+    
+                if (outcome != null) {
                     user = new User();
                     user.setUserId(outcome.getString("userID"));
                     user.setEmail(outcome.getString("email"));
@@ -104,65 +105,69 @@ public class UserService {
                     // Set String array
                     user.setRole(outcome.getStringSet("userRole"));
                 }
-
+    
                 return user;
-
-            } catch(Exception e){
-                System.err.println("Unable to read user" + id);
+    
+            } catch (Exception e) {
+                System.err.println("Unable to read user" + userId);
                 System.err.println(e.getMessage());
             }
         }
         return user;
-
     }
+    
 
-    public void deleteUser(String id){
+    public void deleteUser(String companyId, String userId) {
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
-            .withPrimaryKey(new PrimaryKey("userID", id));
-        
+                .withPrimaryKey("companyID", companyId, "userID", userId);
+    
         try {
-
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
             System.out.println("Deleting item....");
             table.deleteItem(deleteItemSpec);
-            System.out.println("Item deleted, Successful");
-
-        } catch (Exception e){
+            System.out.println("Item deleted successfully");
+    
+        } catch (Exception e) {
             System.err.println("Unable to delete item.");
             System.err.println(e.getMessage());
         }
-        
     }
+    
 
-    public void updateUser(User user, String id){
+    public void updateUser(User user, String companyId, String userId) {
         System.out.println("Trying....");
-
+        System.out.println(companyId);
+        System.out.println(userId);
+        System.out.println(user.getfirstName());
+        System.out.println(user.getlastName());
+        System.out.println(user.getEmail());
+        System.out.println(user.getRoles());
+        
+        
+    
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-        .withPrimaryKey("userID", id)
-        .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole, companyID = :companyID")
-        .withValueMap(new ValueMap()
-                .withString(":firstName", user.getfirstName())
-                .withString(":lastName", user.getlastName())
-                .withString(":email", user.getEmail())
-                .withString(":companyID", user.getCompanyId())
-                .withStringSet(":userRole", user.getRoles()))
-        .withReturnValues(ReturnValue.UPDATED_NEW);
-
-
-        try{
-
+                .withPrimaryKey("companyID", companyId, "userID", userId)
+                .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
+                .withValueMap(new ValueMap()
+                        .withString(":firstName", user.getfirstName())
+                        .withString(":lastName", user.getlastName())
+                        .withString(":email", user.getEmail())
+                        .withStringSet(":userRole", user.getRoles()))
+                .withReturnValues(ReturnValue.UPDATED_NEW);
+        
+        System.out.println("Update item spec created");
+    
+        try {
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
             System.out.println("Updating User...");
             UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
             System.out.println("Update user successful " + outcome.getItem().toJSONPretty());
-
-        } catch (Exception e){
-
+        } catch (Exception e) {
             System.err.println("Unable to update User");
             System.err.println(e.getMessage());
-
         }
     }
+    
 
     public User getUserByEmail(String email){
         User user = null;

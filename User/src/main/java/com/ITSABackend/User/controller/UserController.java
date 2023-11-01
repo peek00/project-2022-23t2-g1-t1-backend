@@ -66,7 +66,10 @@ public class UserController {
             if (isValidRoles){
                 String userId = userService.createUser(user);
                 response.put("logInfo", "User created successfully");
-                response.put("userId", userId);
+                Map<String, String> data = new HashMap<>();
+                data.put("companyID", user.getCompanyId());
+                data.put("userID", userId);
+                response.put("data", data);
             }
             else{
                 throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
@@ -85,12 +88,12 @@ public class UserController {
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
     // @Cacheable(key = "#id", value = "User")
-    public ResponseEntity<Map<String, Object>> getUser(@PathParam("id") String id) {
+    public ResponseEntity<Map<String, Object>> getUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
-            User userData = userService.getUserById(id);
+            User userData = userService.getUserById(companyID, userID);
             if (userData == null) {
                 throw new NullPointerException("User Doesn't Exist");
             }
@@ -126,14 +129,17 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/deleteUser/{id}")
-    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") String id) {
+    @DeleteMapping(value = "/deleteUser")
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            userService.deleteUser(id);
+            userService.deleteUser(companyID, userID);
             response.put("logInfo", "User deleted successfully");
-            response.put("data", id); 
+            Map<String, String> data = new HashMap<>();
+            data.put("companyID", companyID);
+            data.put("userID", userID);
+            response.put("data", data);
             return ResponseEntity.ok(response);
 
         } catch(Exception e) {
@@ -145,7 +151,7 @@ public class UserController {
 
 
     @PutMapping(value = "/updateUser", consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("id") String id) {
+    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
@@ -164,7 +170,7 @@ public class UserController {
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
 
             if(isValidRoles){
-                userService.updateUser(user, id);
+                userService.updateUser(user, companyID, userID);
                 response.put("logInfo", "User updated successfully");
             }
             else{
