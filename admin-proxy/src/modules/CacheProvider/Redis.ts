@@ -1,4 +1,4 @@
-import { createClient, RedisClientType, createCluster, RedisClusterType } from "redis";
+import { createClient, RedisClientType, SetOptions } from "redis";
 import ICacheProvider from "./CacherProviderInterface";
 import { promisify } from "util";
 
@@ -9,28 +9,18 @@ const port = Number(process.env.REDIS_PORT) || 6379;
 
 export class Redis implements ICacheProvider {
   private static instance: Redis;
-  private client: any;
+  private client: RedisClientType;
   private connected: boolean = false;
 
   private constructor() {
-    if (process.env.NODE_ENV !== 'production') {
-      this.client = createClient({
-        url: `redis://${username}:${password}@${host}:${port}`,
-        legacyMode: true,
-      });
-    } else {
-      // Create Redis Cluster
-      this.client = createCluster({
-        rootNodes: [{
-          url: `redis://${username}:${password}@${host}:${port}`,
-          legacyMode: true,
-        }],
-      });
-    }
+    this.client = createClient({
+      url: `redis://${username}:${password}@${host}:${port}`,
+      legacyMode: true,
+    });
     this.client.connect().then(() => {
       this.connected = true;
-    }).catch((err:any) => {
-      console.log((err as Error).message);
+    }).catch((err) => {
+      console.log(err);
     });
   }
 
@@ -71,13 +61,7 @@ export class Redis implements ICacheProvider {
   }
 
   public async flush(): Promise<boolean> {
-    try{
-      await promisify(this.client.flushall).bind(this.client)();
-    }catch (e) {
-      await promisify(this.client.flushAll).bind(this.client)();
-      console.log(e);
-      return false;
-    }
+    await promisify(this.client.flushAll).bind(this.client)();
     return true;
   }
 }
