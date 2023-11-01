@@ -14,9 +14,12 @@ app.use(express.json({ type: 'application/json' }));
 app.get('/:id', (req, res) => {
   console.log(req.params.id);
   console.log(req.headers)
+  console.log(req.headers.userid)
+  console.log(req.headers.companyid)
   res.send({
     logInfo: "this is a sample log",
-    userId: req.headers["x-auth-user"]|| 'default',
+    userId: req.headers.userid,
+    companyid: req.headers.companyid,
     role: 'admin',
     email: 'admin@example.com',
   });
