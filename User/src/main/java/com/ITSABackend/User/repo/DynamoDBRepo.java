@@ -129,9 +129,9 @@ public class DynamoDBRepo {
             // Define default items
             List<Item> defaultItems = new ArrayList<>();
             defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
-            defaultItems.add(new Item().withPrimaryKey("roleType", "Manager"));
-            defaultItems.add(new Item().withPrimaryKey("roleType", "Engineer"));
-            defaultItems.add(new Item().withPrimaryKey("roleType", "Product Manager"));
+            defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
+            defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
+            defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
 
             // Batch write the default items to the table
             
