@@ -82,17 +82,19 @@ class dbtableconfig {
 
     try {
         const data = await this.db.send(new ListTablesCommand({}));
+        console.log(data);
         if (data.TableNames.includes("new-points-ledger")) {
-            if (tearDown) {
+            console.log("Table exists");
+            // if (tearDown) {
               // Delete table if it exists
               await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
               await this.db.send(new CreateTableCommand(params));
               console.log("Table is created");
-            }
-          } else {
-            await this.db.send(new CreateTableCommand(params));
-            console.log("Table is created");
+            // }
+        } else {
+          await this.db.send(new CreateTableCommand(params));
+          console.log("Table is created");
         }
         } catch (err) {
         console.log("Error", err);
