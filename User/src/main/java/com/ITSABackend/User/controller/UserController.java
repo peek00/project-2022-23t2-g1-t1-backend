@@ -188,8 +188,14 @@ public class UserController {
 
         try {
             // Set Default role if not specified
-            if (role == null){
-                role = "user";
+            Role[] allRoles = roleService.getRoles();
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                    .map(Role::getRoleName)
+                                    .collect(Collectors.toSet());
+            if (role == null ){
+                role = "User";
+            } else if (!validRoleNames.contains(role)){
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
             }
             response.put("logInfo", "log message");
             response.put("data", userService.getAllUsers(role));

@@ -52,13 +52,14 @@ public class DynamoDBRepo {
 
             // Key schema for table
             ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
-            tableKeySchema.add(new KeySchemaElement().withAttributeName("userID").withKeyType(KeyType.HASH)); // Partition Key
-            // tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.RANGE));// SORT KEY
+            
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.HASH));// Partition KEY
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("userID").withKeyType(KeyType.RANGE)); // Sort Key
             
             // Attribute definitions
             ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
             attributeDefinitions.add(new AttributeDefinition().withAttributeName("userID").withAttributeType(ScalarAttributeType.S));
-            // attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
+            attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
             attributeDefinitions.add(new AttributeDefinition().withAttributeName("email").withAttributeType(ScalarAttributeType.S));
             
             
