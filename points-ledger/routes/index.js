@@ -51,7 +51,8 @@ router.get('/allaccounts', async(req,res) => {
 router.get('/accdetails', async (req,res) => {
   console.log(req.headers);
   const companyId = req.headers.companyid;
-  const pointsId = req.headers.pointsid;
+  const pointsId = req.body.pointsid;
+  // const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.getPointsBalance(companyId,pointsId)
@@ -110,7 +111,8 @@ router.post('/createAccount', async (req,res) => {
   console.log(req.headers);
   const companyId = req.headers.companyid;
   const userId = req.headers.userid;
-  const inputbalance = req.headers.balance;
+  const inputbalance = req.body.balance;
+  // const inputbalance = req.headers.balance;
   const new_pointsId = uuidv4();
   console.log(companyId);
   console.log(userId)
@@ -121,7 +123,7 @@ router.post('/createAccount', async (req,res) => {
     if (!results) {
       console.log("valid unique points_balance id");
       // if no such points_id balance
-      allquery.createAccount(companyId,userId, new_pointsId, inputbalance)
+      allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
       .then((newresults) => {
         const status = newresults.$metadata.httpStatusCode;
         if (status ==200) {
@@ -166,7 +168,8 @@ router.post('/createAccount', async (req,res) => {
 router.delete('/deleteAccount', function(req,res){
   console.log(req.headers);
   const companyId = req.headers.companyid;
-  const pointsId = req.headers.pointsid;
+  const pointsId = req.body.pointsid;
+  // const pointsId = req.headers.pointsid;
   allquery.pointsAccExist(companyId,pointsId)
   .then((ifexist) => {
     // if points account exist, then proceed with deleting
@@ -211,8 +214,10 @@ router.delete('/deleteAccount', function(req,res){
 router.put('/updatebalance', async (req,res) => {
   console.log(req.headers);
   const companyId = req.headers.companyid;
-  const pointsId = req.headers.pointsid;
-  const balance = req.headers.newbalance;
+  const pointsId = req.body.pointsid;
+  const balance = req.body.newbalance;
+  // const pointsId = req.headers.pointsid;
+  // const balance = req.headers.newbalance;
   allquery.pointsAccExist(companyId, pointsId)
   .then((results) => {
     if (results){
