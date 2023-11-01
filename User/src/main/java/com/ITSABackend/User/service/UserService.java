@@ -90,7 +90,7 @@ public class UserService {
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
                     // Set String array
-                    user.setRole(outcome.getStringSet("role"));
+                    user.setRole(outcome.getStringSet("userRole"));
                 }
 
                 return user;
