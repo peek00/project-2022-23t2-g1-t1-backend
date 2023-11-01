@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ITSABackend.User.constant.AppConstant;
 import com.ITSABackend.User.models.Role;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.repo.DynamoDBRepo;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 
 import jakarta.annotation.PostConstruct;
 
+@Service
 public class RoleService {
     @Autowired 
     DynamoDBRepo dynamoDBRepo;
@@ -33,8 +39,7 @@ public class RoleService {
         Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
 
         try{
-            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("id", role.getRoleName()));
-
+            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("roleName", role.getRoleName()));
             System.out.println("Create role success\n" + outcome.getPutItemResult());
             return role.getRoleName();
 
@@ -46,6 +51,25 @@ public class RoleService {
         }
 
     }
+
+    public void deleteRole(String roleName){
+        DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
+            .withPrimaryKey(new PrimaryKey("roleName", roleName));
+        
+        try {
+
+            Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
+            System.out.println("Deleting item....");
+            table.deleteItem(deleteItemSpec);
+            System.out.println("Item deleted, Successful");
+
+        } catch (Exception e){
+            System.err.println("Unable to delete item.");
+            System.err.println(e.getMessage());
+        }
+        
+    }
+    
 
     public Role[] getRoles() throws Exception{
         Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
@@ -69,6 +93,35 @@ public class RoleService {
             }
         }
         return roles.toArray(new Role[roles.size()]);
+    }
+
+    public Role getRoleByName(String roleName){
+        Role role = null;
+        Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
+        System.out.println("Getting Role from the DB");
+
+        if (table != null){
+            GetItemSpec spec = new GetItemSpec().withPrimaryKey("roleName", roleName);
+
+            try{
+                System.out.println("Reading user....");
+                Item outcome = table.getItem(spec);
+
+                if (outcome != null){
+                    role = new Role();
+                    role.setRoleName(outcome.getString("roleName"));
+                    
+                }
+
+                return role;
+
+            } catch(Exception e){
+                System.err.println("Unable to read user" + roleName);
+                System.err.println(e.getMessage());
+            }
+        }
+        return role;
+
     }
 
 }
