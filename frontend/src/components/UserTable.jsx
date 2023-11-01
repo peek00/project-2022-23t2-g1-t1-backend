@@ -19,7 +19,7 @@ export default function UserTable() {
     }, []);
 
   return (
-    <div className="relative overflow-x-auto w-[75%]">
+    <div className="relative overflow-x-auto w-[85%] mb-[100px]">
       <table className="w-full text-sm text-left bg-[#F5F5F5]">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">
