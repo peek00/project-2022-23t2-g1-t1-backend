@@ -28,6 +28,9 @@ PolicyService.initialize().then(() => {
     }),
   );
 
+  app.use("/",(req, res) => {
+    res.send('health check');
+  })
   // Add Proxy Middleware
   app.use("/",authorize(), router);
   app.use(express.json());
