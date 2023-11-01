@@ -47,14 +47,30 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
+        
         try {
-            String userId = userService.createUser(user);
-            response.put("logInfo", "User created successfully");
-            response.put("userId", userId);
+            Role[] allRoles = roleService.getRoles();
+            Set<String> userRoles = user.getRoles();
+
+
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                 .map(Role::getRoleName)
+                                 .collect(Collectors.toSet());
+            
+            boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
+            if (isValidRoles){
+                 String userId = userService.createUser(user);
+                response.put("logInfo", "User created successfully");
+                response.put("userId", userId);
+            }
+            else{
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
+            }
+           
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred while creating user");
+            response.put("logInfo", e.getMessage());
             response.put("userId", null);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -130,18 +146,16 @@ public class UserController {
 
         try {
             Role[] allRoles = roleService.getRoles();
-            Set<String> userRoles = new HashSet<>();
-            userRoles.add("Owner");
+            Set<String> userRoles = user.getRoles();
+
 
             Set<String> validRoleNames = Arrays.stream(allRoles)
                                  .map(Role::getRoleName)
                                  .collect(Collectors.toSet());
             
 
-            System.out.println(validRoleNames);
-            System.out.println(userRoles);
-            System.out.println("Checking");
-            
+
+
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
 
             if(isValidRoles){
@@ -155,7 +169,7 @@ public class UserController {
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred while updating user");
+            response.put("logInfo", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
