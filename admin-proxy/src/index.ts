@@ -22,10 +22,11 @@ PolicyService.initialize().then(() => {
   // Adding Passport
   app.use(passport.initialize());
   app.use(
-    cors({
-      origin: process.env.CLIENT_BASE_URL,
-      credentials: true,
-    }),
+    // cors({
+    //   origin: process.env.CLIENT_BASE_URL,
+    //   credentials: true,
+    // }),
+    cors()
   );
 
   app.use("/",(req, res) => {
