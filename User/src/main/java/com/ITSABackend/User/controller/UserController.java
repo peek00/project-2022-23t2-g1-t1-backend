@@ -21,11 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/User")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 @EnableCaching
 public class UserController {
 
@@ -54,7 +55,7 @@ public class UserController {
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
     @Cacheable(key = "#id", value = "User")
-    public ResponseEntity<Map<String, Object>> getAllUsers(@PathParam("id") String id) {
+    public ResponseEntity<Map<String, Object>> getUser(@PathParam("id") String id) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
@@ -95,7 +96,6 @@ public class UserController {
         }
     }
 
-
     @DeleteMapping(value = "/deleteUser/{id}")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") String id) {
         Map<String, Object> response = new HashMap<>();
@@ -131,8 +131,27 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @GetMapping(value = "/getAllUsers", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(required=false) String role) {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
 
+        try {
+            // Set Default role if not specified
+            if (role == null){
+                role = "user";
+            }
+            response.put("logInfo", "log message");
+            response.put("data", userService.getAllUsers(role));
 
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
 
+        return new ResponseEntity<>(response, status);
+    }
 
 }

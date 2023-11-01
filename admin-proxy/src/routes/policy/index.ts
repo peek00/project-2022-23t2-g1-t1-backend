@@ -25,4 +25,9 @@ policyRouter.delete(
   policyController.deleteExistingPolicy
 );
 
+policyRouter.post(
+  "/permissions", 
+  policyController.mapUserPolicy
+);
+
 export default policyRouter;

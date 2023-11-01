@@ -1,10 +1,9 @@
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ScanCommand, ListTablesCommand, Condition } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient, UpdateCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { unmarshall } from "@aws-sdk/util-dynamodb";
 import IDatabaseProvider from "./DatabaseProviderInterface";
 import { config } from "../../config/config";
 const { AWSConfig } = config;
-
 
 export class DynamoDB implements IDatabaseProvider {
   private static instance: DynamoDB;

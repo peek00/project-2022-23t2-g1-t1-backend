@@ -1,193 +1,205 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
-import {
-  ArrowDownTrayIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+import React, { useState,useEffect } from "react";
+import axios from "axios";
 import {
   Card,
   CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
-  Tooltip,
-  Input,
 } from "@material-tailwind/react";
- 
+// ... (other imports)
+
+
+
+
+const ITEMS_PER_PAGE = 5; // Set the number of items per page
+
 const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
- 
-const TABLE_ROWS = [
-  {
-   
-    Timestamp: "30/09/2023, 17:38:59",
-    User: "ITSA Test",
-    userAgent: "Mozilla/4.0 (compatible; MSIE...",
-    Location: "190.85.195, Cali, Colombia",
-    Data: "{action: “REQUEST_TRANS...",
-   
-  },
-  
-  
-  {
-    Timestamp: "30/09/2023, 17:36:42",
-    User: "ITSA Test",
-    userAgent: "Mozilla/4.0 (compatible; MSIE...)",
-    Location: "190.85.195, Cali, Colombia",
-    Data:"{action: “REQUEST_TRANS..."
+
+
+export default function LogsTable() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // This code will run when the component mounts
+
+    // Make a GET request using Axios
+    axios.get('http://localhost:8000/api/logging/logs', {
+  withCredentials: true
+})
+  .then((response) => {
+    console.log(response.data);
+    // Handle the successful response here
+    setData(response.data);
+  })
+  .catch((error) => {
+    // Handle errors here
+    console.error('Error fetching data:', error);
     
-  },
-  
-];
- 
-export  default function LogsTable() {
+  });
+
+  console.log(data);
+
+
+  }, []); // Don't forget the `[]`, which will prevent useEffect from running in an infinite loop
+
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const TABLE_ROWS = data;
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const displayedRows = TABLE_ROWS.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(TABLE_ROWS.length / ITEMS_PER_PAGE);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   return (
-    <Card className=" w-full  text-center absolute top-[20%] ">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            
-            <Typography color="gray" className="mt-1 font-normal">
-              These are details about the logs from the users
-            </Typography>
+    <div>
+      <Card className="w-full text-center absolute top-[20%]">
+        <CardHeader floated={false} shadow={false} className="rounded-none">
+          <div className="flex flex-col justify between gap-8 md:flex-row md:items-center">
+            <div>
+              <Typography color="gray" className="mt-1 font-normal">
+                These are details about the logs from the users
+              </Typography>
+            </div>
           </div>
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-           
-            
-          </div>
-        </div>
-      </CardHeader>
-      <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+        </CardHeader>
+        <CardBody className="overflow-scroll px-0">
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE_ROWS.map(
-              (
-                {
-                  Timestamp,
-                    User,
-                    userAgent,
-                    Location,
-                    Data,
-                },
-                index,
-              ) => {
-                const isLast = index === TABLE_ROWS.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
- 
-                return (
-                  <tr key={Timestamp}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {displayedRows && displayedRows.length > 0 && displayedRows.map(
+                ({
+                  timestamp,
+                  userId,
+                  userAgent,
+                  country,
+                  message,
+                }) => {
+                  return (
+                    <tr key={timestamp}>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold"
+                          >
+                            {timestamp}
+                          </Typography>
+                        </div>
+                      </td>
+                      <td className="p-4">
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-bold"
+                          className="font-normal"
                         >
-                          {Timestamp}
+                          {userId}
                         </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {User}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {userAgent}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {Location}
-                      </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {Data}
-                      </Typography>
-                      
-                    </td>
-                  </tr>
-                );
-              },
-            )}
-          </tbody>
-        </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter>
-    </Card>
+                      </td>
+                      <td className="p-4">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {userAgent}
+                        </Typography>
+                      </td>
+                      <td className="p-4">
+                        <div className="w-max">
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {country}
+                          </Typography>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {message}
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+            </tbody>
+          </table>
+        </CardBody>
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Button
+            variant="outlined"
+            size="sm"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Previous
+          </Button>
+          <div className="flex items-center gap-2">
+  <IconButton
+    key={1}
+    variant={currentPage === 1 ? "outlined" : "text"}
+    size="sm"
+    onClick={() => handlePageChange(1)}
+  >
+    1
+  </IconButton>
+  {Array.from({ length: totalPages - 1 }, (_, index) => (
+    <IconButton
+      key={index + 2}
+      variant={currentPage === index + 2 ? "outlined" : "text"}
+      size="sm"
+      onClick={() => handlePageChange(index + 2)}
+    >
+      {index + 2}
+    </IconButton>
+  ))}
+</div>
+          <Button
+            variant="outlined"
+            size="sm"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

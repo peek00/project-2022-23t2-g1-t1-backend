@@ -2,17 +2,17 @@ package com.ITSABackend.User.repo;
 
 
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.TableCollection;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.GlobalSecondaryIndex;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-
-import jakarta.annotation.PostConstruct;
 
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
@@ -26,12 +26,22 @@ public class DynamoDBRepo {
     @Autowired
     DynamoDBConfig dynamoDBConfig;
 
-    @PostConstruct
-    public void createUserTable() throws Exception {
+    public void createUserTable(boolean restart) throws Exception {
         // Create a new user table with secondary index
+        boolean tableExists = false;
         try {
+            // get list of tables
+            TableCollection<ListTablesResult> table = dynamoDBConfig.getDynamoDB().listTables();
+
+            // Check if table already exists
+            for (Table t : table) {
+                if (t.getTableName().equals(AppConstant.USER)) {
+                    tableExists = true;
+                    break;
+                }
+            }
             // Delete the table if it already exists
-            if (dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER) != null) {
+            if (tableExists && restart) {
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
             }
             // Attribute definitions

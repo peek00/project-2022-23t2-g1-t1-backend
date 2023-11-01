@@ -38,8 +38,8 @@ PolicyService.initialize().then(() => {
     console.log(`Server is running on port ${port}`);
   });
 
-  // Schedule a cron job to run at the start of every second
-  cron.schedule("* * * * * *", () => {
+  // Schedule a cron job to run at the start of every minute
+  cron.schedule("*/60 * * * * *", () => {
     // Trigger reinitialization of logger
     console.log("Reinitializing Logger");
     Logger.getInstance().createLogger();

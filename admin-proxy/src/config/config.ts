@@ -8,11 +8,6 @@ export const config = {
     callbackURL: "/auth/google/callback",
     passReqToCallback: true as true,
   },
-  CloudWatchConfigPartial: {
-    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    awsRegion: process.env.CLOUDWATCH_REGION || '',
-  },
   RententionPolicy: {
     User: 30, // 30 days
     Points: 30,
