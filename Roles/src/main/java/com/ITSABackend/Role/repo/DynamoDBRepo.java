@@ -1,4 +1,4 @@
-package com.ITSABackend.User.repo;
+package com.ITSABackend.Role.repo;
 
 
 import com.amazonaws.services.dynamodbv2.document.BatchWriteItemOutcome;
@@ -17,8 +17,8 @@ import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
-import com.ITSABackend.User.config.DynamoDBConfig;
-import com.ITSABackend.User.constant.AppConstant;
+import com.ITSABackend.Role.config.DynamoDBConfig;
+import com.ITSABackend.Role.constant.AppConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,57 +30,6 @@ import org.springframework.stereotype.Repository;
 public class DynamoDBRepo {
     @Autowired
     DynamoDBConfig dynamoDBConfig;
-
-    public void createUserTable(boolean restart) throws Exception {
-        // Create a new user table with secondary index
-        boolean tableExists = false;
-        try {
-            // get list of tables
-            TableCollection<ListTablesResult> table = dynamoDBConfig.getDynamoDB().listTables();
-
-            // Check if table already exists
-            for (Table t : table) {
-                if (t.getTableName().equals(AppConstant.USER)) {
-                    tableExists = true;
-                    break;
-                }
-            }
-            // Delete the table if it already exists
-            if (tableExists && restart) {
-                deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
-            }
-            // Attribute definitions
-            ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
-            attributeDefinitions.add(new AttributeDefinition().withAttributeName("id").withAttributeType(ScalarAttributeType.S));
-            attributeDefinitions.add(new AttributeDefinition().withAttributeName("email").withAttributeType(ScalarAttributeType.S));
-            // Key schema for table
-            ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
-            tableKeySchema.add(new KeySchemaElement().withAttributeName("id").withKeyType(KeyType.HASH)); // Partition key
-            // Initial provisioned throughput settings for the indexes
-            ProvisionedThroughput ptIndex = new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L);
-
-            // CreateDateIndex
-            GlobalSecondaryIndex createEmailIndex = new GlobalSecondaryIndex().withIndexName("email-index")
-                .withProvisionedThroughput(ptIndex)
-                .withKeySchema(new KeySchemaElement().withAttributeName("email").withKeyType(KeyType.HASH))
-                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
-
-            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.USER)
-                .withProvisionedThroughput(
-                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
-                .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema)
-                .withGlobalSecondaryIndexes(createEmailIndex);
-
-            System.out.println("Creating table " + AppConstant.USER + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-            
-        } catch (Exception e) {
-            System.err.println("Cannot create the table");
-            System.err.println(e.getMessage());
-            throw new Exception("Error has occured");
-        }
-    }
-
     public void createRoleTable(boolean restart) throws Exception {
         // Create a new role table with secondary index
         boolean tableExists = false;

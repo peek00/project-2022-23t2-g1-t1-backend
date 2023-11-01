@@ -1,13 +1,12 @@
-package com.ITSABackend.User.service;
+package com.ITSABackend.Role.service;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.ITSABackend.User.constant.AppConstant;
-import com.ITSABackend.User.models.Role;
-import com.ITSABackend.User.models.User;
-import com.ITSABackend.User.repo.DynamoDBRepo;
+import com.ITSABackend.Role.constant.AppConstant;
+import com.ITSABackend.Role.models.Role;
+import com.ITSABackend.Role.repo.DynamoDBRepo;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
