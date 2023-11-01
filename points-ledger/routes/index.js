@@ -58,13 +58,14 @@ router.get('/allaccounts', async(req,res) => {
         "data": results,
         "message": "No records found."
       })
+    }else{
+      res.status(200).json({
+        "code" : 200,
+        "logs_info": userId + " accessed '/allaccounts', status: 200",
+        "data": results,
+        "message": "Success"
+      });
     }
-    res.status(200).json({
-      "code" : 200,
-      "logs_info": userId + " accessed '/allaccounts', status: 200",
-      "data": results,
-      "message": "Success"
-    });
   })
   .catch((error) => {
     console.log(error);
