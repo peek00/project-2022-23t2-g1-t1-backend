@@ -54,6 +54,7 @@ public class UserService {
             System.out.println(user.getEmail());
             System.out.println(user.getRoles());
             System.out.println(user.getCompanyId());
+            System.out.println(user.getCompanyName());
             
 
             PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("userID", id)
@@ -61,17 +62,14 @@ public class UserService {
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
                 .with("userRole", user.getRoles())
-                .with("companyID", user.getCompanyId()));
-
-
-            System.out.println("Hi");
-            System.out.println(outcome);
+                .with("companyID", user.getCompanyId())
+                .with("companyName", user.getCompanyName()));
 
             System.out.println("Create user success\n" + outcome.getPutItemResult());
             return id;
 
         } catch(Exception e){
-            System.out.println(" Only error");
+            System.out.println("Only error");
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
             throw new IllegalStateException("Unable to create user");
@@ -104,6 +102,7 @@ public class UserService {
                     user.setCompanyId(outcome.getString("companyID"));
                     // Set String array
                     user.setRole(outcome.getStringSet("userRole"));
+                    user.setCompanyName(outcome.getString("companyName"));
                 }
     
                 return user;
@@ -195,6 +194,7 @@ public class UserService {
                     user.setlastName(outcome.getString("lastName"));
                     user.setRole(outcome.getStringSet("userRole"));
                     user.setCompanyId(outcome.getString("companyID"));
+                    user.setCompanyName(outcome.getString("companyName"));
                 }
 
                 return user;
@@ -228,6 +228,7 @@ public class UserService {
                     user.setlastName(item.getString("lastName"));
                     user.setRole(item.getStringSet("userRole"));
                     user.setCompanyId(item.getString("companyID"));
+                    user.setCompanyName(item.getString("companyName"));
                     users.add(user);
                 });
 
