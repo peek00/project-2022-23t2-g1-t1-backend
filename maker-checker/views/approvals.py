@@ -56,7 +56,7 @@ async def get_all_requests(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -73,7 +73,7 @@ async def get_all_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -111,27 +111,26 @@ def get_pending_requests(
 ):
     """
     ### Description:
-    This endpoint takes in a company ID and Optional requestor ID.
-
-    If requestor ID is provided, it will return all pending requests 
-    that are NOT EXPIRED MADE BY THE REQUESTOR in the company table.
-
-    If requestor ID is NOT provided, it will return all pending requests
-    that are NOT EXPIRED in the company table.
+    This endpoint takes in a company ID and requestor ID from the header.
+    This returns all pending request originating from the requestor.
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Optional requestor ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of non expired, pending requests
-    either made by a specific requestor or all of them.
+    made by a specific requestor.
     If no requests match, it will return an empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-pending?requestor_id=admin1&company_id=ascenda
+    GET /approval/get-pending
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
@@ -139,7 +138,7 @@ def get_pending_requests(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -156,7 +155,7 @@ def get_pending_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -196,30 +195,30 @@ def get_not_pending_requests_by_requestor_id(
 ):
     """
     ### Description:
-    This endpoint takes in a company ID and Optional requestor ID.
+    This endpoint takes in a company ID and requestor ID from the header.
 
     Not pending requests are requests that have been approved, rejected, 
     withdrawn or expired. Expired requests may have status PENDING.
 
-    If requestor ID is provided, it will return all not pending requests 
-    that are NOT EXPIRED MADE BY THE REQUESTOR in the company table.
-
-    If requestor ID is NOT provided, it will return all not pending requests
-    that are NOT EXPIRED in the company table.
+    This will return all not pending requests originating from the requestor.
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Optional requestor ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of not pending requests
-    either made by a specific requestor or all of them.
+    made by a specific requestor.
     If no requests match, it will return an empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-not-pending?requestor_id=admin1&company_id=ascenda
+    GET /approval/get-not-pending
+    headers = {   
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
@@ -227,7 +226,7 @@ def get_not_pending_requests_by_requestor_id(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -244,7 +243,7 @@ def get_not_pending_requests_by_requestor_id(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -272,8 +271,6 @@ def get_not_pending_requests_by_requestor_id(
         return approval_request_repository.get_non_pending_approval_requests(requestor_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
@@ -286,34 +283,35 @@ def get_approved_requests(
     ):
     """
     ### Description:
-    This endpoint takes in a company ID and Optional requestor ID.
+    This endpoint takes in a company ID and requestor ID from the header.
 
-    If requestor ID is provided, it will return all approved requests 
-    MADE BY THE REQUESTOR in the company table.
-
-    If requestor ID is NOT provided, it will return all approved requests
+    It will return all approved requests made by the requestor 
     in the company table.
+
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Optional requestor ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
-    A JSON object containing a list of approved requests
-    either made by a specific requestor or all of them.
+    A JSON object containing a list of APPROVED requests
+    made by a specific requestor in the company.
     If no requests match, it will return an empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-approved?company_id=ascenda
-    GET /approval/get-approved?company_id=ascenda&requestor_id=admin1
+    GET /approval/get-approved
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
         [
             {
                 "comments": "Be civil",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "requestor_id": "admin1",
                 "approver_id": "abc-567",
@@ -356,34 +354,34 @@ def get_rejected_requests(
     ):
     """
     ### Description:
-    This endpoint takes in a company ID and Optional requestor ID.
+    This endpoint takes in a company ID and requestor ID from header.
 
-    If requestor ID is provided, it will return all rejected requests 
-    MADE BY THE REQUESTOR in the company table.
+    It will return all rejected requests made by the requestor.
 
-    If requestor ID is NOT provided, it will return all rejected requests
-    in the company table.
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Optional requestor ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
-    A JSON object containing a list of rejected requests
-    either made by a specific requestor or all of them.
+    A JSON object containing a list of REJECTED requests
+    made by a specific requestor.
     If no requests match, it will return an empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-rejected?company_id=ascenda
-    GET /approval/get-rejected?company_id=ascenda&requestor_id=admin1
+    GET /approval/get-rejected
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
         [
             {
                 "comments": "Be civil",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "requestor_id": "admin1",
                 "approver_id": "abc-567",
@@ -426,27 +424,28 @@ def get_expired_requests(
     ):
     """
     ### Description:
-    This endpoint takes in a company ID and Optional requestor ID.
+    This endpoint takes in a company ID and requestor ID from headers.
 
-    If requestor ID is provided, it will return all expired requests 
-    that are PENDING MADE BY THE REQUESTOR in the company table.
+    It will return all expired requests that are PENDING 
+    MADE BY THE REQUESTOR in the company table.
 
-    If requestor ID is NOT provided, it will return all expired requests 
-    that are PENDING in the company table.
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Optional requestor ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of expired requests that are still pending
-    either made by a specific requestor or all of them.
+    made by a specific requestor.
     If no requests match, it will return an empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-expired?company_id=ascenda
-    GET /approval/get-expired?company_id=ascenda&requestor_id=admin1
+    GET /approval/get-expired
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
@@ -454,7 +453,7 @@ def get_expired_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "bankofamericapleasehireme",
+                "company_id": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "admin1",
@@ -515,7 +514,7 @@ def get_request_by_id(
     ```
        {
             "comments": Be Civil",
-            "company_id": "bankofamericapleasehireme",
+            "company_id": "ascenda",
             "request_type": "Transaction",
             "requestor_id": "admin1",
             "approver_id": "abc-567",
@@ -559,7 +558,7 @@ def get_request_by_requestor_id(
     """
     ### Description:
     This endpoint takes in a company ID and requestor ID 
-    and returns the request made by requestor.
+    and returns all requests made by requestor.
 
     ### Parameters:
     `company_id`: Company ID.<br /><br />
@@ -572,7 +571,11 @@ def get_request_by_requestor_id(
     ### Example:
     #### Request:
     ```
-    GET /approval/get-by-requestor?company_id=ascenda&requestor_id=admin1
+    GET /approval/get-by-requestor
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
@@ -580,7 +583,7 @@ def get_request_by_requestor_id(
         {
             "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
             "comments": "Optional comment for this particular request",
-            "company_id": "bankofamericapleasehireme",
+            "company_id": "ascenda",
             "request_type": "Transaction",
             "request_title": "Optional title for this particular request",
             "requestor_id": "admin1",
@@ -620,28 +623,32 @@ def get_request_by_approver_id(
 ):
     """
     ### Description:
-    This endpoint takes in a company ID and approver ID 
-    and returns all request responded by the approver. 
+    This endpoint takes in a company ID and requestor ID 
+    and returns all request responded to by the requestor. 
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `approver_id`: Approver ID.<br /><br />
+    `company_id`: Company ID, taken from header.<br /><br />
+    `requestor_id`: Requestor ID, taken from header<br /><br />
 
     ### Returns:
-    A JSON object containing a list of requests responded by the approver.
+    A JSON object containing a list of requests responded by the requestor.
     If non, return empty list.
     
     ### Example:
     #### Request:
     ```
-    GET /approval/get-by-approver?company_id=ascenda&requestor_id=admin1
+    GET /approval/get-by-approver
+    headers = {
+        "company_id": "ascenda",
+        "requestor_id": "admin1"
+    }
     ```
     #### Response:
     ```
     [
     {
         "comments": "Be civil",
-        "company_id": "bankofamericapleasehireme",
+        "company_id": "ascenda",
         "request_type": "Transaction",
         "requestor_id": "admin1",
         "approver_id": "abc-567",
@@ -706,7 +713,7 @@ def create_approval_requests(
     """
     ### Description:
     This endpoint takes in JSON payload and creates a new request.
-    Approver_id and company_id is embedded into payload.
+    Requestor and company ID is embedded into payload.
     Request_detail block can change depending on request type.
     Approval_role refers to who can approve and will get notifications.
 
@@ -716,7 +723,7 @@ def create_approval_requests(
     ### Body::
     {
         "requestor_id": "admin1",
-        "company_id":"bankofamericapleasehireme",
+        "company_id":"ascenda",
         "request_type": "Transaction",
         "request_details": {
             "amount" : 100,
@@ -791,7 +798,7 @@ def update_approval_request(
     ### Body::
     {
         "uid": "b47204b2-3310-46d4-bb7d-911a969578a3",
-        "company_id": "bankofamericapleasehireme",
+        "company_id": "ascenda",
         "requestor_id": "admin1",
         "request_type": "Transaction",
         "request_details": {
@@ -880,7 +887,7 @@ def withdraw_approval_request(
         "status" : "withdrawn",
         "approver_id": "admin1",
         "comments" : "Eat Optional",
-        "company_id": "bankofamericapleasehireme"
+        "company_id": "ascenda"
     }
 
     ### Returns:
@@ -1002,7 +1009,7 @@ def approve_or_reject_approval_request(
         "status" : "approved",
         "approver_id": "abc-567",
         "comments" : "Optional",
-        "company_id":"bankofamericapleasehireme"
+        "company_id":"ascenda"
     }
 
     ### Returns:
