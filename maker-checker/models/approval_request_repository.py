@@ -213,7 +213,7 @@ class ApprovalRequestRepository:
     def create_approval_request(self, approval_request: dict):
         try:
             table = self.__db.Table('approval_request')
-            response = table.put_item(Item=approval_request.dict())
+            response = table.put_item(Item=approval_request)
             return response
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
@@ -229,15 +229,15 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data.company_id,
-                    'uid': data.uid
+                    'company_id': data["company_id"],
+                    'uid': data["uid"]
                 }
             ).get('Item')
 
             # Update the item
             if item == None:
                 raise ValueError("Approval request not found")
-            for key, value in data.dict().items():
+            for key, value in data.items():
                 if value == None:
                     pass
                 else:
@@ -258,14 +258,14 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data.company_id,
-                    'uid': data.uid
+                    'company_id': data["company_id"],
+                    'uid': data["uid"]
                 }
             ).get('Item')
             if item == None:
                 raise ValueError("Approval request not found")
             # Update the item
-            for key, value in data.model_dump().items():
+            for key, value in data.items():
                 # Can add additional validation before
                 item[key] = value
             response = table.put_item(Item=item)
@@ -285,14 +285,14 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data.company_id,
-                    'uid': data.uid
+                    'company_id': data["company_id"],
+                    'uid': data["uid"]
                 }
             ).get('Item')
             if item == None:
                 raise ValueError("Approval request not found")
             # Update the item
-            for key, value in data.model_dump().items():
+            for key, value in data.items():
                 # Can add additional validation before
                 item[key] = value
 
@@ -313,8 +313,8 @@ class ApprovalRequestRepository:
             # Send out call to do whatever the request contains
             response = table.delete_item(
                 Key={
-                    'company_id': data.company_id,
-                    'uid': data.uid
+                    'company_id': data["company_id"],
+                    'uid': data["uid"]
                 }
             )
             return response

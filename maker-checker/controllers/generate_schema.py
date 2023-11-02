@@ -50,7 +50,7 @@ def populate_db(ddb):
     # Insert data
     requests_packet = [
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "cdf7f49f-d5ef-42fd-9fdf-1c27cf61b51e",
             "comments": "No comments",
             "request_type": "Transaction Update",
@@ -70,7 +70,7 @@ def populate_db(ddb):
         },
         {
 
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "cds7f49f-d5ef-42fd-9fdf-1c27cf61b51e",
             "comments": "No comments",
             "request_type": "Transaction Update",
@@ -89,7 +89,7 @@ def populate_db(ddb):
             "status": "rejected"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "b47204b2-3940-46d4-bb7d-911a969578a3",
             "comments": None,
             "request_type": "Transaction Update",
@@ -106,7 +106,7 @@ def populate_db(ddb):
             "status": "pending"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "b47204b2-3310-46d4-bb7d-911a969578a3",
             "comments": None,
             "request_type": "Transaction Update",
@@ -123,7 +123,7 @@ def populate_db(ddb):
             "status": "pending"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "4b3ba938-a7aa-44f4-b8d4-d83906a3623f",
             "comments": "Request made in error",
             "request_type": "Transaction Update",
@@ -142,7 +142,7 @@ def populate_db(ddb):
             "status": "withdrawn"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_1",
             "comments": "Additional comments",
             "request_type": "Transaction Update",
@@ -159,7 +159,7 @@ def populate_db(ddb):
             "status": "pending"  # Change the status
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_2",
             "comments": "No comments",
             "request_type": "New Request Type",  # Change request_type
@@ -177,7 +177,7 @@ def populate_db(ddb):
             "status": "rejected"  # Change the status
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_3",
             "comments": "Additional comments",
             "request_type": "New Request Type 2",
@@ -194,7 +194,7 @@ def populate_db(ddb):
             "status": "pending"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_4",
             "comments": "Additional comments",
             "request_type": "Transaction Update",
@@ -213,7 +213,7 @@ def populate_db(ddb):
             "status": "rejected"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_5",
             "comments": "No comments",
             "request_type": "Another Request Type",
@@ -231,7 +231,7 @@ def populate_db(ddb):
             "status": "approved"
         },
         {
-            "company_id": "bankofamerciahiremeplease",
+            "company_id": "ascenda",
             "uid": "unique_id_6",
             "comments": "Request in progress",
             "request_type": "Transaction Update",
