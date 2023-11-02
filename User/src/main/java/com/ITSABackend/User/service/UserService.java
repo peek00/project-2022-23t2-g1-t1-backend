@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.ScanFilter;
 import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
@@ -17,14 +18,20 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 
 @Service
@@ -238,6 +245,54 @@ public class UserService {
             }
         }
         return users.toArray(new User[users.size()]);
+    }
+
+    // public List<User> getUsersByCompanyRole(String companyID, String roleName){
+        
+    // }
+
+    public List<User> getUsersByCompany(String companyId) {
+        List<User> users = new ArrayList<>();
+
+        Table table = dynamoDBRepo.getTable(AppConstant.USER);
+        System.out.println("Getting Users from the DB by Company");
+
+        if (table != null) {
+            ScanFilter filter = new ScanFilter("companyID").eq(companyId);
+            
+            try {
+                ItemCollection<ScanOutcome> items = table.scan(filter);
+                for (Item item : items) {
+                    User user = new User();
+                    user.setUserId(item.getString("userID"));
+                    user.setEmail(item.getString("email"));
+                    user.setfirstName(item.getString("firstName"));
+                    user.setlastName(item.getString("lastName"));
+                    user.setCompanyId(item.getString("companyID"));
+                    user.setRole(item.getStringSet("userRole")); // Assuming userRole is a Set<String>
+                    user.setCompanyName(item.getString("companyName"));
+
+                    users.add(user);
+                }
+            } catch (Exception e) {
+                System.err.println("Unable to fetch users by company");
+                System.err.println(e.getMessage());
+
+            }
+        }
+
+        return users;
+    }
+
+    public List<User> getUsersByRoleFromCompany(String companyID, String roleName) {
+        List<User> users = getUsersByCompany(companyID);
+
+        // Filter users by roleName in userRole array
+        List<User> filteredUsers = users.stream()
+                .filter(user -> user.getRoles().contains(roleName))
+                .collect(Collectors.toList());
+
+        return filteredUsers;
     }
 }
 
