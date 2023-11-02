@@ -19,7 +19,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 db = initialize_db()
 
 approval_request_repository = ApprovalRequestRepository(db)
