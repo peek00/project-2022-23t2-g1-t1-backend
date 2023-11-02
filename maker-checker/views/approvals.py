@@ -32,14 +32,14 @@ async def healthcheck():
 # =================== START: GET requests =======================
 @router.get("/get-all", response_model=None)
 async def get_all_requests(
-    company_id: str = Header(..., description="Company ID"),
+    companyid: str = Header(..., description="Company ID"),
 ):
     """
     ### Description:
     This endpoint takes in a company ID and returns all requests made in the company table.
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
+    `companyid`: Company ID.<br /><br />
 
     ### Returns:
     A JSON object containing a list of every requests made in the company.
@@ -48,7 +48,7 @@ async def get_all_requests(
     ### Example:
     #### Request:
     ```
-    GET /approval/get-all?company_id=ascenda
+    GET /approval/get-all
     ```
     #### Response:
     ```
@@ -56,10 +56,10 @@ async def get_all_requests(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T05:13:10.303989",
                 "request_details": {
                     "increment": "False",
@@ -73,10 +73,10 @@ async def get_all_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
                     "increment": "False",
@@ -94,9 +94,9 @@ async def get_all_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None:
+        if companyid == None:
             raise ValueError("Company ID is required.")
-        return approval_request_repository.get_all_approval_requests(company_id)
+        return approval_request_repository.get_all_approval_requests(companyid)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -106,8 +106,8 @@ async def get_all_requests(
     
 @router.get("/get-pending")
 def get_pending_requests(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -115,8 +115,8 @@ def get_pending_requests(
     This returns all pending request originating from the requestor.
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header.<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of non expired, pending requests
@@ -128,8 +128,8 @@ def get_pending_requests(
     ```
     GET /approval/get-pending
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -138,10 +138,10 @@ def get_pending_requests(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T05:13:10.303989",
                 "request_details": {
                     "increment": "False",
@@ -155,10 +155,10 @@ def get_pending_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
                     "increment": "False",
@@ -176,11 +176,11 @@ def get_pending_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None:
+        if companyid == None:
             raise ValueError("Company ID is required.")
-        if requestor_id:
-            return approval_request_repository.get_pending_approval_requests_by_requestor_id(company_id, requestor_id)
-        return approval_request_repository.get_pending_approval_requests(company_id)
+        if userid:
+            return approval_request_repository.get_pending_approval_requests_by_requestor_id(companyid, userid)
+        return approval_request_repository.get_pending_approval_requests(companyid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -189,9 +189,9 @@ def get_pending_requests(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-not-pending")
-def get_not_pending_requests_by_requestor_id(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+def get_not_pending_requests_by_userid(
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -203,8 +203,8 @@ def get_not_pending_requests_by_requestor_id(
     This will return all not pending requests originating from the requestor.
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header.<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of not pending requests
@@ -216,8 +216,8 @@ def get_not_pending_requests_by_requestor_id(
     ```
     GET /approval/get-not-pending
     headers = {   
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -226,10 +226,10 @@ def get_not_pending_requests_by_requestor_id(
             {
                 "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T05:13:10.303989",
                 "request_details": {
                     "increment": "False",
@@ -243,10 +243,10 @@ def get_not_pending_requests_by_requestor_id(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
                     "increment": "False",
@@ -264,11 +264,11 @@ def get_not_pending_requests_by_requestor_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None:
+        if companyid == None:
             raise ValueError("Company ID is required.")
-        if requestor_id:
-            return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(company_id, requestor_id)
-        return approval_request_repository.get_non_pending_approval_requests(requestor_id)
+        if userid:
+            return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(companyid, userid)
+        return approval_request_repository.get_non_pending_approval_requests(userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -278,8 +278,8 @@ def get_not_pending_requests_by_requestor_id(
 
 @router.get("/get-approved")
 def get_approved_requests(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -289,8 +289,8 @@ def get_approved_requests(
     in the company table.
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header.<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of APPROVED requests
@@ -302,8 +302,8 @@ def get_approved_requests(
     ```
     GET /approval/get-approved
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -311,9 +311,9 @@ def get_approved_requests(
         [
             {
                 "comments": "Be civil",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "approver_id": "abc-567",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
@@ -335,11 +335,11 @@ def get_approved_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None:
+        if companyid == None:
             raise ValueError("Company ID is required.")
-        if requestor_id:
-            return approval_request_repository.get_approved_approval_requests_by_requestor_id(company_id, requestor_id)
-        return approval_request_repository.get_approved_approval_requests(company_id)
+        if userid:
+            return approval_request_repository.get_approved_approval_requests_by_requestor_id(companyid, userid)
+        return approval_request_repository.get_approved_approval_requests(companyid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -349,8 +349,8 @@ def get_approved_requests(
 
 @router.get("/get-rejected")
 def get_rejected_requests(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -359,8 +359,8 @@ def get_rejected_requests(
     It will return all rejected requests made by the requestor.
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header.<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of REJECTED requests
@@ -372,8 +372,8 @@ def get_rejected_requests(
     ```
     GET /approval/get-rejected
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -381,9 +381,9 @@ def get_rejected_requests(
         [
             {
                 "comments": "Be civil",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "approver_id": "abc-567",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
@@ -405,11 +405,11 @@ def get_rejected_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None:
+        if companyid == None:
             raise ValueError("Company ID is required.")
-        if requestor_id:
-            return approval_request_repository.get_rejected_approval_requests_by_requestor_id(company_id, requestor_id)
-        return approval_request_repository.get_rejected_approval_requests(company_id)
+        if userid:
+            return approval_request_repository.get_rejected_approval_requests_by_requestor_id(companyid, userid)
+        return approval_request_repository.get_rejected_approval_requests(companyid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -419,8 +419,8 @@ def get_rejected_requests(
     
 @router.get("/get-expired")
 def get_expired_requests(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -430,8 +430,8 @@ def get_expired_requests(
     MADE BY THE REQUESTOR in the company table.
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header.<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header.<br /><br />
 
     ### Returns:
     A JSON object containing a list of expired requests that are still pending
@@ -443,8 +443,8 @@ def get_expired_requests(
     ```
     GET /approval/get-expired
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -453,10 +453,10 @@ def get_expired_requests(
             {
                 "uid": "66c0bef1-ff98-4507-9b58-9908bc49fc26",
                 "comments": "Optional comment for this particular request",
-                "company_id": "ascenda",
+                "companyid": "ascenda",
                 "request_type": "Transaction",
                 "request_title": "Optional title for this particular request",
-                "requestor_id": "admin1",
+                "userid": "admin1",
                 "created_at": "2023-10-31T07:49:20.158263",
                 "request_details": {
                     "increment": "False",
@@ -474,11 +474,11 @@ def get_expired_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None: 
+        if companyid == None: 
             raise ValueError("Company ID is required.")
-        if requestor_id:
-            return approval_request_repository.get_expired_approval_requests_by_requestor_id(company_id, requestor_id)
-        return approval_request_repository.get_expired_approval_requests(company_id)
+        if userid:
+            return approval_request_repository.get_expired_approval_requests_by_requestor_id(companyid, userid)
+        return approval_request_repository.get_expired_approval_requests(companyid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -488,7 +488,7 @@ def get_expired_requests(
     
 @router.get("/get-by-id")
 def get_request_by_id(
-    company_id: str = Header(..., description="Company ID"),
+    companyid: str = Header(..., description="Company ID"),
     request_id: str = None,
 ):
     """
@@ -497,7 +497,7 @@ def get_request_by_id(
     and returns the request details.
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
+    `companyid`: Company ID.<br /><br />
     `request_id`: Request ID.<br /><br />
 
     ### Returns:
@@ -507,16 +507,16 @@ def get_request_by_id(
     ### Example:
     #### Request:
     ```
-    GET /approval/get-by-id?company_id=ascenda
-    GET /approval/get-by-id?company_id=ascenda&request_id=66c0bef1-ff98-4507-9b58-9908bc49fc26
+    GET /approval/get-by-id?companyid=ascenda
+    GET /approval/get-by-id?companyid=ascenda&request_id=66c0bef1-ff98-4507-9b58-9908bc49fc26
     ```
     #### Response:
     ```
        {
             "comments": Be Civil",
-            "company_id": "ascenda",
+            "companyid": "ascenda",
             "request_type": "Transaction",
-            "requestor_id": "admin1",
+            "userid": "admin1",
             "approver_id": "abc-567",
             "created_at": "2023-10-31T07:49:20.158263",
             "request_details": {
@@ -538,9 +538,9 @@ def get_request_by_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None or request_id == None:
+        if companyid == None or request_id == None:
             raise ValueError("Company ID and request_id is required.")
-        return approval_request_repository.get_approval_request_by_uid(company_id, request_id)
+        return approval_request_repository.get_approval_request_by_uid(companyid, request_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -551,9 +551,9 @@ def get_request_by_id(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/get-by-requestor")
-def get_request_by_requestor_id(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+def get_request_by_userid(
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -561,8 +561,8 @@ def get_request_by_requestor_id(
     and returns all requests made by requestor.
 
     ### Parameters:
-    `company_id`: Company ID.<br /><br />
-    `requestor_id`: Requestor ID.<br /><br />
+    `companyid`: Company ID.<br /><br />
+    `userid`: Requestor ID.<br /><br />
 
     ### Returns:
     A JSON object containing a list of requests made by the requestor.
@@ -573,8 +573,8 @@ def get_request_by_requestor_id(
     ```
     GET /approval/get-by-requestor
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -583,10 +583,10 @@ def get_request_by_requestor_id(
         {
             "uid": "0428962d-81f3-416d-9e7f-34ff34301251",
             "comments": "Optional comment for this particular request",
-            "company_id": "ascenda",
+            "companyid": "ascenda",
             "request_type": "Transaction",
             "request_title": "Optional title for this particular request",
-            "requestor_id": "admin1",
+            "userid": "admin1",
             "created_at": "2023-10-31T05:13:10.303989",
             "request_details": {
                 "increment": "False",
@@ -604,9 +604,9 @@ def get_request_by_requestor_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None and requestor_id == None:
-            raise ValueError("Company ID and requestor_id is required.")
-        return approval_request_repository.get_approval_request_by_requestor_id(company_id, requestor_id)
+        if companyid == None and userid == None:
+            raise ValueError("Company ID and userid is required.")
+        return approval_request_repository.get_approval_request_by_requestor_id(companyid, userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -618,8 +618,8 @@ def get_request_by_requestor_id(
     
 @router.get("/get-by-approver")
 def get_request_by_approver_id(
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str = Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str = Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -627,8 +627,8 @@ def get_request_by_approver_id(
     and returns all request responded to by the requestor. 
 
     ### Parameters:
-    `company_id`: Company ID, taken from header.<br /><br />
-    `requestor_id`: Requestor ID, taken from header<br /><br />
+    `companyid`: Company ID, taken from header.<br /><br />
+    `userid`: Requestor ID, taken from header<br /><br />
 
     ### Returns:
     A JSON object containing a list of requests responded by the requestor.
@@ -639,8 +639,8 @@ def get_request_by_approver_id(
     ```
     GET /approval/get-by-approver
     headers = {
-        "company_id": "ascenda",
-        "requestor_id": "admin1"
+        "companyid": "ascenda",
+        "userid": "admin1"
     }
     ```
     #### Response:
@@ -648,9 +648,9 @@ def get_request_by_approver_id(
     [
     {
         "comments": "Be civil",
-        "company_id": "ascenda",
+        "companyid": "ascenda",
         "request_type": "Transaction",
-        "requestor_id": "admin1",
+        "userid": "admin1",
         "approver_id": "abc-567",
         "created_at": "2023-10-31T07:49:20.158263",
         "request_details": {
@@ -672,9 +672,9 @@ def get_request_by_approver_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None or requestor_id == None:
+        if companyid == None or userid == None:
             raise ValueError("Company ID and approver_id is required.")
-        return approval_request_repository.get_approval_request_by_approver_id(company_id, requestor_id)
+        return approval_request_repository.get_approval_request_by_approver_id(companyid, userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -691,7 +691,7 @@ def get_request_by_approver_id(
 def validate_create_request_body(data):
     if data["requestor_id"] == None:
         raise ValueError("Requestor ID is required.")
-    if data["company_id"] == None:
+    if data["companyid"] == None:
         raise ValueError("Company ID is required.")
     if data["request_type"] == None:
         raise ValueError("Request Type is required.")
@@ -707,8 +707,8 @@ def validate_create_request_body(data):
 @router.post("/create", response_model=None)
 def create_approval_requests(
     data: ApprovalRequest,
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -722,8 +722,8 @@ def create_approval_requests(
 
     ### Body::
     {
-        "requestor_id": "admin1",
-        "company_id":"ascenda",
+        "userid": "admin1",
+        "companyid":"ascenda",
         "request_type": "Transaction",
         "request_details": {
             "amount" : 100,
@@ -759,8 +759,8 @@ def create_approval_requests(
     try:
         combined_data = {
             **data.model_dump(),
-            "requestor_id": requestor_id,
-            "company_id": company_id
+            "requestor_id": userid,
+            "companyid": companyid
         }
         validate_create_request_body(combined_data)
         # TODO : Put in validation  that combined_data has request details
@@ -771,6 +771,7 @@ def create_approval_requests(
             "request_id" : combined_data['uid'],
             "message": "Created!"
         }
+        print("hi")
         return response
     except (ValidationError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -782,13 +783,13 @@ def create_approval_requests(
 @router.post("/update")
 def update_approval_request(
     data: ApprovalUpdate,
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
     This endpoint takes in JSON payload and updates an existing request.
-    Requestor_id and company_id is embedded into payload.
+    userid and companyid is embedded into payload.
     Updater must be same as requestor, and request cannot be resolved 
     or expired.
 
@@ -798,8 +799,8 @@ def update_approval_request(
     ### Body::
     {
         "uid": "b47204b2-3310-46d4-bb7d-911a969578a3",
-        "company_id": "ascenda",
-        "requestor_id": "admin1",
+        "companyid": "ascenda",
+        "userid": "admin1",
         "request_type": "Transaction",
         "request_details": {
             "account_id": "1221312312sada3",
@@ -832,11 +833,11 @@ def update_approval_request(
     try:
         combined_data = {
             **data.model_dump(),
-            "requestor_id": requestor_id,
-            "company_id": company_id
+            "requestor_id": userid,
+            "companyid": companyid
         }
         # Get the original request
-        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data['uid'])
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["companyid"], combined_data['uid'])
         # Check if request exists
         if original_request == None:
             raise ValueError("Request does not exist.")
@@ -868,13 +869,13 @@ def update_approval_request(
 @router.post("/withdraw")
 def withdraw_approval_request(
     data: ApprovalResponse,
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
     This endpoint takes in JSON payload and withdraws an existing request.
-    Requestor_id and company_id is embedded into payload.
+    userid and companyid is embedded into payload.
     Withdrawer must be same as requestor, and request cannot be resolved 
     or expired.
 
@@ -887,7 +888,7 @@ def withdraw_approval_request(
         "status" : "withdrawn",
         "approver_id": "admin1",
         "comments" : "Eat Optional",
-        "company_id": "ascenda"
+        "companyid": "ascenda"
     }
 
     ### Returns:
@@ -912,11 +913,11 @@ def withdraw_approval_request(
     try:
         combined_data = {
             **data.model_dump(),
-            "requestor_id": requestor_id,
-            "company_id": company_id
+            "requestor_id": userid,
+            "companyid": companyid
         }
 
-        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data['uid'])
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["companyid"], combined_data['uid'])
        
         if original_request == None:
             raise ValueError("Request does not exist.")
@@ -946,8 +947,8 @@ def withdraw_approval_request(
 @router.post("/delete")
 def delete_approval_request(
     data: DeleteRequest,
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     Undocumented, but refrain from using
@@ -955,10 +956,10 @@ def delete_approval_request(
     try:
         combined_data = {
             **data.model_dump(),
-            "requestor_id": requestor_id,
-            "company_id": company_id
+            "requestor_id": userid,
+            "companyid": companyid
         }
-        original_request = approval_request_repository.get_approval_request_by_uid(combined_data['company_id'], combined_data['uid'])
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data['companyid'], combined_data['uid'])
         if original_request == None:
             raise ValueError("Request does not exist.")
         if original_request["requestor_id"] != combined_data['requestor_id']:
@@ -990,13 +991,13 @@ def delete_approval_request(
 @router.post("/response")
 def approve_or_reject_approval_request(
     data: ApprovalResponse,
-    company_id: str = Header(..., description="Company ID"),
-    requestor_id: str =  Header(..., description="Requestor ID"),
+    companyid: str = Header(..., description="Company ID"),
+    userid: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
     This endpoint takes in JSON payload and approves or rejects an existing request.
-    Approver_id and company_id is embedded into payload.
+    Approver_id and companyid is embedded into payload.
     Approver must be different as requestor, and request cannot be resolved 
     or expired.
 
@@ -1009,7 +1010,7 @@ def approve_or_reject_approval_request(
         "status" : "approved",
         "approver_id": "abc-567",
         "comments" : "Optional",
-        "company_id":"ascenda"
+        "companyid":"ascenda"
     }
 
     ### Returns:
@@ -1036,12 +1037,12 @@ def approve_or_reject_approval_request(
         #TODO Might be throwing same error for 404 and 403
         combined_data = {
             **data.model_dump(),
-            "approver_id": requestor_id,
-            "company_id": company_id
+            "approver_id": userid,
+            "companyid": companyid
         }
         print(combined_data)
 
-        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data["uid"])
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["companyid"], combined_data["uid"])
         if original_request["requestor_id"] == combined_data["approver_id"]:
             raise ValueError("Requestor cannot be the approver.")
         if original_request['status'] != "pending":
