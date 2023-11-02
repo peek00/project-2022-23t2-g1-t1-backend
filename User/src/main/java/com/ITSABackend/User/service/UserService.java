@@ -247,10 +247,6 @@ public class UserService {
         return users.toArray(new User[users.size()]);
     }
 
-    // public List<User> getUsersByCompanyRole(String companyID, String roleName){
-        
-    // }
-
     public List<User> getUsersByCompany(String companyId) {
         List<User> users = new ArrayList<>();
 
@@ -269,7 +265,7 @@ public class UserService {
                     user.setfirstName(item.getString("firstName"));
                     user.setlastName(item.getString("lastName"));
                     user.setCompanyId(item.getString("companyID"));
-                    user.setRole(item.getStringSet("userRole")); // Assuming userRole is a Set<String>
+                    user.setRole(item.getStringSet("userRole")); 
                     user.setCompanyName(item.getString("companyName"));
 
                     users.add(user);
@@ -293,6 +289,18 @@ public class UserService {
                 .collect(Collectors.toList());
 
         return filteredUsers;
+    }
+
+    public List<String> getUserEmailsByUserIDsFromCompany(String companyID, List<String> userIDs) {
+        List<User> users = getUsersByCompany(companyID);
+    
+        // Filter users by user IDs in the given array and extract emails
+        List<String> emails = users.stream()
+                .filter(user -> userIDs.contains(user.getUserId()))
+                .map(User::getEmail)
+                .collect(Collectors.toList());
+    
+        return emails;
     }
 }
 
