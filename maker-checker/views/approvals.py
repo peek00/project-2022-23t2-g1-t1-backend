@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import ValidationError
 
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
@@ -32,7 +32,7 @@ async def healthcheck():
 # =================== START: GET requests =======================
 @router.get("/get-all", response_model=None)
 async def get_all_requests(
-    company_id: str = None
+    company_id: str = Header(..., description="Company ID"),
 ):
     """
     ### Description:
@@ -106,8 +106,8 @@ async def get_all_requests(
     
 @router.get("/get-pending")
 def get_pending_requests(
-    company_id: str = None,
-    requestor_id: str = None,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -191,8 +191,8 @@ def get_pending_requests(
     
 @router.get("/get-not-pending")
 def get_not_pending_requests_by_requestor_id(
-    company_id: str = None,
-    requestor_id: str = None,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -281,8 +281,8 @@ def get_not_pending_requests_by_requestor_id(
 
 @router.get("/get-approved")
 def get_approved_requests(
-    company_id:str = None,
-    requestor_id:str = None,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -351,8 +351,8 @@ def get_approved_requests(
 
 @router.get("/get-rejected")
 def get_rejected_requests(
-    company_id:str = None,
-    requestor_id:str = None
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -421,8 +421,8 @@ def get_rejected_requests(
     
 @router.get("/get-expired")
 def get_expired_requests(
-    company_id:str = None,
-    requestor_id:str = None
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
     ):
     """
     ### Description:
@@ -489,7 +489,7 @@ def get_expired_requests(
     
 @router.get("/get-by-id")
 def get_request_by_id(
-    company_id: str = None,
+    company_id: str = Header(..., description="Company ID"),
     request_id: str = None,
 ):
     """
@@ -553,8 +553,8 @@ def get_request_by_id(
     
 @router.get("/get-by-requestor")
 def get_request_by_requestor_id(
-    company_id: str = None,
-    requestor_id: str = None,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -615,8 +615,8 @@ def get_request_by_requestor_id(
     
 @router.get("/get-by-approver")
 def get_request_by_approver_id(
-    company_id: str = None,
-    approver_id: str = None,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str = Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -665,9 +665,9 @@ def get_request_by_approver_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if company_id == None or approver_id == None:
+        if company_id == None or requestor_id == None:
             raise ValueError("Company ID and approver_id is required.")
-        return approval_request_repository.get_approval_request_by_approver_id(company_id, approver_id)
+        return approval_request_repository.get_approval_request_by_approver_id(company_id, requestor_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
@@ -682,17 +682,17 @@ def get_request_by_approver_id(
 
 # =================== START: REQUESTOR requests =======================
 def validate_create_request_body(data):
-    if data.requestor_id == None:
+    if data["requestor_id"] == None:
         raise ValueError("Requestor ID is required.")
-    if data.company_id == None:
+    if data["company_id"] == None:
         raise ValueError("Company ID is required.")
-    if data.request_type == None:
+    if data["request_type"] == None:
         raise ValueError("Request Type is required.")
-    if data.request_details == None:
+    if data["request_details"] == None:
         raise ValueError("Request Details is required.")
-    if data.status == None:
+    if data["status"] == None:
         raise ValueError("Status is required.")
-    if data.approval_role == None:
+    if data["approval_role"] == None:
         raise ValueError("Approval Role is required.")
     #TODO
     return True
@@ -700,6 +700,8 @@ def validate_create_request_body(data):
 @router.post("/create", response_model=None)
 def create_approval_requests(
     data: ApprovalRequest,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -748,13 +750,18 @@ def create_approval_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        validate_create_request_body(data)
-        # TODO : Put in validation  that data has request details
-        result = approval_request_repository.create_approval_request(data)
+        combined_data = {
+            **data.model_dump(),
+            "requestor_id": requestor_id,
+            "company_id": company_id
+        }
+        validate_create_request_body(combined_data)
+        # TODO : Put in validation  that combined_data has request details
+        approval_request_repository.create_approval_request(combined_data)
         # TODO: Japheth send email notifications here
         response = {
-            "logInfo" : f"ID {data.requestor_id} created a request with ID {data.uid} for {data.approval_role} approval.",
-            "request_id" : data.uid,
+            "logInfo" : f"ID {combined_data['requestor_id']} created a request with ID {combined_data['uid']} for {combined_data['approval_role']} approval.",
+            "request_id" : combined_data['uid'],
             "message": "Created!"
         }
         return response
@@ -768,6 +775,8 @@ def create_approval_requests(
 @router.post("/update")
 def update_approval_request(
     data: ApprovalUpdate,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -814,14 +823,18 @@ def update_approval_request(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-
+        combined_data = {
+            **data.model_dump(),
+            "requestor_id": requestor_id,
+            "company_id": company_id
+        }
         # Get the original request
-        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data['uid'])
         # Check if request exists
         if original_request == None:
             raise ValueError("Request does not exist.")
         # Check if requestID is the same, only the original requestor can update
-        if original_request["requestor_id"] != data.requestor_id:
+        if original_request["requestor_id"] != combined_data['requestor_id']:
             raise ValueError("Requestor ID does not match the original requestor ID.")
         # Check if request is pending, only pending requests can be updated
         if original_request['status'] != "pending":
@@ -830,10 +843,10 @@ def update_approval_request(
         if isExpired(original_request["request_expiry"]):
             raise ValueError("Request is expired, cannot be updated.")
         
-        approval_request_repository.update_approval_request(data)
+        approval_request_repository.update_approval_request(combined_data)
         response = {
-            "logInfo" : f"ID {data.requestor_id} updated Request ID {data.uid}, Request Status is now {data.status}.",
-            "result" : f"Successfully updated request {data.uid}!"
+            "logInfo" : f"ID {combined_data['requestor_id']} updated Request ID {combined_data['uid']}, Request Status is now {combined_data['status']}.",
+            "result" : f"Successfully updated request {combined_data['uid']}!"
         }
         return response
     except ValueError as e:
@@ -848,6 +861,8 @@ def update_approval_request(
 @router.post("/withdraw")
 def withdraw_approval_request(
     data: ApprovalResponse,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -888,30 +903,34 @@ def withdraw_approval_request(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
+        combined_data = {
+            **data.model_dump(),
+            "requestor_id": requestor_id,
+            "company_id": company_id
+        }
+
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data['uid'])
        
         if original_request == None:
             raise ValueError("Request does not exist.")
-        if original_request["requestor_id"] != data.approver_id:
+        if original_request["requestor_id"] != combined_data["requestor_id"]:
             raise ValueError("Requestor ID does not match the original requestor ID.")
         if original_request['status'] != "pending":
             raise ValueError("Request is not pending, cannot be withdrawn.")
         if isExpired(original_request["request_expiry"]):
             raise ValueError("Request is expired, cannot be withdrawn.")
-        if data.status != "withdrawn":
+        if combined_data["status"] != "withdrawn":
             raise ValueError("Request can only be withdrawn.")
         
-        approval_request_repository.withdraw_approval_request(data)
+        approval_request_repository.withdraw_approval_request(combined_data)
 
         response = {
-            "logInfo" : f"ID {data.approver_id} withdrew Request ID {data.uid}",
-            "result" : "Successfuly withdrawn request {data.uid}."
+            "logInfo" : f"ID {combined_data['requestor_id']} withdrew Request ID {combined_data['uid']}",
+            "result" : "Successfuly withdrawn request {combined_data['uid']}."
         }
         return response
-    except ValueError as e:
+    except (ValueError,ValidationError) as e:
         raise HTTPException(status_code=403, detail=str(e))
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
@@ -920,24 +939,31 @@ def withdraw_approval_request(
 @router.post("/delete")
 def delete_approval_request(
     data: DeleteRequest,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     Undocumented, but refrain from using
     """
     try:
-        original_request = approval_request_repository.get_approval_request_by_uid(data.uid)
+        combined_data = {
+            **data.model_dump(),
+            "requestor_id": requestor_id,
+            "company_id": company_id
+        }
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data['company_id'], combined_data['uid'])
         if original_request == None:
             raise ValueError("Request does not exist.")
-        if original_request["requestor_id"] != data.requestor_id:
+        if original_request["requestor_id"] != combined_data['requestor_id']:
             raise ValueError("Requestor ID does not match the original requestor ID.")
         if original_request['status'] != "pending":
             raise ValueError("Request is not pending, cannot be deleted.")
         if isExpired(original_request["request_expiry"]):
             raise ValueError("Request is expired, cannot be deleted.")
         
-        result = approval_request_repository.delete_approval_request(data)
+        result = approval_request_repository.delete_approval_request(combined_data)
         response = {
-            "logInfo" : f"ID {data.requestor_id} deleted Request ID {data.uid}",
+            "logInfo" : f"ID {combined_data['requestor_id']} deleted Request ID {combined_data['uid']}",
             "result" : result
         }
         return response
@@ -957,6 +983,8 @@ def delete_approval_request(
 @router.post("/response")
 def approve_or_reject_approval_request(
     data: ApprovalResponse,
+    company_id: str = Header(..., description="Company ID"),
+    requestor_id: str =  Header(..., description="Requestor ID"),
 ):
     """
     ### Description:
@@ -999,27 +1027,34 @@ def approve_or_reject_approval_request(
     """
     try: 
         #TODO Might be throwing same error for 404 and 403
-        original_request = approval_request_repository.get_approval_request_by_uid(data.company_id, data.uid)
-        if original_request["requestor_id"] == data.approver_id:
+        combined_data = {
+            **data.model_dump(),
+            "approver_id": requestor_id,
+            "company_id": company_id
+        }
+        print(combined_data)
+
+        original_request = approval_request_repository.get_approval_request_by_uid(combined_data["company_id"], combined_data["uid"])
+        if original_request["requestor_id"] == combined_data["approver_id"]:
             raise ValueError("Requestor cannot be the approver.")
         if original_request['status'] != "pending":
             raise ValueError("Request is not pending, cannot be updated.")
         if isExpired(original_request["request_expiry"]):
             raise ValueError("Request is expired, cannot be updated.")
         
-        if data.status == "approved":
+        if combined_data["status"] == "approved":
             action = "approved"
             # TODO: Japheth do things here
             # Make a call to points storage to update transaction
-        elif data.status == "rejected":
+        elif combined_data["status"] == "rejected":
             action = "rejected"
 
         #Only update DB if above call to other microservice is successful
-        approval_request_repository.approve_or_reject_approval_request(data)
+        approval_request_repository.approve_or_reject_approval_request(combined_data)
 
         response = {
-            "logInfo" : f"ID {data.approver_id} {action} Request ID {data.uid}",
-            "result" : f"Successfully {action} Request ID {data.uid}!"
+            "logInfo" : f"ID {combined_data['approver_id']} {action} Request ID {combined_data['uid']}",
+            "result" : f"Successfully {action} Request ID {combined_data['uid']}!"
         }
         return response
     
