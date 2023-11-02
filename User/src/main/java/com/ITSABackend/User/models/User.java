@@ -16,7 +16,10 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @DynamoDbBean
 public class User {
     @DynamoDBHashKey
-    private String id;
+    private String userID;
+
+    @DynamoDBAttribute
+    private String companyID;
 
     @DynamoDBAttribute
     private String firstName;
@@ -30,13 +33,31 @@ public class User {
     @DynamoDBAttribute
     private Set<String> userRole;
 
-    @DynamoDBHashKey
+    @DynamoDBAttribute
+    private String companyName;
+
+    public String getCompanyName(){
+        return this.companyName;
+    }
+
+    public void setCompanyName(String companyName){
+        this.companyName = companyName;
+    }
+
+    public String getCompanyId(){
+        return this.companyID;
+    }
+
+    public void setCompanyId(String companyId){
+        this.companyID = companyId; 
+    }
+
     public String getUserId() {
-        return this.id;
+        return this.userID;
     }
 
     public void setUserId(String userId) {
-        this.id = userId;
+        this.userID = userId;
     }
 
     public String getfirstName() {

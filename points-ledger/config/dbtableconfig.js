@@ -22,61 +22,76 @@ class dbtableconfig {
 
   async initialise(tearDown = false) {
     const params = {
-        "TableName": "points_ledger",
-        "KeySchema": [
+      "TableName": "new-points-ledger",
+      "KeySchema": [
           {
-            "AttributeName": "id",
-            "KeyType": "HASH"
-          }
-        ],
-        "BillingMode": "PROVISIONED",
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "id",
-            "AttributeType": "S"
+              "AttributeName": "company_id",
+              "KeyType": "HASH"
           },
           {
-            "AttributeName": "user_id",
-            "AttributeType": "S"
+              "AttributeName": "id",
+              "KeyType": "RANGE"
           }
-        ],
-        "ProvisionedThroughput": {
+      ],
+      "BillingMode": "PROVISIONED",
+      "AttributeDefinitions": [
+          {
+              "AttributeName": "company_id",
+              "AttributeType": "S"
+          },
+          {
+              "AttributeName": "id",
+              "AttributeType": "S"
+          },
+          {
+              "AttributeName": "user_id",
+              "AttributeType": "S"
+          }
+      ],
+      "ProvisionedThroughput": {
           "ReadCapacityUnits": 1,
           "WriteCapacityUnits": 1
-        },
-        "GlobalSecondaryIndexes": [
+      },
+      "GlobalSecondaryIndexes": [
           {
-            "IndexName": "user_id",
-            "KeySchema": [
-              {
-                "AttributeName": "user_id",
-                "KeyType": "HASH"
+              "IndexName": "user_id",
+              "KeySchema": [
+                  {
+                      "AttributeName": "company_id",
+                      "KeyType": "HASH"
+                  },
+                  {
+                      "AttributeName": "user_id",
+                      "KeyType": "RANGE"
+                  }
+              ],
+              "Projection": {
+                  "ProjectionType": "ALL"
+              },
+              "ProvisionedThroughput": {
+                  "ReadCapacityUnits": 1,
+                  "WriteCapacityUnits": 1
               }
-            ],
-            "Projection": {
-              "ProjectionType": "ALL"
-            },
-            "ProvisionedThroughput": {
-              "ReadCapacityUnits": 1,
-              "WriteCapacityUnits": 1
-            }
           }
-        ]
-      };
+      ]
+  };
+  
 
     try {
         const data = await this.db.send(new ListTablesCommand({}));
-        if (data.TableNames.includes("points_ledger")) {
-            if (tearDown) {
+        console.log(data);
+        if (data.TableNames.includes("new-points-ledger")) {
+            console.log("Table exists");
+            // if (tearDown) {
               // Delete table if it exists
-              await this.db.send(new DeleteTableCommand({ TableName: "points_ledger" }));
+              await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
               await this.db.send(new CreateTableCommand(params));
               console.log("Table is created");
-            }
-          } else {
-            await this.db.send(new CreateTableCommand(params));
-            console.log("Table is created");
+            // }
+        } else {
+          await this.db.send(new CreateTableCommand(params));
+          console.log("Table is created");
         }
         } catch (err) {
         console.log("Error", err);

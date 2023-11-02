@@ -1,9 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import MenuDefault from "./MenuDefault.jsx";
 import axios from "axios";
 
+
 export default function UserTable() {
     const [users, setUsers] = useState([]);
+
+    
+
+
+
+   
+    
+
+
+
+    
+
+    
+
+
 
     useEffect(() => {
       axios.get("http://localhost:8000/api/user/User/getAllUsers", {
@@ -19,7 +35,7 @@ export default function UserTable() {
     }, []);
 
   return (
-    <div className="relative overflow-x-auto w-[75%]">
+    <div className="relative overflow-x-auto w-[85%] mb-[100px]">
       <table className="w-full text-sm text-left bg-[#F5F5F5]">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">
@@ -28,13 +44,16 @@ export default function UserTable() {
                           
                           </th>
             <th scope="col" className="px-6 py-3">
-              Full Name
+              First Name
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Last Name
             </th>
             <th scope="col" className="px-6 py-3">
               Email
             </th>
             <th scope="col" className="px-6 py-3 flex">
-              Points
+              Roles
             </th>
           </tr>
         </thead>
@@ -50,12 +69,14 @@ export default function UserTable() {
               >
                 <img src="/user.png" alt="User Avatar" />
               </th>
-              <td className="px-20 py-4">{user.fullName}</td>
+              <td className="px-20 py-4">{user.firstName}</td>
+              <td className="px-6 py-4">{user.lastName}</td>
               <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">100</td>
+              <td className="px-6 py-4">{user.roles.join(', ')}</td>
               
               <td>
-                <MenuDefault />
+              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} />
+
               </td>
             </tr>
           ))}

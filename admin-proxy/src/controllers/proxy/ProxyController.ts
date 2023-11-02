@@ -15,13 +15,15 @@ export class ProxyController{
       onProxyReq: (proxyReq, req, res) => {
         console.log("onProxyReq", req.user);
         console.log("target", target);
-        req.headers["x-auth-user"] = req.user!.id;
-        proxyReq.setHeader("x-auth-user", req.user!.id);
+        req.headers["userid"] = req.user!.id;
+        proxyReq.setHeader("userid", req.user!.id);
+        proxyReq.setHeader("companyid", req.user!.companyId || "808aa552-94cf-4a0a-b17f-6c8b3bf50c85");
       },
       onProxyRes: responseInterceptor(
         async (responseBuffer, proxyRes, req, res) => {
           const response = responseBuffer.toString("utf8");
-          const userId = req.headers["x-auth-user"] as string;
+          const userId = req.headers["userid"] as string;
+          const companyId = req.headers["companyid"] as string;
           console.log("response", response);
           if (logger === undefined) return responseBuffer; // For routes without logging
           try {
@@ -35,7 +37,8 @@ export class ProxyController{
               userId,
             );
             // Remove x-auth-user from response header
-            res.removeHeader("x-auth-user");
+            res.removeHeader("userid");
+            res.removeHeader("companyid");
             // Remove logInfo from responseDetails and send as new response Buffer
             delete responseDetails.logInfo;
             return Buffer.from(JSON.stringify(responseDetails));
