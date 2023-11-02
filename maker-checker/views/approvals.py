@@ -762,12 +762,9 @@ def create_approval_requests(
             "requestor_id": userid,
             "companyid": companyid
         }
-        print("hi")
         validate_create_request_body(combined_data)
-        print("hi")
         # TODO : Put in validation  that combined_data has request details
         approval_request_repository.create_approval_request(combined_data)
-        print("hi")
         # TODO: Japheth send email notifications here
         response = {
             "logInfo" : f"ID {combined_data['requestor_id']} created a request with ID {combined_data['uid']} for {combined_data['approval_role']} approval.",
