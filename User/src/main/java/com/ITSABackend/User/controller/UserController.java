@@ -219,13 +219,11 @@ public class UserController {
     HttpStatus status = HttpStatus.OK;
 
         try {
-            // Call your service method to get users by role and company
             List<User> users = userService.getUsersByRoleFromCompany(companyID, roleName);
             if (users.isEmpty()) {
                 throw new RuntimeException("No users found with the specified company / role");
             }
 
-            // Extract emails from user objects
             List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
 
             response.put("logInfo", "Users with role " + roleName + " retrieved successfully");
@@ -263,6 +261,26 @@ public class UserController {
         }
         return new ResponseEntity<>(response, status);
 
+    }
+
+    @GetMapping(value = "/getUserEmailsByUserIDs", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getUserEmailsByUserIDs(@PathParam("companyID") String companyID, @RequestBody List<String> userIDs) {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            List<String> emails = userService.getUserEmailsByUserIDsFromCompany(companyID, userIDs);
+
+            response.put("logInfo", "User emails retrieved successfully");
+            response.put("data", emails);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "Error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
     }
 
 
