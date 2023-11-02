@@ -9,6 +9,7 @@ import com.ITSABackend.User.service.UserService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -211,6 +212,59 @@ public class UserController {
 
         return new ResponseEntity<>(response, status);
     }
+
+    @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("companyID") String companyID, @PathParam("roleName") String roleName) {
+    Map<String, Object> response = new HashMap<>();
+    HttpStatus status = HttpStatus.OK;
+
+        try {
+            // Call your service method to get users by role and company
+            List<User> users = userService.getUsersByRoleFromCompany(companyID, roleName);
+            if (users.isEmpty()) {
+                throw new RuntimeException("No users found with the specified company / role");
+            }
+
+            // Extract emails from user objects
+            List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
+
+            response.put("logInfo", "Users with role " + roleName + " retrieved successfully");
+            response.put("data", emails);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "Error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
+
+    @GetMapping(value="/getUsersByCompany", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getUsersByCompany(@PathParam("companyID") String companyID){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+
+        try{
+            List<User> users = userService.getUsersByCompany(companyID);
+            if (users.isEmpty()) {
+                throw new RuntimeException("No users found with the specified role");
+            }
+
+            response.put("logInfo", "Users from company" + companyID + " retrieved successfully");
+            response.put("data", users);
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            response.put("logInfo", "Error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        }
+        return new ResponseEntity<>(response, status);
+
+    }
+
 
 }
 
