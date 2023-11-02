@@ -488,8 +488,8 @@ def get_expired_requests(
     
 @router.get("/get-by-id")
 def get_request_by_id(
-    companyid: str = Header(..., description="Company ID"),
-    request_id: str = None,
+    request_id: str,
+    companyid: str = Header(..., description="Company ID")
 ):
     """
     ### Description:
@@ -538,8 +538,8 @@ def get_request_by_id(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        if companyid == None or request_id == None:
-            raise ValueError("Company ID and request_id is required.")
+        if companyid == None:
+            raise ValueError("Company ID is required.")
         return approval_request_repository.get_approval_request_by_uid(companyid, request_id)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -771,7 +771,6 @@ def create_approval_requests(
             "request_id" : combined_data['uid'],
             "message": "Created!"
         }
-        print("hi")
         return response
     except (ValidationError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
