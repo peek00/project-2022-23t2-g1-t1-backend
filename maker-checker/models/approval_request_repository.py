@@ -9,18 +9,18 @@ class ApprovalRequestRepository:
         # db resource will be injected when this repository is created in the main.py
         self.__db = db
 
-    def get_all_approval_requests(self, company_id: str):
+    def get_all_approval_requests(self, companyid: str):
         # referencing the "approval_request" table
         table = self.__db.Table('approval_request')
         response = table.scan(
-            FilterExpression=Attr("company_id").eq(company_id)
+            FilterExpression=Attr("companyid").eq(companyid)
         )
         # Extract the items from the response
         items = response.get('Items', [])
 
         return items  # return data
 
-    def get_pending_approval_requests(self, company_id: str):
+    def get_pending_approval_requests(self, companyid: str):
         try:
             table = self.__db.Table('approval_request')
 
@@ -28,7 +28,7 @@ class ApprovalRequestRepository:
 
             response = table.scan(
                 FilterExpression=Attr("status").eq('pending')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
@@ -36,24 +36,24 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_approved_approval_requests(self, company_id: str):
+    def get_approved_approval_requests(self, companyid: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('approved')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
         
-    def get_approved_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+    def get_approved_approval_requests_by_requestor_id(self, companyid: str, requestor_id: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('approved')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("requestor_id").eq(requestor_id)
             )
             items = response.get('Items', [])
@@ -61,24 +61,24 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_rejected_approval_requests(self, company_id: str):
+    def get_rejected_approval_requests(self, companyid: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('rejected')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_rejected_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+    def get_rejected_approval_requests_by_requestor_id(self, companyid: str, requestor_id: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("status").eq('rejected')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("requestor_id").eq(requestor_id)
             )
             items = response.get('Items', [])
@@ -86,7 +86,7 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_expired_approval_requests(self, company_id: str):
+    def get_expired_approval_requests(self, companyid: str):
         # Check if item is not expired
         try:
             table = self.__db.Table('approval_request')
@@ -97,14 +97,14 @@ class ApprovalRequestRepository:
             response = table.scan(
                 FilterExpression=Attr("status").eq('pending')
                 & Attr("request_expiry").lt(current_time)
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
         
-    def get_expired_approval_requests_by_requestor_id(self, company_id: str, requestor_id: str):
+    def get_expired_approval_requests_by_requestor_id(self, companyid: str, requestor_id: str):
         # Check if item is not expired
         try:
             table = self.__db.Table('approval_request')
@@ -115,7 +115,7 @@ class ApprovalRequestRepository:
             response = table.scan(
                 FilterExpression=Attr("status").eq('pending')
                 & Attr("request_expiry").lt(current_time)
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("requestor_id").eq(requestor_id)
             )
             items = response.get('Items', [])
@@ -124,12 +124,12 @@ class ApprovalRequestRepository:
             raise ValueError(e.response['Error']['Message'])
 
 
-    def get_approval_request_by_uid(self, company_id: str, uid: str):
+    def get_approval_request_by_uid(self, companyid: str, uid: str):
         try:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': company_id,
+                    'companyid': companyid,
                     'uid': uid
                 }
             ).get('Item')
@@ -141,31 +141,31 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_approval_request_by_requestor_id(self, company_id: str, requestor_id: str):
+    def get_approval_request_by_requestor_id(self, companyid: str, requestor_id: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("requestor_id").eq(requestor_id)
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_approval_request_by_approver_id(self, company_id: str, approver_id: str):
+    def get_approval_request_by_approver_id(self, companyid: str, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
             response = table.scan(
                 FilterExpression=Attr("approver_id").eq(approver_id)
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
             )
             items = response.get('Items', [])
             return items
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_pending_approval_requests_by_requestor_id(self, company_id: str, approver_id: str):
+    def get_pending_approval_requests_by_requestor_id(self, companyid: str, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
 
@@ -173,7 +173,7 @@ class ApprovalRequestRepository:
             response = table.scan(
                 FilterExpression=Attr("requestor_id").eq(
                     approver_id) & Attr("status").eq('pending')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
@@ -181,13 +181,13 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_non_pending_approval_requests(self, company_id: str,):
+    def get_non_pending_approval_requests(self, companyid: str,):
         try:
             table = self.__db.Table('approval_request')
             current_time = str(datetime.now().isoformat())
             response = table.scan(
                 FilterExpression=Attr("status").ne('pending')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
@@ -195,14 +195,14 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_non_pending_approval_requests_by_requestor_id(self, company_id: str, approver_id: str):
+    def get_non_pending_approval_requests_by_requestor_id(self, companyid: str, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
             current_time = str(datetime.now().isoformat())
             response = table.scan(
                 FilterExpression=Attr("requestor_id").eq(approver_id)
                 & Attr("status").ne('pending')
-                & Attr("company_id").eq(company_id)
+                & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)
             )
             items = response.get('Items', [])
@@ -229,7 +229,7 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data["company_id"],
+                    'companyid': data["companyid"],
                     'uid': data["uid"]
                 }
             ).get('Item')
@@ -258,7 +258,7 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data["company_id"],
+                    'companyid': data["companyid"],
                     'uid': data["uid"]
                 }
             ).get('Item')
@@ -285,7 +285,7 @@ class ApprovalRequestRepository:
             table = self.__db.Table('approval_request')
             item = table.get_item(
                 Key={
-                    'company_id': data["company_id"],
+                    'companyid': data["companyid"],
                     'uid': data["uid"]
                 }
             ).get('Item')
@@ -313,7 +313,7 @@ class ApprovalRequestRepository:
             # Send out call to do whatever the request contains
             response = table.delete_item(
                 Key={
-                    'company_id': data["company_id"],
+                    'companyid': data["companyid"],
                     'uid': data["uid"]
                 }
             )
