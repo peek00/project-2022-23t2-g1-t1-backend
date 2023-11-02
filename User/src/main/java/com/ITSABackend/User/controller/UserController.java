@@ -1,11 +1,17 @@
 package com.ITSABackend.User.controller;
 
 
+import com.ITSABackend.User.models.Role;
 import com.ITSABackend.User.models.User;
+import com.ITSABackend.User.service.RoleService;
 import com.ITSABackend.User.service.UserService;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +39,42 @@ public class UserController {
     @Autowired
     UserService userService;
     
+    @Autowired 
+    RoleService roleService;
+
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
+        
         try {
-            String userId = userService.createUser(user);
-            response.put("logInfo", "User created successfully");
-            response.put("userId", userId);
+            Role[] allRoles = roleService.getRoles();
+            Set<String> userRoles = user.getRoles();
+
+
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                 .map(Role::getRoleName)
+                                 .collect(Collectors.toSet());
+            
+            boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
+
+            if (isValidRoles){
+                String userId = userService.createUser(user);
+                response.put("logInfo", "User created successfully");
+                Map<String, String> data = new HashMap<>();
+                data.put("companyID", user.getCompanyId());
+                data.put("userID", userId);
+                response.put("data", data);
+            }
+            else{
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
+            }
+           
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred while creating user");
+            response.put("logInfo", e.getMessage());
             response.put("userId", null);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -54,13 +83,13 @@ public class UserController {
     }
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
-    @Cacheable(key = "#id", value = "User")
-    public ResponseEntity<Map<String, Object>> getUser(@PathParam("id") String id) {
+    // @Cacheable(key = "#id", value = "User")
+    public ResponseEntity<Map<String, Object>> getUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
-            User userData = userService.getUserById(id);
+            User userData = userService.getUserById(companyID, userID);
             if (userData == null) {
                 throw new NullPointerException("User Doesn't Exist");
             }
@@ -96,14 +125,17 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/deleteUser/{id}")
-    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") String id) {
+    @DeleteMapping(value = "/deleteUser")
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            userService.deleteUser(id);
+            userService.deleteUser(companyID, userID);
             response.put("logInfo", "User deleted successfully");
-            response.put("data", id); 
+            Map<String, String> data = new HashMap<>();
+            data.put("companyID", companyID);
+            data.put("userID", userID);
+            response.put("data", data);
             return ResponseEntity.ok(response);
 
         } catch(Exception e) {
@@ -115,16 +147,36 @@ public class UserController {
 
 
     @PutMapping(value = "/updateUser", consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("id") String id) {
+    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
-            userService.updateUser(user, id);
-            response.put("logInfo", "User updated successfully");
+            Role[] allRoles = roleService.getRoles();
+            Set<String> userRoles = user.getRoles();
+
+
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                 .map(Role::getRoleName)
+                                 .collect(Collectors.toSet());
+            
+
+
+
+            boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
+
+            if(isValidRoles){
+                userService.updateUser(user, companyID, userID);
+                response.put("logInfo", "User updated successfully");
+            }
+            else{
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
+            }
+            
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred while updating user");
+            response.put("logInfo", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
@@ -138,8 +190,14 @@ public class UserController {
 
         try {
             // Set Default role if not specified
-            if (role == null){
-                role = "user";
+            Role[] allRoles = roleService.getRoles();
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                    .map(Role::getRoleName)
+                                    .collect(Collectors.toSet());
+            if (role == null ){
+                role = "User";
+            } else if (!validRoleNames.contains(role)){
+                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
             }
             response.put("logInfo", "log message");
             response.put("data", userService.getAllUsers(role));
@@ -155,3 +213,4 @@ public class UserController {
     }
 
 }
+
