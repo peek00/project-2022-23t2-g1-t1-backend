@@ -7,6 +7,7 @@ import UserListingPage from '../pages/UserListingPage';
 import AddUserPage from '../pages/AddUserPage';
 import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
+import AddAccountPage from '../pages/AddAccountPage';
 
 
 
@@ -36,6 +37,9 @@ function Routing() {
       <Route path ="/updatePoints" element={<PrivateRoute page={"points"} permission={"PUT"}/>}>
       <Route path ="/updatePoints" element={<UpdatePointsPage/>}/>
       </Route>
+      <Route path ="/addAccount" element={<AddAccountPage/>}  />
+
+
 
 
 
