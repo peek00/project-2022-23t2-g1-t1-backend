@@ -3,4 +3,5 @@ export default interface ICacheProvider {
   write: (key: string, value: string, ttl?: number) => Promise<boolean>;
   flush: () => Promise<boolean>;
   remove: (key: string) => Promise<boolean>;
+  initialise:() => Promise<void>;
 }

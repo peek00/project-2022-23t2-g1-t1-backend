@@ -29,11 +29,13 @@ export class PolicyService {
     return PolicyService.instance;
   }
 
-  public static async initialize(restart:boolean = true): Promise<void> {
+  public static async initialize(restart:boolean = false): Promise<void> {
     const policyService = PolicyService.getInstance();
     if (restart) {
       await PolicyService.tearDown();
     }
+    // Connect to redis
+    await policyService.cacheProvider.initialise();
 
     // Check if table exists
     const tables = await policyService.db.listTables();

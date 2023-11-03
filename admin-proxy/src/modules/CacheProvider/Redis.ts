@@ -23,11 +23,7 @@ export class Redis implements ICacheProvider {
         legacyMode: true,
       });
     }
-    this.client.connect().then(() => {
-      this.connected = true;
-    }).catch((err) => {
-      console.log(err);
-    });
+
   }
 
   public static getInstance(): Redis {
@@ -35,6 +31,16 @@ export class Redis implements ICacheProvider {
       Redis.instance = new Redis();
     }
     return Redis.instance;
+  }
+
+  public async initialise(): Promise<void> {
+    try {
+      await promisify(this.client.on).bind(this.client)("connect");
+      this.connected = true;
+    } catch (e) {
+      console.log(e);
+      this.connected = false;
+    }
   }
 
   public async get(key: string): Promise<string | null> {
