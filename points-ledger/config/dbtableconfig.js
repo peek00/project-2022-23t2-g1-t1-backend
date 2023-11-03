@@ -53,27 +53,45 @@ class dbtableconfig {
           "WriteCapacityUnits": 1
       },
       "GlobalSecondaryIndexes": [
-          {
-              "IndexName": "user_id",
-              "KeySchema": [
-                  {
-                      "AttributeName": "company_id",
-                      "KeyType": "HASH"
-                  },
-                  {
-                      "AttributeName": "user_id",
-                      "KeyType": "RANGE"
-                  }
-              ],
-              "Projection": {
-                  "ProjectionType": "ALL"
-              },
-              "ProvisionedThroughput": {
-                  "ReadCapacityUnits": 1,
-                  "WriteCapacityUnits": 1
-              }
-          }
-      ]
+        {
+            "IndexName": "user_id",
+            "KeySchema": [
+                {
+                    "AttributeName": "company_id",
+                    "KeyType": "HASH"
+                },
+                {
+                    "AttributeName": "user_id",
+                    "KeyType": "RANGE"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        },
+        // New Global Secondary Index
+        {
+            "IndexName": "get_all_accounts",
+            "KeySchema": [
+                {
+                    "AttributeName": "user_id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            // ProvisionedThroughput is not required if BillingMode is PAY_PER_REQUEST
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 1,
+                "WriteCapacityUnits": 1
+            }
+        }
+    ]
   };
   
 
