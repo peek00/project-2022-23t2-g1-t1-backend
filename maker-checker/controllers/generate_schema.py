@@ -32,7 +32,7 @@ def create_approval_request_table(ddb):
                 'WriteCapacityUnits': 10   # Adjust based on your expected write workload
             }
         )
-        print('Waiting for table creation...')
+        print('Waiting for request table creation...')
         table.wait_until_exists()
     #     print('Table created successfully.')
     except botocore.exceptions.ClientError as e:
@@ -40,8 +40,88 @@ def create_approval_request_table(ddb):
             print('Table already exists. Skipping table creation.')
         else:
             raise e
+        
+def create_request_template_table(ddb):
+    try:
+        partition_key='companyid'
+        sort_key='uid'
 
-def populate_db(ddb):
+        table = ddb.create_table(
+            TableName="request_template",
+            KeySchema=[
+                {
+                    'AttributeName': partition_key,
+                    'KeyType': 'HASH'  # Partition key
+                },
+                {
+                    'AttributeName': sort_key,
+                    'KeyType': 'RANGE'  # Sort key
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': partition_key,
+                    'AttributeType': 'S'  # String type for uid
+                },
+                {
+                    'AttributeName': sort_key,
+                    'AttributeType': 'S'  # String type for uid
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
+                'WriteCapacityUnits': 10   # Adjust based on your expected write workload
+            }
+        )
+        print("Waiting for request template table creation...")
+        table.wait_until_exists()
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print('Table already exists. Skipping table creation.')
+        else:
+            raise e
+        
+def create_request_permission_table(ddb):
+    try:
+        partition_key='companyid'
+        sort_key='role'
+
+        table = ddb.create_table(
+            TableName="request_permission",
+            KeySchema=[
+                {
+                    'AttributeName': partition_key,
+                    'KeyType': 'HASH'  # Partition key
+                },
+                {
+                    'AttributeName': sort_key,
+                    'KeyType': 'RANGE'  # Sort key
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': partition_key,
+                    'AttributeType': 'S'  # String type for uid
+                },
+                {
+                    'AttributeName': sort_key,
+                    'AttributeType': 'S'  # String type for uid
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
+                'WriteCapacityUnits': 10   # Adjust based on your expected write workload
+            }
+        )
+        print("Waiting for request permission table creation...")
+        table.wait_until_exists()
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceInUseException':
+            print('Table already exists. Skipping table creation.')
+        else:
+            raise e
+
+def populate_request_db(ddb):
     table = ddb.Table('approval_request')
 
     # Insert data
@@ -247,4 +327,43 @@ def populate_db(ddb):
     ]
     with table.batch_writer() as batch:
         for item in requests_packet:
+            batch.put_item(Item=item)
+
+def populate_template_db(ddb):
+    table = ddb.Table('request_template')
+
+    data = [
+        {
+            "companyid": "ascenda",
+            "uid": "cdf7f49f",
+            "type": "Points Update",
+            "details": {
+                "increment": "true",
+                "amount": "100",
+                "account_id": "123"
+                },
+            "allowed_approvers": [
+                "Owner",
+                "Engineer"
+            ]
+        }
+    ]
+    with table.batch_writer() as batch:
+        for item in data:
+            batch.put_item(Item=item)
+
+def populate_permission_db(ddb):
+    table = ddb.Table('request_permission')
+
+    data = [
+        {
+            "companyid": "ascenda",
+            "role": "Owner",
+            "allowed_request_types": [
+                "cdf7f49f",
+            ]
+        },
+    ]
+    with table.batch_writer() as batch:
+        for item in data:
             batch.put_item(Item=item)

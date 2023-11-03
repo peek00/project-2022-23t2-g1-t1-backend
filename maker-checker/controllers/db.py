@@ -2,7 +2,7 @@ import boto3
 import os
 
 from boto3.resources.base import ServiceResource
-from controllers.generate_schema import create_approval_request_table, populate_db
+import controllers.generate_schema as generate_schema
 
 def initialize_db() -> ServiceResource:
 
@@ -19,8 +19,15 @@ def initialize_db() -> ServiceResource:
                                 aws_access_key_id='example',           # Replace with your AWS access key ID
                                 aws_secret_access_key='example'
                             ) 
-        create_approval_request_table(ddb)
-        populate_db(ddb)      # Replace with your AWS secret access key
+        generate_schema.create_approval_request_table(ddb)
+        generate_schema.populate_request_db(ddb)    
+
+        generate_schema.create_request_permission_table(ddb)
+        generate_schema.populate_permission_db(ddb)
+
+        generate_schema.create_request_template_table(ddb)
+        generate_schema.populate_template_db(ddb)
+        
         return ddb
     # Connect to online
     else:

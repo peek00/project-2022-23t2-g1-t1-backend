@@ -5,7 +5,6 @@ from views import approvals
 from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db
 
-from controllers.generate_schema import create_approval_request_table, populate_db
 
 app = FastAPI()
 # CORS policy for backend to interact with the frontend
