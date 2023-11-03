@@ -1,13 +1,10 @@
 package com.ITSABackend.User.service;
 
 import java.util.ArrayList;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.ITSABackend.User.constant.AppConstant;
-import com.ITSABackend.User.models.Role;
+import com.ITSABackend.User.models.Company;
 import com.ITSABackend.User.repo.DynamoDBRepo;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
@@ -21,43 +18,45 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import jakarta.annotation.PostConstruct;
 
 @Service
-public class RoleService {
+public class CompanyService {
     @Autowired 
     DynamoDBRepo dynamoDBRepo;
     
     @PostConstruct
     public void createTable() throws Exception{
-        dynamoDBRepo.createRoleTable(true);
+        dynamoDBRepo.createCompanyTable(true);
     }
 
     public void deleteTable(String tableName) throws Exception{
         dynamoDBRepo.deleteTable(tableName);
     }
 
-    public String createRole(Role role) throws Exception{
-        Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
+    public String createCompany(Company company) throws Exception{
+        Table table = dynamoDBRepo.getTable(AppConstant.COMPANY);
 
         try{
-            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("roleName", role.getRoleName()));
-            System.out.println("Create role success\n" + outcome.getPutItemResult());
-            return role.getRoleName();
+            PutItemOutcome outcome = table.putItem(new Item()
+                                    .withPrimaryKey("companyID", company.getCompanyID())
+                                    .with("companyName", company.getCompanyName()));
+            System.out.println("Create company success\n" + outcome.getPutItemResult());
+            return company.getCompanyID();
 
         } catch(Exception e){
             System.out.println(" Only error");
             System.out.println(e.getMessage());
-            throw new IllegalStateException("Unable to create role");
+            throw new IllegalStateException("Unable to create Company");
 
         }
 
     }
 
-    public void deleteRole(String roleName){
+    public void deleteCompany(String companyID){
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
-            .withPrimaryKey(new PrimaryKey("roleName", roleName));
+            .withPrimaryKey(new PrimaryKey("companyID", companyID));
         
         try {
 
-            Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
+            Table table = dynamoDBRepo.getTable(AppConstant.COMPANY);
             System.out.println("Deleting item....");
             table.deleteItem(deleteItemSpec);
             System.out.println("Item deleted, Successful");
@@ -70,56 +69,58 @@ public class RoleService {
     }
     
 
-    public Role[] getRoles() throws Exception{
-        Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
-        ArrayList<Role> roles = new ArrayList<Role>();
+    public Company[] getCompanies() throws Exception{
+        Table table = dynamoDBRepo.getTable(AppConstant.COMPANY);
+        ArrayList<Company> companies = new ArrayList<Company>();
 
         if (table != null){
 
             try{
-                System.out.println("Reading Roles....");
+                System.out.println("Reading Company....");
                 ItemCollection<ScanOutcome> items = table.scan();
                 items.forEach(item -> {
                     System.out.println(item);
-                    Role role = new Role();
-                    role.setRoleName(item.getString("roleName"));
-                    roles.add(role);
+                    Company company = new Company();
+                    company.setCompanyID(item.getString("companyID"));
+                    company.setCompanyName(item.getString("companyName"));
+                    companies.add(company);
                 });
 
             } catch(Exception e){
-                System.err.println("Unable to read Roles");
+                System.err.println("Unable to read Companies");
                 System.err.println(e.getMessage());
             }
         }
-        return roles.toArray(new Role[roles.size()]);
+        return companies.toArray(new Company[companies.size()]);
     }
 
-    public Role getRoleByName(String roleName){
-        Role role = null;
-        Table table = dynamoDBRepo.getTable(AppConstant.ROLE);
-        System.out.println("Getting Role from the DB");
+    public Company getCompanyByID(String companyID){
+        Company company = null;
+        Table table = dynamoDBRepo.getTable(AppConstant.COMPANY);
+        System.out.println("Getting Company from the DB");
 
         if (table != null){
-            GetItemSpec spec = new GetItemSpec().withPrimaryKey("roleName", roleName);
+            GetItemSpec spec = new GetItemSpec().withPrimaryKey("companyID", companyID);
 
             try{
-                System.out.println("Reading Role....");
+                System.out.println("Reading Company....");
                 Item outcome = table.getItem(spec);
 
                 if (outcome != null){
-                    role = new Role();
-                    role.setRoleName(outcome.getString("roleName"));
+                    company = new Company();
+                    company.setCompanyID(outcome.getString("companyID"));
+                    company.setCompanyName(outcome.getString("companyName"));
                     
                 }
 
-                return role;
+                return company;
 
             } catch(Exception e){
-                System.err.println("Unable to read role" + roleName);
+                System.err.println("Unable to read user" + companyID);
                 System.err.println(e.getMessage());
             }
         }
-        return role;
+        return company;
 
     }
 
