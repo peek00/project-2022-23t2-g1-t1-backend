@@ -217,75 +217,75 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("companyID") String companyID, @PathParam("roleName") String roleName) {
-    Map<String, Object> response = new HashMap<>();
-    HttpStatus status = HttpStatus.OK;
+    // @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("companyID") String companyID, @PathParam("roleName") String roleName) {
+    // Map<String, Object> response = new HashMap<>();
+    // HttpStatus status = HttpStatus.OK;
 
-        try {
-            List<User> users = userService.getUsersByRoleFromCompany(companyID, roleName);
-            if (users.isEmpty()) {
-                throw new RuntimeException("No users found with the specified company / role");
-            }
+    //     try {
+    //         List<User> users = userService.getUsersByRoleFromCompany(companyID, roleName);
+    //         if (users.isEmpty()) {
+    //             throw new RuntimeException("No users found with the specified company / role");
+    //         }
 
-            List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
+    //         List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
 
-            response.put("logInfo", "Users with role " + roleName + " retrieved successfully");
-            response.put("data", emails);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred");
-            response.put("data", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+    //         response.put("logInfo", "Users with role " + roleName + " retrieved successfully");
+    //         response.put("data", emails);
+    //     } catch (Exception e) {
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //     }
 
-        return new ResponseEntity<>(response, status);
-    }
+    //     return new ResponseEntity<>(response, status);
+    // }
 
-    @GetMapping(value="/getUsersByCompany", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUsersByCompany(@PathParam("companyID") String companyID){
-        Map<String, Object> response = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
+    // @GetMapping(value="/getUsersByCompany", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUsersByCompany(@PathParam("companyID") String companyID){
+    //     Map<String, Object> response = new HashMap<>();
+    //     HttpStatus status = HttpStatus.OK;
 
 
-        try{
-            List<User> users = userService.getUsersByCompany(companyID);
-            if (users.isEmpty()) {
-                throw new RuntimeException("No users found with the specified role");
-            }
+    //     try{
+    //         List<User> users = userService.getUsersByCompany(companyID);
+    //         if (users.isEmpty()) {
+    //             throw new RuntimeException("No users found with the specified role");
+    //         }
 
-            response.put("logInfo", "Users from company" + companyID + " retrieved successfully");
-            response.put("data", users);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred");
-            response.put("data", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //         response.put("logInfo", "Users from company" + companyID + " retrieved successfully");
+    //         response.put("data", users);
+    //     }catch(Exception e){
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        }
-        return new ResponseEntity<>(response, status);
+    //     }
+    //     return new ResponseEntity<>(response, status);
 
-    }
+    // }
 
-    @GetMapping(value = "/getUserEmailsByUserIDs", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUserEmailsByUserIDs(@PathParam("companyID") String companyID, @RequestBody List<String> userIDs) {
-        Map<String, Object> response = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
+    // @GetMapping(value = "/getUserEmailsByUserIDs", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUserEmailsByUserIDs(@PathParam("companyID") String companyID, @RequestBody List<String> userIDs) {
+    //     Map<String, Object> response = new HashMap<>();
+    //     HttpStatus status = HttpStatus.OK;
 
-        try {
-            List<String> emails = userService.getUserEmailsByUserIDsFromCompany(companyID, userIDs);
+    //     try {
+    //         List<String> emails = userService.getUserEmailsByUserIDsFromCompany(companyID, userIDs);
 
-            response.put("logInfo", "User emails retrieved successfully");
-            response.put("data", emails);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred");
-            response.put("data", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+    //         response.put("logInfo", "User emails retrieved successfully");
+    //         response.put("data", emails);
+    //     } catch (Exception e) {
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //     }
 
-        return new ResponseEntity<>(response, status);
-    }
+    //     return new ResponseEntity<>(response, status);
+    // }
 
 
 }

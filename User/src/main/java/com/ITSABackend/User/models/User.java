@@ -33,16 +33,7 @@ public class User {
     @DynamoDBAttribute
     private Set<String> userRole;
 
-    @DynamoDBAttribute
-    private String companyName;
 
-    public String getCompanyName(){
-        return this.companyName;
-    }
-
-    public void setCompanyName(String companyName){
-        this.companyName = companyName;
-    }
 
     public Set<String> getCompanyIDs(){
         return this.companyIDs;
