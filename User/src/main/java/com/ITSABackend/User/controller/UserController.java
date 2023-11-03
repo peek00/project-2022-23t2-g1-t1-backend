@@ -68,7 +68,6 @@ public class UserController {
                 String userId = userService.createUser(user);
                 response.put("logInfo", "User created successfully");
                 Map<String, Object> data = new HashMap<>();
-                data.put("companyIDs", user.getCompanyIDs());
                 data.put("userID", userId);
                 response.put("data", data);
             }
