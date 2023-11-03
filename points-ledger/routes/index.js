@@ -41,6 +41,14 @@ router.get('/allcompanyids', async (req, res) => {
   }
 });
 
+router.get('/testing', function(req, res, next) {
+  res.status(200).json({
+    "code" : 200,
+    "logs_info":  "Accessed /testing, status: 200, points ms connection works",
+    "data": [],
+    "message": "Accessed /testing, status: 200, points ms connection works"
+  })
+})
 
 // GET request to return all accounts by a particular user and company
 // takes in a particular user_id and companyid
