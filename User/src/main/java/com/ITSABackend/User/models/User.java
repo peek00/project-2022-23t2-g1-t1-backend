@@ -19,7 +19,7 @@ public class User {
     private String userID;
 
     @DynamoDBAttribute
-    private String companyID;
+    private Set<String> companyIDs;
 
     @DynamoDBAttribute
     private String firstName;
@@ -33,23 +33,14 @@ public class User {
     @DynamoDBAttribute
     private Set<String> userRole;
 
-    @DynamoDBAttribute
-    private String companyName;
 
-    public String getCompanyName(){
-        return this.companyName;
+
+    public Set<String> getCompanyIDs(){
+        return this.companyIDs;
     }
 
-    public void setCompanyName(String companyName){
-        this.companyName = companyName;
-    }
-
-    public String getCompanyId(){
-        return this.companyID;
-    }
-
-    public void setCompanyId(String companyId){
-        this.companyID = companyId; 
+    public void setCompanyIDs(Set<String> companyIDs){
+        this.companyIDs = companyIDs; 
     }
 
     public String getUserId() {
@@ -95,6 +86,4 @@ public class User {
     public void setRole(Set<String> roles){
         this.userRole = roles;
     }
-
-    // Constructors, getPoints can be added after
 }

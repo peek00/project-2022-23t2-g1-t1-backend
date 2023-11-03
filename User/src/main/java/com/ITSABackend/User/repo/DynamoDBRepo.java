@@ -53,13 +53,13 @@ public class DynamoDBRepo {
             // Key schema for table
             ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
             
-            tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.HASH));// Partition KEY
-            tableKeySchema.add(new KeySchemaElement().withAttributeName("userID").withKeyType(KeyType.RANGE)); // Sort Key
+            // tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.HASH));// Partition KEY
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("userID").withKeyType(KeyType.HASH)); // Sort Key
             
             // Attribute definitions
             ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
             attributeDefinitions.add(new AttributeDefinition().withAttributeName("userID").withAttributeType(ScalarAttributeType.S));
-            attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
+            // attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
             attributeDefinitions.add(new AttributeDefinition().withAttributeName("email").withAttributeType(ScalarAttributeType.S));
             
             
@@ -149,6 +149,67 @@ public class DynamoDBRepo {
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Cannot create the table");
+            System.err.println(e.getMessage());
+            throw new Exception("Error has occured");
+        }
+    }
+    public void createCompanyTable(boolean restart) throws Exception {
+        // Create a new role table with secondary index
+        boolean tableExists = false;
+        try {
+            // get list of tables
+            TableCollection<ListTablesResult> table = dynamoDBConfig.getDynamoDB().listTables();
+
+            // Check if table already exists
+            for (Table t : table) {
+                if (t.getTableName().equals(AppConstant.COMPANY)) {
+                    tableExists = true;
+                    break;
+                }
+            }
+            // Delete the table if it already exists
+            if (tableExists && restart) {
+                deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY).getTableName());
+            }
+            // Attribute definitions
+            ArrayList<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
+            attributeDefinitions.add(new AttributeDefinition().withAttributeName("companyID").withAttributeType(ScalarAttributeType.S));
+            // Key schema for table
+            ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
+            tableKeySchema.add(new KeySchemaElement().withAttributeName("companyID").withKeyType(KeyType.HASH)); // Partition key
+
+            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.COMPANY)
+                .withProvisionedThroughput(
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
+
+            System.out.println("Creating table " + AppConstant.COMPANY + "...");
+            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+
+            if (!tableExists || (tableExists && restart)) {
+                
+            Table companyTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY);
+
+            // Define default items
+            List<Item> defaultItems = new ArrayList<>();
+            defaultItems.add(new Item().withPrimaryKey("companyID", "DBS").withString("companyName", "DBS"));
+            defaultItems.add(new Item().withPrimaryKey("companyID", "POSB").withString("companyName", "POSB"));
+            defaultItems.add(new Item().withPrimaryKey("companyID", "BofA").withString("companyName", "Bank Of America"));
+
+
+            // Batch write the default items to the table
+            
+            System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
+            TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
+            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+            
+            } else {
+                System.out.println("Table " + AppConstant.COMPANY + " already exists, skipping population of default values.");
             }
             
         } catch (Exception e) {
