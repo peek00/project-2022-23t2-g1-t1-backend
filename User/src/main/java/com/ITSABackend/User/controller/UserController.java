@@ -67,8 +67,8 @@ public class UserController {
             if (isValidRoles){
                 String userId = userService.createUser(user);
                 response.put("logInfo", "User created successfully");
-                Map<String, String> data = new HashMap<>();
-                data.put("companyID", user.getCompanyId());
+                Map<String, Object> data = new HashMap<>();
+                data.put("companyIDs", user.getCompanyIDs());
                 data.put("userID", userId);
                 response.put("data", data);
             }
@@ -89,12 +89,12 @@ public class UserController {
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
     // @Cacheable(key = "#id", value = "User")
-    public ResponseEntity<Map<String, Object>> getUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
+    public ResponseEntity<Map<String, Object>> getUser(@PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
-            User userData = userService.getUserById(companyID, userID);
+            User userData = userService.getUserById(userID);
             if (userData == null) {
                 throw new NullPointerException("User Doesn't Exist");
             }
@@ -135,7 +135,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            userService.deleteUser(companyID, userID);
+            userService.deleteUser(userID);
             response.put("logInfo", "User deleted successfully");
             Map<String, String> data = new HashMap<>();
             data.put("companyID", companyID);
@@ -171,7 +171,7 @@ public class UserController {
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
 
             if(isValidRoles){
-                userService.updateUser(user, companyID, userID);
+                userService.updateUser(user, userID);
                 response.put("logInfo", "User updated successfully");
             }
             else{
