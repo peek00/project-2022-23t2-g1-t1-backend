@@ -60,7 +60,6 @@ public class UserService {
             System.out.println(user.getlastName());
             System.out.println(user.getEmail());
             System.out.println(user.getRoles());
-            System.out.println(user.getCompanyIDs());
 
             
 
@@ -68,8 +67,7 @@ public class UserService {
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
-                .with("userRole", user.getRoles())
-                .with("companyIDs", user.getCompanyIDs()));
+                .with("userRole", user.getRoles()));
 
             System.out.println("Create user success\n" + outcome.getPutItemResult());
             return id;
@@ -105,7 +103,6 @@ public class UserService {
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
-                    user.setCompanyIDs(outcome.getStringSet("companyIDs"));
                     // Set String array
                     user.setRole(outcome.getStringSet("userRole"));
                 }
@@ -140,7 +137,6 @@ public class UserService {
 
     public void updateUser(User user, String userId) {
         System.out.println("Trying....");
-        System.out.println(user.getCompanyIDs());
         System.out.println(userId);
         System.out.println(user.getfirstName());
         System.out.println(user.getlastName());
@@ -151,9 +147,8 @@ public class UserService {
     
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                 .withPrimaryKey("userID", userId)
-                .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole, companyIDs = :companyIDs")
+                .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
                 .withValueMap(new ValueMap()
-                        .withStringSet(":companyIDs", user.getCompanyIDs())
                         .withString(":firstName", user.getfirstName())
                         .withString(":lastName", user.getlastName())
                         .withString(":email", user.getEmail())
@@ -199,7 +194,6 @@ public class UserService {
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
                     user.setRole(outcome.getStringSet("userRole"));
-                    user.setCompanyIDs(outcome.getStringSet("companyID"));
                 }
 
                 return user;
@@ -232,7 +226,7 @@ public class UserService {
                     user.setfirstName(item.getString("firstName"));
                     user.setlastName(item.getString("lastName"));
                     user.setRole(item.getStringSet("userRole"));
-                    user.setCompanyIDs(item.getStringSet("companyID"));
+
 
                     users.add(user);
                 });
