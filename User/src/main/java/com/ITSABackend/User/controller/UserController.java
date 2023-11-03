@@ -9,6 +9,7 @@ import com.ITSABackend.User.service.UserService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,8 +63,7 @@ public class UserController {
             if (isValidRoles){
                 String userId = userService.createUser(user);
                 response.put("logInfo", "User created successfully");
-                Map<String, String> data = new HashMap<>();
-                data.put("companyID", user.getCompanyId());
+                Map<String, Object> data = new HashMap<>();
                 data.put("userID", userId);
                 response.put("data", data);
             }
@@ -84,12 +84,12 @@ public class UserController {
 
     @GetMapping(value = "/getUser", produces = {"application/json"})
     // @Cacheable(key = "#id", value = "User")
-    public ResponseEntity<Map<String, Object>> getUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
+    public ResponseEntity<Map<String, Object>> getUser(@PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
-            User userData = userService.getUserById(companyID, userID);
+            User userData = userService.getUserById(userID);
             if (userData == null) {
                 throw new NullPointerException("User Doesn't Exist");
             }
@@ -130,7 +130,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            userService.deleteUser(companyID, userID);
+            userService.deleteUser(userID);
             response.put("logInfo", "User deleted successfully");
             Map<String, String> data = new HashMap<>();
             data.put("companyID", companyID);
@@ -166,7 +166,7 @@ public class UserController {
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
 
             if(isValidRoles){
-                userService.updateUser(user, companyID, userID);
+                userService.updateUser(user, userID);
                 response.put("logInfo", "User updated successfully");
             }
             else{
@@ -211,6 +211,77 @@ public class UserController {
 
         return new ResponseEntity<>(response, status);
     }
+
+    // @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("companyID") String companyID, @PathParam("roleName") String roleName) {
+    // Map<String, Object> response = new HashMap<>();
+    // HttpStatus status = HttpStatus.OK;
+
+    //     try {
+    //         List<User> users = userService.getUsersByRoleFromCompany(companyID, roleName);
+    //         if (users.isEmpty()) {
+    //             throw new RuntimeException("No users found with the specified company / role");
+    //         }
+
+    //         List<String> emails = users.stream().map(User::getEmail).collect(Collectors.toList());
+
+    //         response.put("logInfo", "Users with role " + roleName + " retrieved successfully");
+    //         response.put("data", emails);
+    //     } catch (Exception e) {
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //     }
+
+    //     return new ResponseEntity<>(response, status);
+    // }
+
+    // @GetMapping(value="/getUsersByCompany", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUsersByCompany(@PathParam("companyID") String companyID){
+    //     Map<String, Object> response = new HashMap<>();
+    //     HttpStatus status = HttpStatus.OK;
+
+
+    //     try{
+    //         List<User> users = userService.getUsersByCompany(companyID);
+    //         if (users.isEmpty()) {
+    //             throw new RuntimeException("No users found with the specified role");
+    //         }
+
+    //         response.put("logInfo", "Users from company" + companyID + " retrieved successfully");
+    //         response.put("data", users);
+    //     }catch(Exception e){
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    //     }
+    //     return new ResponseEntity<>(response, status);
+
+    // }
+
+    // @GetMapping(value = "/getUserEmailsByUserIDs", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUserEmailsByUserIDs(@PathParam("companyID") String companyID, @RequestBody List<String> userIDs) {
+    //     Map<String, Object> response = new HashMap<>();
+    //     HttpStatus status = HttpStatus.OK;
+
+    //     try {
+    //         List<String> emails = userService.getUserEmailsByUserIDsFromCompany(companyID, userIDs);
+
+    //         response.put("logInfo", "User emails retrieved successfully");
+    //         response.put("data", emails);
+    //     } catch (Exception e) {
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //     }
+
+    //     return new ResponseEntity<>(response, status);
+    // }
+
 
 }
 
