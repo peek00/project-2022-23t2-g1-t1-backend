@@ -34,13 +34,13 @@ export class Redis implements ICacheProvider {
   }
 
   public async initialise(): Promise<void> {
-    try {
-      await promisify(this.client.on).bind(this.client)("connect");
+    await this.client.connect().then(() => {
+      console.log("Connected to Redis");
       this.connected = true;
-    } catch (e) {
+    }).catch((e) => {
       console.log(e);
       this.connected = false;
-    }
+    });
   }
 
   public async get(key: string): Promise<string | null> {
