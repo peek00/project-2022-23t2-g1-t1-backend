@@ -61,7 +61,7 @@ public class UserService {
             System.out.println(user.getEmail());
             System.out.println(user.getRoles());
             System.out.println(user.getCompanyIDs());
-            System.out.println(user.getCompanyName());
+
             
 
             PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("userID", id)
@@ -69,8 +69,7 @@ public class UserService {
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
                 .with("userRole", user.getRoles())
-                .with("companyIDs", user.getCompanyIDs())
-                .with("companyName", user.getCompanyName()));
+                .with("companyIDs", user.getCompanyIDs()));
 
             System.out.println("Create user success\n" + outcome.getPutItemResult());
             return id;
@@ -109,7 +108,6 @@ public class UserService {
                     user.setCompanyIDs(outcome.getStringSet("companyIDs"));
                     // Set String array
                     user.setRole(outcome.getStringSet("userRole"));
-                    user.setCompanyName(outcome.getString("companyName"));
                 }
     
                 return user;
@@ -202,7 +200,6 @@ public class UserService {
                     user.setlastName(outcome.getString("lastName"));
                     user.setRole(outcome.getStringSet("userRole"));
                     user.setCompanyIDs(outcome.getStringSet("companyID"));
-                    user.setCompanyName(outcome.getString("companyName"));
                 }
 
                 return user;
@@ -236,7 +233,7 @@ public class UserService {
                     user.setlastName(item.getString("lastName"));
                     user.setRole(item.getStringSet("userRole"));
                     user.setCompanyIDs(item.getStringSet("companyID"));
-                    user.setCompanyName(item.getString("companyName"));
+
                     users.add(user);
                 });
 
