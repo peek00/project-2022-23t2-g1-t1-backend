@@ -18,8 +18,7 @@ public class User {
     @DynamoDBHashKey
     private String userID;
 
-    @DynamoDBAttribute
-    private Set<String> companyIDs;
+
 
     @DynamoDBAttribute
     private String firstName;
@@ -33,15 +32,6 @@ public class User {
     @DynamoDBAttribute
     private Set<String> userRole;
 
-
-
-    public Set<String> getCompanyIDs(){
-        return this.companyIDs;
-    }
-
-    public void setCompanyIDs(Set<String> companyIDs){
-        this.companyIDs = companyIDs; 
-    }
 
     public String getUserId() {
         return this.userID;
