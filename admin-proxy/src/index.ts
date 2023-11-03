@@ -17,7 +17,7 @@ const host = "0.0.0.0";
 const port = Number(process.env.PORT) || 8000;
 
 // Initialize Policy Service
-PolicyService.initialize().then(() => {
+Promise.all([PolicyService.initialize()]).then(() => {
   console.log("Policy Service Initialized");
   // Adding Passport
   app.use(passport.initialize());
