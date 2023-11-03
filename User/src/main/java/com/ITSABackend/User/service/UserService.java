@@ -25,6 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -212,18 +213,23 @@ public class UserService {
         return user;
     }
 
-    public User[] getAllUsers(String role) {
+    public User[] getAllUsers(Set<String> validRoleNames) {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         ArrayList<User> users = new ArrayList<User>();
+        ItemCollection<ScanOutcome> items;
 
         if (table != null){
-
             try{
                 System.out.println("Reading user....");
-                // Create FilterExpression
-                String filterExpression = "contains(userRole, :userRole)";
-                ValueMap valueMap = new ValueMap().withString(":userRole", role);
-                ItemCollection<ScanOutcome> items = table.scan(filterExpression, "userID, companyID, firstName, lastName, email, userRole", null, valueMap);
+                // if validRoleName is only of length 1, User, include a filter expression to not include the role name
+                if (validRoleNames.size() == 1 && validRoleNames.contains("User")) {
+                    String filterExpression = "contains (userRole, :roleName)";
+                    ValueMap valueMap = new ValueMap().withString(":roleName", "User");
+                    items = table.scan(filterExpression, "userID, companyID, firstName, lastName, email, userRole", null, valueMap);
+                } else {
+                    items = table.scan();
+                }
+
                 items.forEach(item -> {
                     System.out.println(item);
                     User user = new User();

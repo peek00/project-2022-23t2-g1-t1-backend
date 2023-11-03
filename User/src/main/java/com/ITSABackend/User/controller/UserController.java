@@ -6,6 +6,7 @@ import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.service.RoleService;
 import com.ITSABackend.User.service.UserService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -185,7 +186,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/getAllUsers", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(required=false) String role) {
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam("isAdmin") boolean isAdmin) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
@@ -195,14 +196,13 @@ public class UserController {
             Set<String> validRoleNames = Arrays.stream(allRoles)
                                     .map(Role::getRoleName)
                                     .collect(Collectors.toSet());
-            if (role == null ){
-                role = "User";
-            } else if (!validRoleNames.contains(role)){
-                throw new IllegalArgumentException("Invalid role(s) detected in userRoles");
+
+            if(!isAdmin){
+                // Keep only User Role
+                validRoleNames.retainAll(Arrays.asList("User"));
             }
             response.put("logInfo", "log message");
-            response.put("data", userService.getAllUsers(role));
-
+            response.put("data", userService.getAllUsers(validRoleNames));
         } catch (Exception e) {
             System.err.println(e.getMessage());
             response.put("logInfo", "error occurred");
