@@ -2,10 +2,10 @@
 import React from 'react';
 import SideBar from '../components/SideBar';
 import TopBar from '../components/TopBar';
-import UpdateUserForm from '../components/UpdateUserForm';
-import AddUserForm from '../components/AddUserForm';
 
-export default function AddUserPage(props) {
+import AddAccountForm from '../components/AddAccountForm';
+
+export default function AddPage(props) {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
@@ -35,9 +35,9 @@ export default function AddUserPage(props) {
           
           <div className='absolute left-[20%] min-w-[65%]'>
            
-            {props.type ==='add'?<AddUserForm/>:<UpdateUserForm/>}
+            <AddAccountForm/>
             <h1 className='text-3xl font-bold mt-[20%]'>
-  {props.type === 'add' ? 'Add User' : 'Update User'}
+            Add Account
 </h1>
           </div>
         </div>
