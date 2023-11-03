@@ -64,6 +64,46 @@ async function getAllAccounts(userId, companyId) {
     }
 }
 
+async function getAllAccountsByUserId(userId) {
+    try {
+        const redisKey = `accountsByUserId:${userId}`;
+        console.log("Calling cache");
+        const cachedData = await CacheProvider.get(redisKey);
+        console.log("called cache");
+
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
+        const input = {
+            "ExpressionAttributeValues": marshall({
+                ":userVal": userId
+            }, {
+                removeUndefinedValues: true
+            }),
+            "IndexName": "get_all_accounts", // Use the new global secondary index
+            "KeyConditionExpression": "user_id = :userVal",
+            "TableName": config.aws_table_name
+        };
+
+        const data = await ddbClient.send(new QueryCommand(input));
+        const items = data.Items;
+
+        const result = items.map(item => unmarshall(item));
+
+        // Cache result in Redis for 10min
+        await CacheProvider.write(redisKey, JSON.stringify(result), 600);
+        console.log(result);
+
+        return result.length > 0 ? result : null;
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
 async function getAllIdsByCompanyId(companyId) {
     try {
         const redisKey = `idsByCompanyId:${companyId}`;
@@ -328,6 +368,31 @@ async function companyExists(companyId) {
     }
 }
 
+async function companyExists(companyId) {
+    try {
+
+
+        const params = {
+            "TableName": config.aws_table_name,
+            "KeyConditionExpression": "company_id = :companyId",
+            "ExpressionAttributeValues": marshall({
+                ":companyId": companyId
+            }),
+            "Limit": 1 // We only need to know if at least one exists
+        };
+
+        const data = await ddbClient.send(new QueryCommand(params));
+
+        const exists = data.Count > 0;
+        
+        return exists;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
 
 async function createAccount(companyId, userId, new_pointsId, inputbalance) {
     try {
@@ -412,4 +477,4 @@ async function deleteAccount(companyId, pointsId) {
 }
 
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists };
