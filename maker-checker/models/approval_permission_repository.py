@@ -44,18 +44,47 @@ class ApprovalRequestPermissionRepo:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-    def update_permission(self, companyid:str, userid:str, permission:Permission):
+    def add_permission(self, companyid:str, userid:str, role:str, action:str):
         """
-        Involves appending the new roles
+        Adds a permission, creates if not. 
+        Used when creating a new template.
         """
         try:
-
-            original_permission = self.__table.query(
-                KeyConditionExpression=Key('companyid').eq(companyid) & Key('role').eq(permission.role)
-            )
-            original_approved_actions = original_permission['Items'][0]['approved_actions']
-            new_approved_actions = original_approved_actions + permission.approved_actions
-
+            # Check if permissions for this role exists
+            permission = self.get_specific_permission(companyid, role)
+            if permission == []:
+                # Create new permission object
+                permission = Permission(
+                    role=role,
+                    approved_actions=[action]
+                )
+                self.create_permission(companyid, userid, permission)
+            else:
+                # Append action to permission
+                permission = permission[0]
+                if action not in permission['approved_actions']:
+                    permission['approved_actions'].append(action)
+                    response = self.__table.update_item(
+                        Key={
+                            'companyid': companyid,
+                            'role': role
+                        },
+                        UpdateExpression="set approved_actions=:p, updated_at=:u, updated_by=:i",
+                        ExpressionAttributeValues={
+                            ':p': permission['approved_actions'],
+                            ':u': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                            ':i': userid
+                        },
+                        ReturnValues="UPDATED_NEW"
+                    )
+        except ClientError as e:
+            print(e.response['Error']['Message'])
+    
+    def update_permission(self, companyid:str, userid:str, permission:Permission):
+        """
+        Involves replacing the roles. Should use add if you want to just add.
+        """
+        try:
             response = self.__table.update_item(
                 Key={
                     'companyid': companyid,
@@ -63,7 +92,7 @@ class ApprovalRequestPermissionRepo:
                 },
                 UpdateExpression="set approved_actions=:p, updated_at=:u, updated_by=:i",
                 ExpressionAttributeValues={
-                    ':p': new_approved_actions,
+                    ':p': permission.approved_actions,
                     ':u': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                     ':i': userid
                 },
@@ -72,3 +101,4 @@ class ApprovalRequestPermissionRepo:
             return response
         except ClientError as e:
             print(e.response['Error']['Message'])
+    

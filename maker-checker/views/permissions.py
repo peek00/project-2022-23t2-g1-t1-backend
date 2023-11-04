@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter, HTTPException, Header
 
 from controllers.db import get_db_connection, create_table_on_first_load
@@ -13,7 +13,6 @@ router = APIRouter(
 )
 
 db = get_db_connection()
-create_table_on_first_load()
 
 permission_repository = ApprovalRequestPermissionRepo(db)
 
@@ -61,6 +60,38 @@ async def create_permission(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/add")
+async def add_permission(
+    role:str,
+    action:str | List[str],
+    companyid: str = Header(None),
+    userid:str = Header(None)
+):
+    """
+    Adds one permission at a time to a role.
+    """
+    try:
+        # Get and check if it exists
+        request = permission_repository.get_specific_permission(companyid, role)
+        if request == []:
+            raise ValueError("Permission does not exists")
+        else:
+            if isinstance(action, list):
+                for a in action:
+                    permission_repository.add_permission(companyid, userid, role, a)
+            else: 
+                permission_repository.add_permission(companyid, userid, role, action)
+        response = {
+            "logInfo": f"User {userid} added permissions for {role} for action {action}.",
+            "message": "Permission updated successfully."
+        }
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
     
 @router.put("/")
 async def update_permission(
