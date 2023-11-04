@@ -11,3 +11,14 @@ class Templates(BaseModel):
     
     class Config:
         orm_mode = True
+
+class TemplateUpdate(BaseModel):
+    uid: str 
+    type: str
+    allowed_requestors: List[str]
+    allowed_approvers: List[str]
+    details: Dict
+    desc: Optional[str] = None
+    
+    class Config:
+        orm_mode = True

@@ -1,10 +1,11 @@
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, status
 
-from controllers.db import get_db_connection, create_table_on_first_load
+from controllers.db import get_db_connection
 from models.approval_template_repository import ApprovalRequestTemplateRepo
 from models.approval_permission_repository import ApprovalRequestPermissionRepo
-from models.Templates import Templates
+from models.Templates import Templates, TemplateUpdate
+from models.Errors import UnauthorizedError
 
 router = APIRouter(
     prefix="/templates",
@@ -25,22 +26,6 @@ def validate_template_object(template: Templates):
         raise ValueError("Details cannot be empty.")
     return True
 
-
-@router.get("/type")
-async def get_type_given_id(
-    uid: str,
-    companyid: str = Header(None)
-):
-    """
-    Get template type given id
-    """
-    try:
-        response = template_repository.get_type(companyid, uid)
-        return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)
-)
-
 @router.get("/")
 async def get_all_templates(
     uid: Optional[str] = None,
@@ -50,16 +35,22 @@ async def get_all_templates(
     Get all templates by companyid
     """
     try:
+        if companyid == None:
+            raise UnauthorizedError("Companyid cannot be empty.")
         if uid:
             response = template_repository.get_specific_template(
                 companyid, uid)
             return response
         response = template_repository.get_all_templates(companyid)
         return response
+    except UnauthorizedError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-@router.post("/")
+        
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_template(
     template: Templates,
     companyid: str = Header(None),
@@ -69,23 +60,19 @@ async def create_template(
     Create a new template. When a template is created, need to update permissions.
     """
     try:
-        # Validate template object
+        # Validate that approved requestor and approvers is not none
         validate_template_object(template)
-        # Get and check if it exists
-        request = template_repository.get_specific_template(companyid, template.uid)
-        if request == []:
-            # Validate that approved requestor and approvers is not none
-            template_repository.create_template(companyid, userid, template)
+
+        template_repository.create_template(companyid, userid, template)
             # Updating permissions
-            for role in template.allowed_requestors:
-                permission_repository.add_permission(companyid, userid, role, template.uid)
-        else:
-            raise ValueError("Template already exists")
+        for role in template.allowed_requestors:
+            permission_repository.add_permission(companyid, userid, role, template.uid)
+
         response = {
             "logInfo": f"User {userid} added template {template.uid} for action {template.type}.",
             "message": "Template created successfully."
         }
-        return response
+        return (response)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -93,7 +80,7 @@ async def create_template(
 
 @router.put("/")
 async def update_template(
-    template: Templates,
+    template: TemplateUpdate,
     companyid: str = Header(None),
     userid:str = Header(None)
 ):
@@ -105,7 +92,6 @@ async def update_template(
         request = template_repository.get_specific_template(companyid, template.uid)
         if request != []:
             template_repository.update_template(companyid, userid, template)
-
         else:
             raise ValueError("Template does not exist")
         response = {
@@ -114,7 +100,7 @@ async def update_template(
         }
         return response
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
@@ -129,6 +115,8 @@ async def delete_template(
     """
     try:
         # Get and check if it exists
+        if companyid == None or userid == None:
+            raise UnauthorizedError("Companyid and userid cannot be empty.")
         request = template_repository.get_specific_template(companyid, uid)
         if request != []:
             template_repository.delete_template(companyid, uid)
@@ -139,6 +127,8 @@ async def delete_template(
             "message": "Template deleted successfully."
         }
         return response
+    except UnauthorizedError as e:
+        raise HTTPException(status_code=401, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:

@@ -18,7 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-db = get_db_connection()
 create_table_on_first_load()
 
 
