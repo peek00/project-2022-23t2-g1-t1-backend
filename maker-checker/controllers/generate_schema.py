@@ -106,12 +106,12 @@ def create_request_permission_table(ddb):
                 {
                     'AttributeName': sort_key,
                     'AttributeType': 'S'  # String type for uid
-                }
+                },
             ],
             ProvisionedThroughput={
                 'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
                 'WriteCapacityUnits': 10   # Adjust based on your expected write workload
-            }
+            },
         )
         print("Waiting for request permission table creation...")
         table.wait_until_exists()
@@ -359,7 +359,7 @@ def populate_permission_db(ddb):
         {
             "companyid": "ascenda",
             "role": "Owner",
-            "allowed_request_types": [
+            "approved_actions": [
                 "cdf7f49f",
             ]
         },

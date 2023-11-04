@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
 from models.approval_request_repository import ApprovalRequestRepository
-from controllers.db import initialize_db
+from controllers.db import initialize_db, create_table_on_first_load, get_db_connection
 from botocore.exceptions import ClientError
 from datetime import datetime
 
@@ -12,6 +12,8 @@ router = APIRouter(
   tags = ["Approvals"],
 )
 
+db = get_db_connection()
+approval_request_repository = ApprovalRequestRepository(db)
 
 def isExpired(expiry_date:str):
     """
@@ -19,9 +21,6 @@ def isExpired(expiry_date:str):
     to determine if it is expired.
     """
     return datetime.now() > datetime.fromisoformat(expiry_date)
-
-db = initialize_db()
-approval_request_repository = ApprovalRequestRepository(db)
 
 @router.get("/")
 async def healthcheck():
