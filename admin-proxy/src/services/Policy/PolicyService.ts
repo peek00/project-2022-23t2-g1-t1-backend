@@ -34,8 +34,6 @@ export class PolicyService {
     if (restart) {
       await PolicyService.tearDown();
     }
-    // Connect to redis
-    await policyService.cacheProvider.initialise();
 
     // Check if table exists
     const tables = await policyService.db.listTables();
@@ -49,10 +47,10 @@ export class PolicyService {
     if (policies === undefined || policies.length === 0) {
       const defaultPolicy = {
         endpoint: "*",
-        GET: ["superadmin", "admin"],
-        POST: ["superadmin", "admin"],
-        PUT: ["superadmin", "admin"],
-        DELETE: ["superadmin", "admin"],
+        GET: ["Owner"],
+        POST: ["Owner"],
+        PUT: ["Owner"],
+        DELETE: ["Owner"],
       };
       await policyService.add(defaultPolicy);
       // Add auth route policy

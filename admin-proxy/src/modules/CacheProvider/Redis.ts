@@ -15,7 +15,8 @@ export class Redis implements ICacheProvider {
   private constructor() {
     if (process.env.NODE_ENV === "production") {
       this.client = createClient({
-        url: `redis://${host}:${port}`
+        url: `redis://${host}:${port}`,
+        legacyMode: true,
       });
     } else{
       this.client = createClient({
@@ -23,7 +24,13 @@ export class Redis implements ICacheProvider {
         legacyMode: true,
       });
     }
-
+    this.client.connect().then(() => {
+      console.log("Connected to Redis");
+      this.connected = true;
+    }).catch((e) => {
+      console.log(e);
+      this.connected = false;
+    });
   }
 
   public static getInstance(): Redis {
@@ -31,16 +38,6 @@ export class Redis implements ICacheProvider {
       Redis.instance = new Redis();
     }
     return Redis.instance;
-  }
-
-  public async initialise(): Promise<void> {
-    await this.client.connect().then(() => {
-      console.log("Connected to Redis");
-      this.connected = true;
-    }).catch((e) => {
-      console.log(e);
-      this.connected = false;
-    });
   }
 
   public async get(key: string): Promise<string | null> {

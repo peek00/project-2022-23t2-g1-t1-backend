@@ -17,7 +17,7 @@ const host = "0.0.0.0";
 const port = Number(process.env.PORT) || 8000;
 
 // Initialize Policy Service
-Promise.all([PolicyService.initialize()]).then(() => {
+PolicyService.initialize().then(() => {
   console.log("Policy Service Initialized");
   // Adding Passport
   app.use(passport.initialize());
@@ -29,10 +29,10 @@ Promise.all([PolicyService.initialize()]).then(() => {
     cors()
   );
 
-  app.use("/",(req, res) => {
+  // Add Proxy Middleware
+  app.use("/health",(req, res) => {
     res.send('health check');
   })
-  // Add Proxy Middleware
   app.use("/",authorize(), router);
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
