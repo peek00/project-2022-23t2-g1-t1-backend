@@ -16,6 +16,7 @@ const ddbClient = new DynamoDBClient({
 });
 
 
+
 async function getAllAccounts(userId, companyId) {
     try {
         const redisKey = `account:${companyId}:${userId}`;
@@ -93,7 +94,7 @@ async function getAllAccountsByUserId(userId) {
         const result = items.map(item => unmarshall(item));
 
         // Cache result in Redis for 10min
-        await CacheProvider.write(redisKey, JSON.stringify(result), 600);
+        await CacheProvider.write(redisKey, JSON.stringify(result), 300);
         console.log(result);
 
         return result.length > 0 ? result : null;
@@ -103,6 +104,49 @@ async function getAllAccountsByUserId(userId) {
         throw err;
     }
 }
+
+
+// returns all user_ids when given companyid
+async function getAllUserIdsByCompanyId(companyId) {
+    try {
+        const redisKey = `userIdsByCompanyId:${companyId}`;
+        console.log("Calling cache");
+        const cachedData = await CacheProvider.get(redisKey);
+        console.log("called cache");
+
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
+        const input = {
+            "ExpressionAttributeValues": marshall({
+                ":companyVal": companyId
+            }, {
+                removeUndefinedValues: true
+            }),
+            "KeyConditionExpression": "company_id = :companyVal",
+            "TableName": config.aws_table_name
+        };
+
+        const data = await ddbClient.send(new QueryCommand(input));
+        const items = data.Items;
+
+        // Extract user_ids from the items
+        const userIds = items.map(item => unmarshall(item).user_id);
+
+        // Cache result in Redis for 10min
+        await CacheProvider.write(redisKey, JSON.stringify(userIds), 300);
+        console.log(userIds);
+
+        return userIds.length > 0 ? userIds : [];
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
 
 async function getAllIdsByCompanyId(companyId) {
     try {
@@ -368,6 +412,43 @@ async function companyExists(companyId) {
     }
 }
 
+async function getAllCompanyIds() {
+    try {
+        const redisKey = `allCompanyIds`;
+        console.log("Calling cache");
+        const cachedData = await CacheProvider.get(redisKey);
+        console.log("called cache");
+
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
+        // As there is no direct way to get all the unique 'company_id' attributes,
+        const input = {
+            "TableName": config.aws_table_name,
+            "ProjectionExpression": "company_id" // Only fetch the 'company_id' attribute
+        };
+
+        const data = await ddbClient.send(new ScanCommand(input));
+        const items = data.Items;
+
+        // Extract the unique 'company_id' values from the items
+        const allCompanyIds = [...new Set(items.map(item => unmarshall(item).company_id))];
+
+        // Cache result in Redis for 10min
+        await CacheProvider.write(redisKey, JSON.stringify(allCompanyIds), 600);
+        console.log(allCompanyIds);
+
+        return allCompanyIds.length > 0 ? allCompanyIds : [];
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+
 async function companyExists(companyId) {
     try {
 
@@ -477,4 +558,4 @@ async function deleteAccount(companyId, pointsId) {
 }
 
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists };
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds};
