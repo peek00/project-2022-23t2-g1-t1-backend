@@ -64,6 +64,47 @@ async function getAllAccounts(userId, companyId) {
     }
 }
 
+async function getAllIdsByCompanyId(companyId) {
+    try {
+        const redisKey = `idsByCompanyId:${companyId}`;
+        console.log("Calling cache");
+        const cachedData = await CacheProvider.get(redisKey);
+        console.log("called cache");
+
+        if (cachedData) {
+            console.log("Cache hit");
+            return JSON.parse(cachedData);
+        }
+
+        const input = {
+            "ExpressionAttributeValues": marshall({
+                ":companyVal": companyId
+            }, {
+                removeUndefinedValues: true
+            }),
+            "KeyConditionExpression": "company_id = :companyVal",
+            "TableName": config.aws_table_name,
+            "ProjectionExpression": "id" 
+        };
+
+        const data = await ddbClient.send(new QueryCommand(input));
+        const items = data.Items;
+
+        const ids = items.map(item => unmarshall(item).id);
+
+        // Cache result in Redis for 5min (300 seconds)
+        await CacheProvider.write(redisKey, JSON.stringify(ids), 300);
+        console.log(ids);
+
+        return ids.length > 0 ? ids : [];
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+
 async function getAllAccountsByUserId(userId) {
     try {
         const redisKey = `accountsByUserId:${userId}`;
@@ -103,6 +144,8 @@ async function getAllAccountsByUserId(userId) {
         throw err;
     }
 }
+
+// returns all points accounts by given company_id
 
 
 // returns all user_ids when given companyid
@@ -369,4 +412,4 @@ async function deleteAccount(companyId, pointsId) {
 }
 
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds};
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};

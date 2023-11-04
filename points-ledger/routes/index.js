@@ -77,6 +77,51 @@ router.get('/allaccounts', async(req,res) => {
   })
 })
 
+// GET request that returns all points account by a particular company_id
+router.get('/allidsbycompany', async(req, res) => {
+  const companyId = req.headers.companyid; 
+
+  // Check if the companyId is provided
+  if (!companyId) {
+    return res.status(400).json({
+      "code": 400,
+      "message": "CompanyId header is required."
+    });
+  }
+
+  try {
+    // Using the modified function to get all ids for the companyId
+    const results = await allquery.getAllIdsByCompanyId(companyId);
+    console.log("Results: ", results);
+
+    // Check if there are results
+    if (!results || results.length === 0) {
+      return res.status(404).json({
+        "code": 404,
+        "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 404`,
+        "message": "No accounts found for the provided company ID."
+      });
+    }
+
+    // If there are results, return them
+    res.status(200).json({
+      "code": 200,
+      "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 200`,
+      "data": results,
+      "message": "Success"
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      "code": 500,
+      "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 500`,
+      "message": error.message
+    });
+  }
+});
+
+
 // GET request that returns all points account by a particular user_id
 router.get('/allpointsaccounts', async(req,res) => {
   console.log(req.headers);
