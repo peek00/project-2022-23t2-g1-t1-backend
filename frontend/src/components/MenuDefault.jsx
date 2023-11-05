@@ -30,14 +30,15 @@ export default function MenuDefault({firstName,lastName,email}) {
       <MenuList className="">
         {role && role.user && role.user.PUT && (
           <MenuItem>
-           <Link to="/users/update" onClick={() => {
-  updateUserData(firstName,lastName,email);
-}}>View Accounts</Link>
+          View Accounts
+           
           </MenuItem>
         )}
         {role && role.points && role.points.PUT && (
           <MenuItem>
-            <Link to="/updatePoints" >Update User Detials</Link>
+          <Link to="/users/update" onClick={() => {
+  updateUserData(firstName,lastName,email);
+}}>Update User Details</Link>
           </MenuItem>
         )}
       </MenuList>
