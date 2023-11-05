@@ -16,11 +16,11 @@ def get_approval_request_repository():
     return mock.MagicMock(ApprovalRequestRepository)
 
 
-@patch("controllers.db.initialize_db", return_value=MagicMock())
-def initialize_client(mock_initialize_db):
+@patch("controllers.db.create_table_on_first_load", return_value=MagicMock())
+def initialize_client(mock_function):
     from main import app
     # Mock initialize_db and ApprovalRequestRepository
-    mock_initialize_db.return_value = MagicMock()  # Mock the database initialization
+    mock_function.return_value = MagicMock()  # Mock the database initialization
 
     client = TestClient(app)
     return client
