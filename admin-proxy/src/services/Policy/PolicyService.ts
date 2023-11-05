@@ -2,6 +2,7 @@ import IDatabaseProvider from "../../modules/DatabaseProvider/DatabaseProviderIn
 import { DynamoDB } from "../../modules/DatabaseProvider/DynamoDB";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
 import { Redis } from "../../modules/CacheProvider/Redis";
+import {initialPolicy} from "../../config/initialPolicy";
 
 interface Policy {
   endpoint: string;
@@ -45,23 +46,9 @@ export class PolicyService {
     const policies = await policyService.findAll();
     console.log(policies)
     if (policies === undefined || policies.length === 0) {
-      const defaultPolicy = {
-        endpoint: "*",
-        GET: ["superadmin", "admin"],
-        POST: ["superadmin", "admin"],
-        PUT: ["superadmin", "admin"],
-        DELETE: ["superadmin", "admin"],
-      };
-      await policyService.add(defaultPolicy);
-      // Add auth route policy
-      const authPolicy = {
-        endpoint: "/auth",
-        GET: [],
-        POST: [],
-        PUT: [],
-        DELETE: [],
-      };
-      await policyService.add(authPolicy);
+      await Promise.all(initialPolicy.map(async (policy: Policy) => {
+        await policyService.add(policy);
+      }));
     }
   }
 
