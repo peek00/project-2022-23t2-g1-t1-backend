@@ -14,11 +14,9 @@ function DropdownMenu({ selectedCompany, onSelectCompany }) {
 
   // // Getting the list of companies 
   // // Hard coded now
-  const [companyDict, setCompanyDict] = useState({
-    "company_name": "companyID",
-    "test": "testID",
-    "bryan": "do your work"
-  });
+  const [companyList, setCompanyList] = useState([
+    "test", "fakecompany2"
+  ]);
   // // Fetch here
 
   return (
@@ -29,10 +27,10 @@ function DropdownMenu({ selectedCompany, onSelectCompany }) {
       {isOpen && (
         <div className="origin-top-right right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
           <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            {Object.entries(companyDict).map(([name, id]) => (
+            {companyList.map((name) => (
               <button
-                key={id}
-                onClick={() => handleButtonClick(id)}
+                key={name}
+                onClick={() => handleButtonClick(name)}
                 className="block px-4 py-2 text-sm text-gray-700"
                 role="menuitem"
               >
