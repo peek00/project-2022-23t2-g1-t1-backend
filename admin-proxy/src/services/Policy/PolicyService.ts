@@ -2,6 +2,7 @@ import IDatabaseProvider from "../../modules/DatabaseProvider/DatabaseProviderIn
 import { DynamoDB } from "../../modules/DatabaseProvider/DynamoDB";
 import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface";
 import { Redis } from "../../modules/CacheProvider/Redis";
+import {initialPolicy} from "../../config/initialPolicy";
 
 interface Policy {
   endpoint: string;
@@ -45,23 +46,9 @@ export class PolicyService {
     const policies = await policyService.findAll();
     console.log(policies)
     if (policies === undefined || policies.length === 0) {
-      const defaultPolicy = {
-        endpoint: "*",
-        GET: ["Owner"],
-        POST: ["Owner"],
-        PUT: ["Owner"],
-        DELETE: ["Owner"],
-      };
-      await policyService.add(defaultPolicy);
-      // Add auth route policy
-      const authPolicy = {
-        endpoint: "/auth",
-        GET: [],
-        POST: [],
-        PUT: [],
-        DELETE: [],
-      };
-      await policyService.add(authPolicy);
+      await Promise.all(initialPolicy.map(async (policy: Policy) => {
+        await policyService.add(policy);
+      }));
     }
   }
 
@@ -195,7 +182,7 @@ export class PolicyService {
   public async mapRoleActions(role: string[], pageLs: string[]): Promise<any> {
     let pageMap:{[key:string]: any} = {};
     await Promise.all(pageLs.map(async ms => {
-      const api_endpoint =  `/api/${ms}`;
+      const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
       let permissions:{[key:string]:boolean} = {
         GET: false,
         POST: false,
@@ -210,7 +197,7 @@ export class PolicyService {
         // compare userRole and endpointPolicy
         console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
         // Make sure that at least one role is included in the endpoint policy
-        if (endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
+        if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
           console.log('true')
           permissions[method] = true;
         } else {

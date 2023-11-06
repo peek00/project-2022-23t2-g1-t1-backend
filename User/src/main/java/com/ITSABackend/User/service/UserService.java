@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.ScanFilter;
 import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
@@ -17,14 +18,24 @@ import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 
 @Service
@@ -46,14 +57,17 @@ public class UserService {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
 
         try{
-            // System.out.println("On try");
-            // System.out.println(user.getUserId());
-            // System.out.println(user.getfirstName());
-            // System.out.println(user.getlastName());
-
             String id = UUID.randomUUID().toString();
+            System.out.println("Hi");
+            System.out.println(id);
+            System.out.println(user.getfirstName());
+            System.out.println(user.getlastName());
+            System.out.println(user.getEmail());
+            System.out.println(user.getRoles());
 
-            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("id", id)
+            
+
+            PutItemOutcome outcome = table.putItem(new Item().withPrimaryKey("userID", id)
                 .with("firstName", user.getfirstName())
                 .with("lastName", user.getlastName())
                 .with("email", user.getEmail())
@@ -63,7 +77,8 @@ public class UserService {
             return id;
 
         } catch(Exception e){
-            System.out.println(" Only error");
+            System.out.println("Only error");
+            System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
             throw new IllegalStateException("Unable to create user");
 
@@ -71,85 +86,92 @@ public class UserService {
 
     }
 
-    public User getUserById(String id){
+    public User getUserById( String userId) {
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         System.out.println("Getting User from the DB");
-
-        if (table != null){
-            GetItemSpec spec = new GetItemSpec().withPrimaryKey("id", id);
-
-            try{
+        System.out.println(userId);
+    
+        if (table != null) {
+            GetItemSpec spec = new GetItemSpec()
+                    .withPrimaryKey("userID", userId);
+    
+            try {
                 System.out.println("Reading user....");
                 Item outcome = table.getItem(spec);
-
-                if (outcome != null){
+                System.out.println(outcome);
+    
+                if (outcome != null) {
                     user = new User();
-                    user.setUserId(outcome.getString("id"));
+                    user.setUserId(outcome.getString("userID"));
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
                     // Set String array
                     user.setRole(outcome.getStringSet("userRole"));
                 }
-
+    
                 return user;
-
-            } catch(Exception e){
-                System.err.println("Unable to read user" + id);
+    
+            } catch (Exception e) {
+                System.err.println("Unable to read user" + userId);
                 System.err.println(e.getMessage());
             }
         }
         return user;
-
     }
+    
 
-    public void deleteUser(String id){
+    public void deleteUser(String userId) {
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
-            .withPrimaryKey(new PrimaryKey("id", id));
-        
+                .withPrimaryKey("userID", userId);
+    
         try {
-
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
             System.out.println("Deleting item....");
             table.deleteItem(deleteItemSpec);
-            System.out.println("Item deleted, Successful");
-
-        } catch (Exception e){
+            System.out.println("Item deleted successfully");
+    
+        } catch (Exception e) {
             System.err.println("Unable to delete item.");
             System.err.println(e.getMessage());
         }
-        
     }
+    
 
-    public void updateUser(User user, String id){
+    public void updateUser(User user, String userId) {
         System.out.println("Trying....");
-
+        System.out.println(userId);
+        System.out.println(user.getfirstName());
+        System.out.println(user.getlastName());
+        System.out.println(user.getEmail());
+        System.out.println(user.getRoles());
+        
+        
+    
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-        .withPrimaryKey("id", id)
-        .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
-        .withValueMap(new ValueMap()
-                .withString(":firstName", user.getfirstName())
-                .withString(":lastName", user.getlastName())
-                .withString(":email", user.getEmail())
-                .withStringSet(":userRole", user.getRoles()))
-        .withReturnValues(ReturnValue.UPDATED_NEW);
-
-
-        try{
-
+                .withPrimaryKey("userID", userId)
+                .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
+                .withValueMap(new ValueMap()
+                        .withString(":firstName", user.getfirstName())
+                        .withString(":lastName", user.getlastName())
+                        .withString(":email", user.getEmail())
+                        .withStringSet(":userRole", user.getRoles()))
+                .withReturnValues(ReturnValue.UPDATED_NEW);
+        
+        System.out.println("Update item spec created");
+    
+        try {
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
             System.out.println("Updating User...");
             UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
             System.out.println("Update user successful " + outcome.getItem().toJSONPretty());
-
-        } catch (Exception e){
-
+        } catch (Exception e) {
             System.err.println("Unable to update User");
             System.err.println(e.getMessage());
-
         }
     }
+    
 
     public User getUserByEmail(String email){
         User user = null;
@@ -171,7 +193,7 @@ public class UserService {
 
                 if (outcome != null){
                     user = new User();
-                    user.setUserId(outcome.getString("id"));
+                    user.setUserId(outcome.getString("userID"));
                     user.setEmail(outcome.getString("email"));
                     user.setfirstName(outcome.getString("firstName"));
                     user.setlastName(outcome.getString("lastName"));
@@ -188,26 +210,33 @@ public class UserService {
         return user;
     }
 
-    public User[] getAllUsers(String role) {
+    public User[] getAllUsers(Set<String> validRoleNames) {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         ArrayList<User> users = new ArrayList<User>();
+        ItemCollection<ScanOutcome> items;
 
         if (table != null){
-
             try{
                 System.out.println("Reading user....");
-                // Create FilterExpression
-                String filterExpression = "contains(userRole, :userRole)";
-                ValueMap valueMap = new ValueMap().withString(":userRole", role);
-                ItemCollection<ScanOutcome> items = table.scan(filterExpression, "id, firstName, lastName, email, userRole", null, valueMap);
+                // if validRoleName is only of length 1, User, include a filter expression to not include the role name
+                if (validRoleNames.size() == 1 && validRoleNames.contains("User")) {
+                    String filterExpression = "contains (userRole, :roleName)";
+                    ValueMap valueMap = new ValueMap().withString(":roleName", "User");
+                    items = table.scan(filterExpression, "userID, companyID, firstName, lastName, email, userRole", null, valueMap);
+                } else {
+                    items = table.scan();
+                }
+
                 items.forEach(item -> {
                     System.out.println(item);
                     User user = new User();
-                    user.setUserId(item.getString("id"));
+                    user.setUserId(item.getString("userID"));
                     user.setEmail(item.getString("email"));
                     user.setfirstName(item.getString("firstName"));
                     user.setlastName(item.getString("lastName"));
                     user.setRole(item.getStringSet("userRole"));
+
+
                     users.add(user);
                 });
 
@@ -218,5 +247,79 @@ public class UserService {
         }
         return users.toArray(new User[users.size()]);
     }
+
+    public List<String> getUserEmailsFromCompany(List<String> userIds){
+        List<String> emails = new ArrayList<String>(); 
+        try{
+            
+            Iterator<String> iterator = userIds.iterator();
+
+            while (iterator.hasNext()) {
+                User user = null;
+                String str = iterator.next();
+                user = this.getUserById(str);
+                if (user != null){
+                    emails.add(user.getEmail());
+                }
+            }
+            return emails;
+        }
+        catch(Exception e){
+            System.err.println("Unable to read emails");
+            System.err.println(e.getMessage());
+        }
+        return emails;
+        
+    }
+
+    public List<String> getUserEmailsFromCompanyByRole(List<String> userIds, String roleName){
+        List<String> emails = new ArrayList<String>(); 
+        try{
+            
+            Iterator<String> iterator = userIds.iterator();
+
+            while (iterator.hasNext()) {
+                User user = null;
+                String str = iterator.next();
+                user = this.getUserById(str);
+                if (user != null && user.getRoles().contains(roleName)){
+                    emails.add(user.getEmail());
+                }
+            }
+            return emails;
+        }
+        catch(Exception e){
+            System.err.println("Unable to read emails");
+            System.err.println(e.getMessage());
+        }
+        return emails;
+        
+    }
+
+
+
+
+    // public List<User> getUsersByRoleFromCompany(String companyID, String roleName) {
+    //     List<User> users = getUsersByCompany(companyID);
+
+    //     // Filter users by roleName in userRole array
+    //     List<User> filteredUsers = users.stream()
+    //             .filter(user -> user.getRoles().contains(roleName))
+    //             .collect(Collectors.toList());
+
+    //     return filteredUsers;
+    // }
+
+    // public List<String> getUserEmailsByUserIDsFromCompany(String companyID, List<String> userIDs) {
+    //     List<User> users = getUsersByCompany(companyID);
+    
+    //     // Filter users by user IDs in the given array and extract emails
+    //     List<String> emails = users.stream()
+    //             .filter(user -> userIDs.contains(user.getUserId()))
+    //             .map(User::getEmail)
+    //             .collect(Collectors.toList());
+    
+    //     return emails;
+    // }
 }
 

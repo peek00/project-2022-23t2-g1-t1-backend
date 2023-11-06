@@ -62,6 +62,8 @@ services:
     environment:
       - AWS_REGION=local
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
+    ports:
+      - 3000:3000
   microservice1:
     build: ./testMicroservice
     networks:
