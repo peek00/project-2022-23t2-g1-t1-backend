@@ -20,6 +20,10 @@
               {
                   "name": "DYNAMODB_REGION",
                   "value": "ap-southeast-1"
+              },
+              {
+                  "name": "DYNAMODB_ENDPOINT",
+                  "value": "dynamodb.ap-southeast-1.amazonaws.com"
               }
           ],
           "environmentFiles": [],
