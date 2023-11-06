@@ -24,7 +24,7 @@ public class CompanyService {
     
     @PostConstruct
     public void createTable() throws Exception{
-        dynamoDBRepo.createCompanyTable(false);
+        dynamoDBRepo.createCompanyTable(true);
     }
 
     public void deleteTable(String tableName) throws Exception{

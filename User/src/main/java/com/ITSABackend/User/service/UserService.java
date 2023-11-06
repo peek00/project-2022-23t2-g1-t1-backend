@@ -45,7 +45,7 @@ public class UserService {
     
     @PostConstruct
     public void createTable() throws Exception{
-        dynamoDBRepo.createUserTable(false);
+        dynamoDBRepo.createUserTable(true);
     }
 
     public void deleteTable(String tableName) throws Exception{
