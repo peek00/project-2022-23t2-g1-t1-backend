@@ -23,11 +23,14 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -245,38 +248,56 @@ public class UserService {
         return users.toArray(new User[users.size()]);
     }
 
-    // public List<User> getUsersByCompany(String companyId) {
-    //     List<User> users = new ArrayList<>();
-
-    //     Table table = dynamoDBRepo.getTable(AppConstant.USER);
-    //     System.out.println("Getting Users from the DB by Company");
-
-    //     if (table != null) {
-    //         ScanFilter filter = new ScanFilter("companyID").eq(companyId);
+    public List<String> getUserEmailsFromCompany(List<String> userIds){
+        List<String> emails = new ArrayList<String>(); 
+        try{
             
-    //         try {
-    //             ItemCollection<ScanOutcome> items = table.scan(filter);
-    //             for (Item item : items) {
-    //                 User user = new User();
-    //                 user.setUserId(item.getString("userID"));
-    //                 user.setEmail(item.getString("email"));
-    //                 user.setfirstName(item.getString("firstName"));
-    //                 user.setlastName(item.getString("lastName"));
-    //                 user.setCompanyIDs(item.getStringSet("companyID"));
-    //                 user.setRole(item.getStringSet("userRole")); 
-    //                 user.setCompanyName(item.getString("companyName"));
+            Iterator<String> iterator = userIds.iterator();
 
-    //                 users.add(user);
-    //             }
-    //         } catch (Exception e) {
-    //             System.err.println("Unable to fetch users by company");
-    //             System.err.println(e.getMessage());
+            while (iterator.hasNext()) {
+                User user = null;
+                String str = iterator.next();
+                user = this.getUserById(str);
+                if (user != null){
+                    emails.add(user.getEmail());
+                }
+            }
+            return emails;
+        }
+        catch(Exception e){
+            System.err.println("Unable to read emails");
+            System.err.println(e.getMessage());
+        }
+        return emails;
+        
+    }
 
-    //         }
-    //     }
+    public List<String> getUserEmailsFromCompanyByRole(List<String> userIds, String roleName){
+        List<String> emails = new ArrayList<String>(); 
+        try{
+            
+            Iterator<String> iterator = userIds.iterator();
 
-    //     return users;
-    // }
+            while (iterator.hasNext()) {
+                User user = null;
+                String str = iterator.next();
+                user = this.getUserById(str);
+                if (user != null && user.getRoles().contains(roleName)){
+                    emails.add(user.getEmail());
+                }
+            }
+            return emails;
+        }
+        catch(Exception e){
+            System.err.println("Unable to read emails");
+            System.err.println(e.getMessage());
+        }
+        return emails;
+        
+    }
+
+
+
 
     // public List<User> getUsersByRoleFromCompany(String companyID, String roleName) {
     //     List<User> users = getUsersByCompany(companyID);
