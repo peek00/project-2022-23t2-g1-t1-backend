@@ -19,7 +19,7 @@ const createDynamoDBClient = () => {
       region: process.env.AWS_REGION,
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS || "test",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
       },
     });
   } else {
@@ -28,7 +28,7 @@ const createDynamoDBClient = () => {
       endpoint: process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS || "test",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test",
       },
     });
   }
