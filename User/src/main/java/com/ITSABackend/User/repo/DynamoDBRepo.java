@@ -47,6 +47,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.USER + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
             }
 
@@ -82,12 +83,11 @@ public class DynamoDBRepo {
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the User table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
     }
-
     public void createRoleTable(boolean restart) throws Exception {
         // Create a new role table with secondary index
         boolean tableExists = false;
@@ -104,6 +104,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.ROLE + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE).getTableName());
             }
             // Attribute definitions
@@ -153,7 +154,7 @@ public class DynamoDBRepo {
             }
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the Role table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
@@ -174,6 +175,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.COMPANY + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY).getTableName());
             }
             // Attribute definitions
@@ -201,7 +203,6 @@ public class DynamoDBRepo {
             defaultItems.add(new Item().withPrimaryKey("companyID", "POSB").withString("companyName", "POSB"));
             defaultItems.add(new Item().withPrimaryKey("companyID", "BofA").withString("companyName", "Bank Of America"));
 
-
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
@@ -214,7 +215,7 @@ public class DynamoDBRepo {
             }
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the Company table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
