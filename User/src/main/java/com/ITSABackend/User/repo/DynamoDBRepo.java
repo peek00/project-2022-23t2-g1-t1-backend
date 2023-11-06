@@ -76,7 +76,7 @@ public class DynamoDBRepo {
 
             CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.USER)
                 .withProvisionedThroughput(
-                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 2).withWriteCapacityUnits((long) 2))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema)
                 .withGlobalSecondaryIndexes(createEmailIndex);
 
@@ -150,11 +150,21 @@ public class DynamoDBRepo {
                 // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
                 // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
 
-                // Iterate through the items to write to the table
-                for (Item item : defaultItems) {
-                    PutItemOutcome outcome = roleTable.putItem(item);
-                    System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
-                }
+                // Do while loop to try to write the default items to the table 1 by 1
+                int i = 0;
+                do {
+                    try {
+                        PutItemOutcome outcome = roleTable.putItem(defaultItems.get(i));
+                        System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+                        i++;
+                    } catch (Exception e) {
+                        System.err.println("Unable to add item: " + defaultItems.get(i));
+                        System.err.println(e.getMessage());
+                        System.out.println("Retrying...");
+                        // Sleep for 1 second
+                        Thread.sleep(1000);
+                    }
+                } while (i < defaultItems.size());
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
@@ -194,7 +204,7 @@ public class DynamoDBRepo {
 
             CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.COMPANY)
                 .withProvisionedThroughput(
-                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 2).withWriteCapacityUnits((long) 2))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
 
             System.out.println("Creating table " + AppConstant.COMPANY + "...");
@@ -213,15 +223,31 @@ public class DynamoDBRepo {
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
-            // TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
+            TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
             // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
             // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
 
             // Iterate through the items to write to the table
-            for (Item item : defaultItems) {
-                PutItemOutcome outcome = companyTable.putItem(item);
-                System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
-            }
+            // for (Item item : defaultItems) {
+            //     PutItemOutcome outcome = companyTable.putItem(item);
+            //     System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+            // }
+
+            // Iterate through the items to write to the table 
+            int i = 0;
+            do {
+                try {
+                    PutItemOutcome outcome = companyTable.putItem(defaultItems.get(i));
+                    System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+                    i++;
+                } catch (Exception e) {
+                    System.err.println("Unable to add item: " + defaultItems.get(i));
+                    System.err.println(e.getMessage());
+                    System.out.println("Retrying...");
+                    // Sleep for 1 second
+                    Thread.sleep(1000);
+                }
+            } while (i < defaultItems.size());
             
             } else {
                 System.out.println("Table " + AppConstant.COMPANY + " already exists, skipping population of default values.");
