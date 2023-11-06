@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 import { useUserContext } from "../context/userContext";
 
-export default function MenuDefault({firstName,lastName,email}) {
+export default function MenuDefault({firstName,lastName,email,id}) {
   const [role, setRole] = useState(null);
   const { userData, updateUserData } = useUserContext();
 
@@ -37,7 +37,7 @@ export default function MenuDefault({firstName,lastName,email}) {
         {role && role.points && role.points.PUT && (
           <MenuItem>
           <Link to="/users/update" onClick={() => {
-  updateUserData(firstName,lastName,email);
+  updateUserData(firstName,lastName,email,id);
 }}>Update User Details</Link>
           </MenuItem>
         )}

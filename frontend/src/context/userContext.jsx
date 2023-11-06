@@ -9,15 +9,17 @@ export const UserContextProvider = ({ children }) => {
     firstName: '',
     lastName: '',
     email: '',
+    id: '',
   
   });
 
-  const updateUserData = (firstName,lastName,email) => {
+  const updateUserData = (firstName,lastName,email,id) => {
     setUserData(
         {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        id: id,
       }
     );
   };
