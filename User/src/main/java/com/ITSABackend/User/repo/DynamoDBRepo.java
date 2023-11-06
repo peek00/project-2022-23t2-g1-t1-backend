@@ -210,7 +210,7 @@ public class DynamoDBRepo {
             System.out.println("Creating table " + AppConstant.COMPANY + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
-            if (tableExists && restart) {
+            if (!tableExists || restart) {
                 
             Table companyTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY);
 
@@ -223,7 +223,7 @@ public class DynamoDBRepo {
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
+            // TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
             // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
             // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
 
