@@ -130,7 +130,7 @@ public class DynamoDBRepo {
             System.out.println("Creating table " + AppConstant.ROLE + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
-            if (tableExists && restart) {
+            if (!tableExists || restart) {
 
                 Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
 
@@ -174,7 +174,7 @@ public class DynamoDBRepo {
                 }
             }
             // Delete the table if it already exists
-            if (tableExists && restart) {
+            if (!tableExists || restart) {
                 System.out.println("Table " + AppConstant.COMPANY + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY).getTableName());
             }
