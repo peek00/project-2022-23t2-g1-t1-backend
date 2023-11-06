@@ -27,7 +27,7 @@ export class LogService {
       AttributeDefinitions: [
         { AttributeName: "logGroup", AttributeType: "S" },
         { AttributeName: "timestamp", AttributeType: "S" },
-        { AttributeName: "ttl", AttributeType: "N" },
+        // { AttributeName: "ttl", AttributeType: "N" },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
@@ -35,6 +35,7 @@ export class LogService {
       },
       TimeToLiveSpecification: {
         AttributeName: "ttl",
+        AttributeType: "N",
         Enabled: true,
       },
     };
