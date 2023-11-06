@@ -191,7 +191,7 @@ public class DynamoDBRepo {
                 }
             }
             // Delete the table if it already exists
-            if (!tableExists || restart) {
+            if (tableExists && restart) {
                 System.out.println("Table " + AppConstant.COMPANY + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY).getTableName());
             }
