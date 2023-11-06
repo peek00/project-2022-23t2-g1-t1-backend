@@ -52,7 +52,7 @@
             }
         }
     ],
-    "family": "maker-checker",
+    "family": "user",
     "taskRoleArn": "arn:aws:iam::717942231127:role/ECSTaskRole",
     "executionRoleArn": "arn:aws:iam::717942231127:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
