@@ -56,7 +56,7 @@ jobs:
       repository: 'admin-proxy'
       ecs_service: 'admin-proxy-service'
       ecs_cluster: 'admin-proxy-cluster'
-      ecs_task_definition: '/.infra/ecs/adminProxyTaskDefinition.json'
+      ecs_task_definition: './.infra/ecs/adminProxyTaskDefinition.json'
       container_name: 'admin-proxy'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test' }}
 
@@ -70,7 +70,7 @@ jobs:
       repository: 'logging'
       ecs_service: 'logging-service'
       ecs_cluster: 'logging-service-cluster'
-      ecs_task_definition: '/.infra/ecs/loggingServiceTaskDefinition.json'
+      ecs_task_definition: './.infra/ecs/loggingServiceTaskDefinition.json'
       container_name: 'logging'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
   
@@ -84,7 +84,7 @@ jobs:
       repository: 'maker-checker'
       ecs_service: 'maker-checker-service'
       ecs_cluster: 'maker-checker-cluster'
-      ecs_task_definition: '/.infra/ecs/makerCheckerTaskDefinition.json'
+      ecs_task_definition: './.infra/ecs/makerCheckerTaskDefinition.json'
       container_name: 'maker-checker'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
   
@@ -98,7 +98,7 @@ jobs:
       repository: 'points'
       ecs_service: 'points-service'
       ecs_cluster: 'points-cluster'
-      ecs_task_definition: '/.infra/ecs/pointsLedgerTaskDefinition.json'
+      ecs_task_definition: './.infra/ecs/pointsLedgerTaskDefinition.json'
       container_name: 'points'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
 
@@ -112,6 +112,6 @@ jobs:
       repository: 'user'
       ecs_service: 'user-service'
       ecs_cluster: 'user-cluster'
-      ecs_task_definition: '/.infra/ecs/userTaskDefinition.json'
+      ecs_task_definition: './.infra/ecs/userTaskDefinition.json'
       container_name: 'user'
       execution_role_arn: ${{ github.secrets.ECS_EXECUTION_ROLE_ARN || 'test'}}
