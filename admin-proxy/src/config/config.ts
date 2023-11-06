@@ -5,7 +5,7 @@ export const config = {
   GoogleOauth2Config: {
     clientID: process.env.GOOGLE_CLIENT_ID || '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    callbackURL: "/auth/google/callback",
+    callbackURL: `${process.env.DNS || ''}/auth/google/callback`,
     passReqToCallback: true as true,
   },
   RententionPolicy: {
