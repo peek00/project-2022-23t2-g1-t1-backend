@@ -25,19 +25,20 @@ export default function MenuDefault({firstName,lastName,email}) {
   return (
     <Menu>
       <MenuHandler>
-        <Button className="bg-[#1C2434]">Edit User</Button>
+        <Button className="bg-[#1C2434]">View User Details</Button>
       </MenuHandler>
       <MenuList className="">
         {role && role.user && role.user.PUT && (
           <MenuItem>
-           <Link to="/users/update" onClick={() => {
-  updateUserData(firstName,lastName,email);
-}}>Edit User Details</Link>
+          View Accounts
+           
           </MenuItem>
         )}
         {role && role.points && role.points.PUT && (
           <MenuItem>
-            <Link to="/updatePoints" >Update User Points</Link>
+          <Link to="/users/update" onClick={() => {
+  updateUserData(firstName,lastName,email);
+}}>Update User Details</Link>
           </MenuItem>
         )}
       </MenuList>

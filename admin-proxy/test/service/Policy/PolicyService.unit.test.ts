@@ -20,18 +20,18 @@ const mockRedis = {
 
 const mockPolicy = {
   endpoint: "/test",
-  GET: ["superadmin", "admin"],
-  POST: ["superadmin", "admin"],
-  PUT: ["superadmin", "admin"],
-  DELETE: ["superadmin", "admin"],
+  GET: ["Owner", "Product Manager"],
+  POST: ["Owner", "Product Manager"],
+  PUT: ["Owner", "Product Manager"],
+  DELETE: ["Owner", "Product Manager"],
 };
 
 const defaultPolicy = {
   endpoint: "*",
-  GET: ["superadmin", "admin"],
-  POST: ["superadmin", "admin"],
-  PUT: ["superadmin", "admin"],
-  DELETE: ["superadmin", "admin"],
+  GET: ["Owner"],
+  POST: ["Owner"],
+  PUT: ["Owner"],
+  DELETE: ["Owner"],
 };
 
 describe("PolicyService", () => {
@@ -127,10 +127,10 @@ describe("PolicyService", () => {
       expect(mockDynamoDB.findAll).toHaveBeenCalled();
       expect(mockDynamoDB.add).toHaveBeenCalledWith("policy", {
         endpoint: "*",
-        GET: ["superadmin", "admin"],
-        POST: ["superadmin", "admin"],
-        PUT: ["superadmin", "admin"],
-        DELETE: ["superadmin", "admin"],
+        GET: ["Owner"],
+        POST: ["Owner"],
+        PUT: ["Owner"],
+        DELETE: ["Owner"],
       });
       expect(mockDynamoDB.add).toHaveBeenCalledWith("policy", {
         endpoint: "/auth",
