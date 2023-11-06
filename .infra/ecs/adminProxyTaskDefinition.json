@@ -1,0 +1,191 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:717942231127:task-definition/admin-proxy:20",
+    "containerDefinitions": [
+        {
+            "name": "admin-proxy",
+            "image": "717942231127.dkr.ecr.ap-southeast-1.amazonaws.com/admin-proxy:latest",
+            "cpu": 512,
+            "memory": 2048,
+            "memoryReservation": 1024,
+            "portMappings": [
+                {
+                    "name": "admin-proxy-8000-tcp",
+                    "containerPort": 8000,
+                    "hostPort": 8000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "REDIS_HOST",
+                    "value": "loyalty-redis.leeatg.ng.0001.apse1.cache.amazonaws.com"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "value": "6379"
+                },
+                {
+                    "name": "MAKER_CHECKER_MS",
+                    "value": "logging.logging"
+                },
+                {
+                    "name": "POINTS_MS",
+                    "value": "logging.logging"
+                },
+                {
+                    "name": "AWS_DEFAULT_REGION",
+                    "value": "ap-southeast-1"
+                },
+                {
+                    "name": "CLIENT_AUTH_REDIRECT_URL",
+                    "value": "http://itsa-frontend.s3-website-ap-southeast-1.amazonaws.com/user"
+                },
+                {
+                    "name": "CLIENT_BASE_URL",
+                    "value": "http://itsa-frontend.s3-website-ap-southeast-1.amazonaws.com"
+                },
+                {
+                    "name": "DNS",
+                    "value": "https://itsag1t1.com"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                },
+                {
+                    "name": "USER_MS",
+                    "value": "logging.logging"
+                },
+                {
+                    "name": "LOGGING_MS",
+                    "value": "logging.logging"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_SECRET_ACCESS_KEY::"
+                },
+                {
+                    "name": "GOOGLE_CLIENT_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:GOOGLE_CLIENT_ID::"
+                },
+                {
+                    "name": "GOOGLE_CLIENT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:GOOGLE_CLIENT_SECRET::"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:JWT_SECRET::"
+                },
+                {
+                    "name": "REDIS_PASS",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:REDIS_PASS::"
+                },
+                {
+                    "name": "REDIS_USER",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:REDIS_USER::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/admin-proxy",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "admin-proxy",
+    "taskRoleArn": "arn:aws:iam::717942231127:role/ECSTaskRole",
+    "executionRoleArn": "arn:aws:iam::717942231127:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 20,
+    "volumes": [
+        {
+            "name": "LogFileSystem",
+            "efsVolumeConfiguration": {
+                "fileSystemId": "fs-0318a716695de5a2d",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED",
+                "authorizationConfig": {
+                    "accessPointId": "fsap-07540bf5378d986fa",
+                    "iam": "DISABLED"
+                }
+            }
+        }
+    ],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.efsAuth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "ecs.capability.efs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.25"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-11-06T12:06:08.253Z",
+    "registeredBy": "arn:aws:iam::717942231127:user/g1t1admin",
+    "tags": []
+}
