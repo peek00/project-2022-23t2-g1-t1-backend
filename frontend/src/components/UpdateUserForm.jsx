@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../context/userContext';
 
+
 export default function UpdateUserForm() {
 
 
@@ -12,6 +13,7 @@ export default function UpdateUserForm() {
     lastName: userData.lastName,
     email: userData.email,
     role: 'Customer',
+  
    
   });
 
@@ -38,12 +40,14 @@ export default function UpdateUserForm() {
         
        
       };
-      const userId = localStorage.getItem("id");
-      console.log(userId);
+      
+     const userId = userData.id;
       console.log(requestBody);
       const response = await axios.put(`http://localhost:8000/api/user/User/updateUser?userID=${userId}`, requestBody, {
         withCredentials: true
       });
+
+      window.location.href = "/users";
   
       // Assuming the response contains the user's role
   
