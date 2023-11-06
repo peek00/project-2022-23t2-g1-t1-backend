@@ -130,24 +130,24 @@ public class DynamoDBRepo {
             System.out.println("Creating table " + AppConstant.ROLE + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
-            if (!tableExists || (tableExists && restart)) {
+            if (tableExists && restart) {
+
+                Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
+
+                // Define default items
+                List<Item> defaultItems = new ArrayList<>();
+                defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
+
+                // Batch write the default items to the table
                 
-            Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
-
-            // Define default items
-            List<Item> defaultItems = new ArrayList<>();
-            defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
-
-            // Batch write the default items to the table
-            
-            System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
-            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+                System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
+                TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
+                BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+                System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
@@ -193,7 +193,7 @@ public class DynamoDBRepo {
             System.out.println("Creating table " + AppConstant.COMPANY + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
-            if (!tableExists || (tableExists && restart)) {
+            if (tableExists && restart) {
                 
             Table companyTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY);
 
