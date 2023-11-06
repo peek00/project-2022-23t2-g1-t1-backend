@@ -17,7 +17,7 @@ export class LogService {
     return LogService.instance;
   };
 
-  async initialise(tearDown = false) {
+  async initialise(tearDown = true) {
     const params = {
       TableName: "logs",
       KeySchema: [
@@ -27,12 +27,13 @@ export class LogService {
       AttributeDefinitions: [
         { AttributeName: "logGroup", AttributeType: "S" },
         { AttributeName: "timestamp", AttributeType: "S" },
+        { AttributeName: "ttl", AttributeType: "N" },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
         WriteCapacityUnits: 5,
       },
-      ttl: {
+      TimeToLiveSpecification: {
         AttributeName: "ttl",
         Enabled: true,
       },
