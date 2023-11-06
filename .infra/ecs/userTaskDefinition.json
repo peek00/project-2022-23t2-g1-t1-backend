@@ -23,7 +23,7 @@
                 },
                 {
                     "name": "DYNAMODB_ENDPOINT",
-                    "value": "https://dynamodb.ap-southeast-1.amazonaws.com"
+                    "value": "dynamodb.ap-southeast-1.amazonaws.com"
                 }
             ],
             "environmentFiles": [],
