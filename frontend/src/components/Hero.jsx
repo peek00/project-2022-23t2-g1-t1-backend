@@ -61,7 +61,7 @@ export default function Hero() {
 
 
          </div>
-         <div className='container  bg-[#1C2434] text-white mt-5 fixed min-w-full bottom-0'>
+         <div className='container  bg-[#1C2434] text-white mt-5  min-w-full '>
             <div className='ml-5 mb-5'>
                 <img src="/footerLogo.svg" className='w-30 h-30'/>
 

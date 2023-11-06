@@ -85,7 +85,7 @@ export default function UserTable() {
               <td className="px-6 py-4">{user.roles.join(', ')}</td>
               
               <td>
-              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} />
+              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} id={user.userId} />
 
               </td>
             </tr>
