@@ -53,8 +53,8 @@ export default function EditAccount({companyId, pointsId, points}) {
                       axios.put("http://localhost:8000/api/points/updatebalance", 
                       {
                           company_id: companyId,
-                          balance: pointsId,
-                          user_id: points
+                          balance: inputValue,
+                          user_id: pointsId
                       },
                       {
                           withCredentials: true
