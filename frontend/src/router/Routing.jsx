@@ -11,6 +11,8 @@ import AddAccountPage from '../pages/addAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
 import UserAccountPage from '../pages/UserAccountPage';
 
+import UserAccountPage from '../pages/UserAccountPage';
+
 
 
 function Routing() {

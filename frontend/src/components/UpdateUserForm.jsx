@@ -12,8 +12,8 @@ export default function UpdateUserForm() {
     firstName: userData.firstName,
     lastName: userData.lastName,
     email: userData.email,
-    role: 'Customer',
-  
+    role: 'User',
+ 
    
   });
 
@@ -53,9 +53,11 @@ export default function UpdateUserForm() {
   
     
       console.log(response);
+      console.log(requestBody)
     } catch (error) {
       // Handle errors here
-      console.error("Cannot log out of auth:", error);
+      console.log(error)
+      console.log(requestBody)
       throw error; // Optionally re-throw the error to propagate it to the caller
     }
   };
