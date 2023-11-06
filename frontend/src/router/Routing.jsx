@@ -8,7 +8,7 @@ import AddUserPage from '../pages/AddUserPage';
 import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
 import AddAccountPage from '../pages/addAccountPage';
-import MakerCheckerPage from '../pages/MakerCheckerPage';
+
 import UserAccountPage from '../pages/UserAccountPage';
 
 
