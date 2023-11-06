@@ -3,6 +3,7 @@ package com.ITSABackend.User.repo;
 
 import com.amazonaws.services.dynamodbv2.document.BatchWriteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.TableCollection;
 import com.amazonaws.services.dynamodbv2.document.TableWriteItems;
@@ -145,9 +146,15 @@ public class DynamoDBRepo {
                 // Batch write the default items to the table
                 
                 System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
-                TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
-                BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-                System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+                // TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
+                // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+                // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+
+                // Iterate through the items to write to the table
+                for (Item item : defaultItems) {
+                    PutItemOutcome outcome = roleTable.putItem(item);
+                    System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+                }
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
@@ -206,9 +213,15 @@ public class DynamoDBRepo {
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
-            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+            // TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
+            // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+            // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+
+            // Iterate through the items to write to the table
+            for (Item item : defaultItems) {
+                PutItemOutcome outcome = companyTable.putItem(item);
+                System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+            }
             
             } else {
                 System.out.println("Table " + AppConstant.COMPANY + " already exists, skipping population of default values.");
