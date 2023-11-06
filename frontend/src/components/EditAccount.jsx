@@ -33,42 +33,44 @@ export default function EditAccount({companyId, pointsId, points}) {
         <Button className="bg-[#1C2434]">Edit Points</Button>
       </MenuHandler>
       <MenuList className="">
-        {/* {role && role.user && role.user.PUT && ( */}
-            <MenuItem>
-                <input 
-                    type="number" 
-                    className="w-full border rounded p-2"
-                    placeholder={points}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onClick={handleClickInsideMenu}
-                />
-              </MenuItem>
-              <MenuItem>
-                <Button
-                    className="bg-[#1C2434]"
-                    onClick={() => {
-                        axios.put("http://localhost:8000/api/points/updatebalance", 
-                        {
-                            company_id: companyId,
-                            balance: pointsId,
-                            user_id: points
-                        },
-                        {
-                            withCredentials: true
-                        })
-                        .then((response) => {
-                            console.log(response.data);
-                        })
-                        .catch((error) => {
-                            console.error('Error fetching data:', error);
-                        });
-                    }}
-                >
-                    Submit
-                </Button>
+        {role && role.user && role.user.PUT && (
+          <MenuItem>
+              <input 
+                  type="number" 
+                  className="w-full border rounded p-2"
+                  placeholder={points}
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onClick={handleClickInsideMenu}
+              />
             </MenuItem>
-        {/* )} */}
+         )}
+         {role && role.user && role.user.PUT && (
+            <MenuItem>
+              <Button
+                  className="bg-[#1C2434]"
+                  onClick={() => {
+                      axios.put("http://localhost:8000/api/points/updatebalance", 
+                      {
+                          company_id: companyId,
+                          balance: pointsId,
+                          user_id: points
+                      },
+                      {
+                          withCredentials: true
+                      })
+                      .then((response) => {
+                          console.log(response.data);
+                      })
+                      .catch((error) => {
+                          console.error('Error fetching data:', error);
+                      });
+                  }}
+              >
+                  Submit
+              </Button>
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );
