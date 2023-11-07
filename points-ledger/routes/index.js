@@ -43,34 +43,34 @@ router.get('/allcompanyids', async (req, res) => {
 
 // GET request to return all company_ids in the system
 // does not take in any params or headers
-router.get('/allcompanyids', async (req, res) => {
-  try {
-    const results = await allquery.getAllCompanyIds(); // Call the function to get all company IDs
-    console.log("Results: ", results);
+// router.get('/allcompanyids', async (req, res) => {
+//   try {
+//     const results = await allquery.getAllCompanyIds(); // Call the function to get all company IDs
+//     console.log("Results: ", results);
 
-    if (!results || results.length === 0) {
-      return res.status(404).json({
-        "code": 404,
-        "logs_info": "Accessed /allcompanyids, status: 404",
-        "message": "No company records found."
-      });
-    }
+//     if (!results || results.length === 0) {
+//       return res.status(404).json({
+//         "code": 404,
+//         "logs_info": "Accessed /allcompanyids, status: 404",
+//         "message": "No company records found."
+//       });
+//     }
 
-    return res.status(200).json({
-      "code": 200,
-      "logs_info": "Accessed /allcompanyids, status: 200",
-      "data": results,
-      "message": "Success"
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      "code": 500,
-      "logs_info": "Accessed /allcompanyids, status: 500",
-      "message": error.message
-    });
-  }
-});
+//     return res.status(200).json({
+//       "code": 200,
+//       "logs_info": "Accessed /allcompanyids, status: 200",
+//       "data": results,
+//       "message": "Success"
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       "code": 500,
+//       "logs_info": "Accessed /allcompanyids, status: 500",
+//       "message": error.message
+//     });
+//   }
+// });
 
 router.get('/testing', function(req, res, next) {
   res.status(200).json({
@@ -87,7 +87,8 @@ router.get('/testing', function(req, res, next) {
 // takes in a particular user_id and companyid
 router.get('/allaccounts', async(req,res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const userId = req.headers.userid;
   allquery.getAllAccounts(userId,companyId)
   .then((results) => {
@@ -164,8 +165,8 @@ router.get('/allpointsaccounts', async(req,res) => {
 // takes in companyid in request headers
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
-  
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
     return res.status(400).json({
@@ -206,8 +207,8 @@ router.get('/alluseraccounts', async(req, res) => {
 
 // GET request that returns all points account by a particular company_id
 router.get('/allidsbycompany', async(req, res) => {
-  const companyId = req.headers.companyid; 
-
+  // const companyId = req.headers.companyid; 
+  const companyId = req.body.company_id;
   // Check if the companyId is provided
   if (!companyId) {
     return res.status(400).json({
@@ -293,8 +294,8 @@ router.get('/allpointsaccounts', async(req,res) => {
 // takes in companyid in request headers
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
-  
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
     return res.status(400).json({
@@ -337,7 +338,8 @@ router.get('/alluseraccounts', async(req, res) => {
 // takes in a particular points account's id and company id
 router.get('/accdetails', async (req,res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
   // const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
@@ -373,7 +375,8 @@ router.get('/accdetails', async (req,res) => {
 // takes in a particular points account's id
 router.get('/validate', async (req,res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
@@ -396,7 +399,8 @@ router.get('/validate', async (req,res) => {
 // takes in user_id and input balance 
 router.post('/createAccount', async (req,res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const userId = req.headers.userid;
   const inputbalance = req.body.balance;
   // const inputbalance = req.headers.balance;
@@ -478,7 +482,8 @@ router.post('/createAccount', async (req,res) => {
 // takes in pointsId
 router.delete('/deleteAccount', function(req,res){
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
   // const pointsId = req.headers.pointsid;
   allquery.pointsAccExist(companyId,pointsId)
@@ -524,7 +529,8 @@ router.delete('/deleteAccount', function(req,res){
 // sample input = {"mainId": "2f5687c7-af51-4d79-9a38-9eef5a3c42b8","newbalance": 5000}
 router.put('/updatebalance', async (req,res) => {
   console.log(req.headers);
-  const companyId = req.headers.companyid;
+  // const companyId = req.headers.companyid;
+  const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
   const balance = req.body.newbalance;
   // const pointsId = req.headers.pointsid;
