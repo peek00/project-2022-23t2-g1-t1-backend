@@ -20,17 +20,15 @@ permission_repository = ApprovalRequestPermissionRepo(db)
 @router.get("/")
 async def get_all_permission(
     role: Optional[str] = None,
-    companyid: str = None, description="Company ID",
 ):
     """
-    Get all permission by companyid
+    Get all permission.
     """
     try:
         if role:
-            response = permission_repository.get_specific_permission(
-                companyid, role)
+            response = permission_repository.get_specific_permission(role)
             return response
-        response = permission_repository.get_all_permission(companyid)
+        response = permission_repository.get_all_permission()
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -38,7 +36,6 @@ async def get_all_permission(
 @router.post("/")
 async def create_permission(
     permission: Permission,
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -46,9 +43,9 @@ async def create_permission(
     """
     try:
         # Get and check if it exists
-        request = permission_repository.get_specific_permission(companyid, permission.role)
+        request = permission_repository.get_specific_permission(permission.role)
         if request == []:
-            permission_repository.create_permission(companyid, userid, permission)
+            permission_repository.create_permission(userid, permission)
         else:
             raise ValueError("Permission already exists")
         response = {
@@ -65,7 +62,6 @@ async def create_permission(
 async def add_permission(
     role:str,
     action:str | List[str],
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -73,15 +69,15 @@ async def add_permission(
     """
     try:
         # Get and check if it exists
-        request = permission_repository.get_specific_permission(companyid, role)
+        request = permission_repository.get_specific_permission(role)
         if request == []:
             raise ValueError("Permission does not exists")
         else:
             if isinstance(action, list):
                 for a in action:
-                    permission_repository.add_permission(companyid, userid, role, a)
+                    permission_repository.add_permission(userid, role, a)
             else: 
-                permission_repository.add_permission(companyid, userid, role, action)
+                permission_repository.add_permission(userid, role, action)
         response = {
             "logInfo": f"User {userid} added permissions for {role} for action {action}.",
             "message": "Permission updated successfully."
@@ -96,7 +92,6 @@ async def add_permission(
 @router.put("/")
 async def update_permission(
     permission: Permission,
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -104,11 +99,11 @@ async def update_permission(
     """
     try:
           # Get and check if it exists
-        request = permission_repository.get_specific_permission(companyid, permission.role)
+        request = permission_repository.get_specific_permission(permission.role)
         if request == []:
             raise ValueError("Permission does not exists.")
         else:
-            response = permission_repository.update_permission(companyid, userid, permission)
+            response = permission_repository.update_permission(userid, permission)
         response = {
             "logInfo": f"User {userid} updated permissions for {permission.role} for actions {permission.approved_actions}.",
             "message": "Permission updated successfully."

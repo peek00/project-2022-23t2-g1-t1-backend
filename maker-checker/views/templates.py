@@ -29,19 +29,16 @@ def validate_template_object(template: Templates):
 @router.get("/")
 async def get_all_templates(
     uid: Optional[str] = None,
-    companyid: str = None, description="Company ID",
 ):
     """
-    Get all templates by companyid
+    Get all templates.
     """
     try:
-        if companyid == None:
-            raise UnauthorizedError("Companyid cannot be empty.")
+
         if uid:
-            response = template_repository.get_specific_template(
-                companyid, uid)
+            response = template_repository.get_specific_template(uid)
             return response
-        response = template_repository.get_all_templates(companyid)
+        response = template_repository.get_all_templates()
         return response
     except UnauthorizedError as e:
         raise HTTPException(status_code=401, detail=str(e))
@@ -53,7 +50,6 @@ async def get_all_templates(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_template(
     template: Templates,
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -63,10 +59,10 @@ async def create_template(
         # Validate that approved requestor and approvers is not none
         validate_template_object(template)
 
-        template_repository.create_template(companyid, userid, template)
+        template_repository.create_template(userid, template)
             # Updating permissions
         for role in template.allowed_requestors:
-            permission_repository.add_permission(companyid, userid, role, template.uid)
+            permission_repository.add_permission(userid, role, template.uid)
 
         response = {
             "logInfo": f"User {userid} added template {template.uid} for action {template.type}.",
@@ -81,7 +77,6 @@ async def create_template(
 @router.put("/")
 async def update_template(
     template: TemplateUpdate,
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -89,9 +84,9 @@ async def update_template(
     """
     try:
         # Get and check if it exists
-        request = template_repository.get_specific_template(companyid, template.uid)
+        request = template_repository.get_specific_template(template.uid)
         if request != []:
-            template_repository.update_template(companyid, userid, template)
+            template_repository.update_template(userid, template)
         else:
             raise ValueError("Template does not exist")
         response = {
@@ -107,7 +102,6 @@ async def update_template(
 @router.delete("/")
 async def delete_template(
     uid: str,
-    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -115,11 +109,11 @@ async def delete_template(
     """
     try:
         # Get and check if it exists
-        if companyid == None or userid == None:
-            raise UnauthorizedError("Companyid and userid cannot be empty.")
-        request = template_repository.get_specific_template(companyid, uid)
+        if userid == None:
+            raise UnauthorizedError("Userid cannot be empty.")
+        request = template_repository.get_specific_template(uid)
         if request != []:
-            template_repository.delete_template(companyid, uid)
+            template_repository.delete_template(uid)
         else:
             raise ValueError("Template does not exist")
         response = {

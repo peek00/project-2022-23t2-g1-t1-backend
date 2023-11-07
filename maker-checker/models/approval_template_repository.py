@@ -18,21 +18,20 @@ class ApprovalRequestTemplateRepo:
         )
         return response['Items']
     
-    def get_specific_template(self, companyid:str, uid:str):
+    def get_specific_template(self, uid:str):
         """
         Given a uid and companyid, returns the template associated.
         If not found, return an empty list.
         """
         response = self.__table.query(
-            KeyConditionExpression=Key('companyid').eq(companyid) & Key('uid').eq(uid)
+            KeyConditionExpression=Key('uid').eq(uid)
         )
         return response['Items']
     
-    def create_template(self, companyid:str, userid:str, template:Templates):
+    def create_template(self,userid:str, template:Templates):
         try:
             response = self.__table.put_item(
                 Item={
-                    'companyid': companyid,
                     'uid': template.uid,
                     'type': template.type,
                     'allowed_requestors' : template.allowed_requestors,
@@ -47,16 +46,15 @@ class ApprovalRequestTemplateRepo:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-    def update_template(self, companyid:str, userid:str, template:Templates):
+    def update_template(self, userid:str, template:Templates):
         try:
             response = self.__table.update_item(
                 Key={
-                    'companyid': companyid,
                     'uid': template.uid
                 },
                 UpdateExpression="set type=:a, allowed_requestors=:r, allowed_approvers=:p, details=:d, desc=:desc updated_at=:u, updated_by=:b",
                 ExpressionAttributeValues={
-                    ':a': template.action,
+                    ':a': template.type,
                     ':r': template.allowed_requestors,
                     ':p': template.allowed_approvers,
                     ':d': template.details,
@@ -70,11 +68,10 @@ class ApprovalRequestTemplateRepo:
         except ClientError as e:
             print(e.response['Error']['Message'])
             
-    def delete_template(self, companyid:str, uid:str):
+    def delete_template(self,uid:str):
         try:
             response = self.__table.delete_item(
                 Key={
-                    'companyid': companyid,
                     'uid': uid
                 }
             )
