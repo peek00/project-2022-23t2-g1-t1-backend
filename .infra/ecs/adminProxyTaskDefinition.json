@@ -27,11 +27,11 @@
                 },
                 {
                     "name": "MAKER_CHECKER_MS",
-                    "value": "maker-checker.maker-checker"
+                    "value": "http://maker-checker.maker-checker"
                 },
                 {
                     "name": "POINTS_MS",
-                    "value": "points.points"
+                    "value": "http://points.points"
                 },
                 {
                     "name": "AWS_DEFAULT_REGION",
@@ -55,11 +55,11 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "user.user"
+                    "value": "http://user.user"
                 },
                 {
                     "name": "LOGGING_MS",
-                    "value": "logging.logging"
+                    "value": "http://logging.logging"
                 }
             ],
             "mountPoints": [],
