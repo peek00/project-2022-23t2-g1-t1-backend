@@ -9,8 +9,6 @@ import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
 import AddAccountPage from '../pages/addAccountPage';
 
-import UserAccountPage from '../pages/UserAccountPage';
-
 
 
 
@@ -23,8 +21,7 @@ function Routing() {
       <Route path ="/users" element={<PrivateRoute page={"user"} permission ={"GET"}/>}>
       <Route index element={<UserListingPage/>}/>
       <Route path ="add" element={<PrivateRoute page={"user"} permission={"POST"}/>}>
-      <Route index element={<AddUserPage type="add" />}/>
-      </Route>
+      <Route index element={<AddUserPage type="add" />}/></Route>
       <Route path ="update" element={<PrivateRoute page ={"user"} permission={"PUT"}/>}>
       <Route index element={<AddUserPage type="update" />}/>
       </Route>
@@ -35,7 +32,7 @@ function Routing() {
       
       
       <Route path ="/logs" element={<PrivateRoute page={"logging"} permission={"GET"}/>}>
-      <Route path ="/logs" element={<LogsPage />}  />
+        <Route path ="/logs" element={<LogsPage />}  />
       </Route>
       <Route path ="/updatePoints" element={<PrivateRoute page={"points"} permission={"PUT"}/>}>
       <Route path ="/updatePoints" element={<UpdatePointsPage/>}/>
@@ -43,6 +40,7 @@ function Routing() {
       <Route path ="/addAccount" element={<AddAccountPage/>}  />
 
 
+      <Route path ="/makerchecker" element={<MakerCheckerPage/>}  />
 
       <Route path="/user/accounts" element={<UserAccountPage/>}>
 

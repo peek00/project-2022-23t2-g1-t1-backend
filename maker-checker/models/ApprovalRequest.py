@@ -13,6 +13,7 @@ class ApprovalStatus(str, Enum):
 
 class ApprovalRequest(BaseModel):
     uid: str = Field(default_factory=lambda: str(uuid4()))
+    companyid : str
     request_type: str
     request_details: Dict[str, Any]
     status: ApprovalStatus
@@ -28,6 +29,7 @@ class ApprovalUpdate(BaseModel):
     Request cannot be updated once modified. 
     """
     uid: str # Link to request to update
+    companyid : str
     status: Optional[ApprovalStatus] = None
     comments: Optional[str] = None
     request_details: Optional[Dict[str, str]] = None
@@ -39,9 +41,11 @@ class ApprovalResponse(BaseModel):
     Base model used when an approver rejects or approves a request.
     """
     uid: str
+    companyid:str
     status: ApprovalStatus
     comments: Optional[str] = None
     resolution_at: str = datetime.now().isoformat()
 
 class DeleteRequest(BaseModel):
     uid: str
+    companyid:str
