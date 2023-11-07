@@ -29,7 +29,7 @@ export default function SideBar() {
 
         <NavLink
           to="/users"
-          activeClassName="active"
+          activeclassname="active"
           className={`text-white text-sm font-thin cursor-pointer ${
             activeLink === '/users' ? 'active opacity-100 font-bold' : 'opacity-60'
           }`}
@@ -39,7 +39,6 @@ export default function SideBar() {
 
         <NavLink
           to="/users/add"
-          activeClassName="active"
           className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/users/add' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
@@ -48,14 +47,24 @@ export default function SideBar() {
         </NavLink>
 
         <NavLink
+          to="/makerchecker"
+          className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${
+            activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
+          }`}
+        >
+          Maker Checker
+        </NavLink>
+        
+        <NavLink
           to="/logs"
-          activeClassName="active"
           className={`text-white mt-20 text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
         >
           Logs
         </NavLink>
+
+    
       </div>
     </div>
   );

@@ -109,43 +109,39 @@ def populate_request_db(ddb):
     # Insert data
     requests_packet = [
         {
+            "uid": "3517402c-a306-4bdb-9da0-b478973fa42c",
             "companyid": "ascenda",
-            "uid": "cdf7f49f-d5ef-42fd-9fdf-1c27cf61b51e",
-            "comments": "No comments",
-            "request_type": "Transaction Update",
-            "request_title": None,
-            "requestor_id": "admin1",
-            "approver_id": "admin2",
-            "created_at": "2023-11-7T05:16:49.626324",
+            "comments": "Optional comment for this particular request",
+            "request_type": "Transaction",
+            "request_title": "Optional title for this particular request",
+            "requestor_id": "db0eae93-f3fe-453b-8da9-14767ffc5332",
+            "created_at": "2023-11-07T15:12:44.583490",
             "request_details": {
-                "increment": "true",
-                "amount": "100",
-                "account_id": "123"
+                "increment": "False",
+                "amount": 100,
+                "account_id": 456789
             },
-            "approval_role": "ADMINS",
-            "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-12-20T05:16:49.626338",
-            "status": "approved"
+            "approval_role": "ADMIN",
+            "request_expiry": "2023-11-12T15:12:44.583502",
+            "status": "pending"
         },
         {
 
-            "companyid": "ascenda",
             "uid": "cds7f49f-d5ef-42fd-9fdf-1c27cf61b51e",
+            "companyid": "ascenda",
             "comments": "No comments",
-            "request_type": "Transaction Update",
+            "request_type": "Transaction",
             "request_title": None,
-            "requestor_id": "admin2",
-            "approver_id": "admin1",
-            "created_at": "2023-10-15T05:16:49.626324",
+            "requestor_id": "db0eae93-f3fe-453b-8da9-14767ffc5332",
+            "created_at": "2023-11-07T15:12:44.583490",
             "request_details": {
                 "increment": "true",
                 "amount": "100",
                 "account_id": "123"
             },
             "approval_role": "ADMINS",
-            "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-12-20T05:16:49.626338",
-            "status": "rejected"
+            "request_expiry": "2023-11-12T15:12:44.583502",
+            "status": "pending"
         },
         {
             "companyid": "ascenda",
@@ -161,7 +157,7 @@ def populate_request_db(ddb):
                 "account_id": "123"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-12-20T05:16:49.626338",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "pending"
         },
         {
@@ -178,7 +174,7 @@ def populate_request_db(ddb):
                 "account_id": "13"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-20T05:16:49.626338",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "pending"
         },
         {
@@ -189,7 +185,7 @@ def populate_request_db(ddb):
             "request_title": None,
             "requestor_id": "admin1",
             "approver_id": "admin1",
-            "created_at": "2023-10-15T05:16:49.626324",
+            "created_at": "2023-11-12T15:12:44.583502",
             "request_details": {
                 "increment": "true",
                 "amount": "100",
@@ -197,7 +193,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-12-20T05:16:49.626338",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "withdrawn"
         },
         {
@@ -214,7 +210,7 @@ def populate_request_db(ddb):
                 "account_id": "456"    # Change the account_id
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-12-21T05:16:49.626338",   # Change request_expiry
+            "request_expiry": "2023-11-12T15:12:44.583502",   # Change request_expiry
             "status": "pending"  # Change the status
         },
         {
@@ -232,7 +228,7 @@ def populate_request_db(ddb):
                 "account_id": "789"    # Change the account_id
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-22T05:16:49.626338",   # Change request_expiry
+            "request_expiry": "2023-11-12T15:12:44.583502",   # Change request_expiry
             "status": "rejected"  # Change the status
         },
         {
@@ -249,7 +245,7 @@ def populate_request_db(ddb):
                 "account_id": "101"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-12-23T08:30:00.000000",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "pending"
         },
         {
@@ -268,7 +264,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-17T09:45:00.000000",
-            "request_expiry": "2023-11-24T09:45:00.000000",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "rejected"
         },
         {
@@ -286,7 +282,7 @@ def populate_request_db(ddb):
                 "account_id": "303"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-11-25T10:00:00.000000",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "approved"
         },
         {
@@ -296,14 +292,14 @@ def populate_request_db(ddb):
             "request_type": "Transaction Update",
             "request_title": "Custom Request Title 6",
             "requestor_id": "admin1",
-            "created_at": "2023-10-16T11:15:00.000000",
+            "created_at": "2023-11-12T15:12:44.583502",
             "request_details": {
                 "increment": "true",
                 "amount": "700",
                 "account_id": "404"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-26T11:15:00.000000",
+            "request_expiry": "2023-11-12T15:12:44.583502",
             "status": "pending"
         },
     ]
