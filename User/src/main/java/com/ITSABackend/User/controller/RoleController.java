@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/Role")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @EnableCaching
 public class RoleController {
 
