@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
-import { addUser } from '../apis/users';
+import { addPoint } from '../apis/points';
+import { useUserContext } from '../context/userContext';
 
 export default function AddAccountForm() {
+  const { userData, updateUserData } = useUserContext();
+
+  
   const [formData, setFormData] = useState({
     startingPoints: '',
     companyID: '',
@@ -10,7 +14,35 @@ export default function AddAccountForm() {
     
   });
 
+
+
+  const [companyData, setCompany] = useState("");
+
+  useEffect(() => {
+    // Make an Axios GET request to the API endpoint
+    axios.get('http://localhost:8000/api/points/allcompanyids',{withCredentials: true})
+      .then(response => {
+        // Handle the successful response and set the data to the state
+        setCompany(response.data.data);
+        
+      // Set the companyID in the formData state to the first item in companyData
+      if (response.data.data.length > 0) {
+        setFormData({
+          ...formData,
+          companyID: response.data.data[0].id
+        });
+      }
+    })
+      .catch(error => {
+        // Handle any errors here, e.g., display an error message
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
+  console.log(companyData);
+
   const handleChange = (e) => {
+    console.log(formData);
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -18,7 +50,7 @@ export default function AddAccountForm() {
     });
   };
 
-  const handleAdd = async (e) => {
+  const addPointAccount = async (e) => {
     e.preventDefault();
     console.log(formData);
   
@@ -26,19 +58,23 @@ export default function AddAccountForm() {
       // Create a request body, if needed
       const requestBody = {
 
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        role:[formData.role],
+        company_id: formData.companyID,
+        balance: formData.startingPoints,
       
         
        
       };
-      const response = addUser(requestBody)
+      // May have to change this to user context
+      console.log(requestBody);
+      console.log(localStorage.getItem("id"));
+
+
+
+      const response = addPoint(requestBody,localStorage.getItem("id"));
   
       // Assuming the response contains the user's role
 
-      window.location.href = "/users";
+      // window.location.href = "/users";
   
     
       console.log(response);
@@ -53,10 +89,10 @@ export default function AddAccountForm() {
 
   return (
     <div className="absolute  w-[80%] mt-[30%] bg-[#F5F5F5] rounded-2xl">
-      <form onSubmit={handleAdd} className="p-10 text-center">
+      <form onSubmit={addPointAccount} className="p-10 text-center">
         <div className="row flex gap-12">
           <div className="mb-6 ml-12">
-            <label htmlFor="firstName" className="block mb-2 text-sm font-medium text-gray-900">
+            <label htmlFor="startingPoints" className="block mb-2 text-sm font-medium text-gray-900">
               Starting Points
             </label>
             <input
@@ -75,18 +111,23 @@ export default function AddAccountForm() {
               Company
             </label>
             <select
-              id="companyID"
-              name="companyID"
-              value={formData.companyID}
-              onChange={handleChange}
-              className="bg-gray-50 border px-12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option value="User">User</option>
-              <option value="Owner">Owner</option>
-              <option value="Manager">Manager</option>
-              <option value="Engineer">Engineer</option>
-              <option value="Product Manager">Product Manager</option>
-            </select>
+  id="companyID"
+  name="companyID"
+  value={formData.companyID}
+  onChange={handleChange}
+  className="bg-gray-50 border px-12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+>
+  {companyData && companyData.length > 0 ? (
+    companyData.map((company) => (
+      <option key={company} value={company}>
+        {company}
+      </option>
+    ))
+  ) : (
+    <option value="">No companies available</option>
+  )}
+</select>
+
           </div>
           </div>
         </div>
