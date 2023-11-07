@@ -65,8 +65,8 @@ export class DynamoDB implements IDatabaseProvider {
         KeySchema: config.KeySchema,
         AttributeDefinitions: config.AttributeDefinitions,
         ProvisionedThroughput: config.ProvisionedThroughput || {
-          ReadCapacityUnits: 5,
-          WriteCapacityUnits: 5,
+          ReadCapacityUnits: 1,
+          WriteCapacityUnits: 1,
         },
       }));
     } catch (error) {

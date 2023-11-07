@@ -30,8 +30,8 @@ export class LogService {
         // { AttributeName: "ttl", AttributeType: "N" },
       ],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5,
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
       },
       TimeToLiveSpecification: {
         AttributeName: "ttl",
