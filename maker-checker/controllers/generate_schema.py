@@ -43,8 +43,7 @@ def create_approval_request_table(ddb):
         
 def create_request_template_table(ddb):
     try:
-        partition_key='companyid'
-        sort_key='uid'
+        partition_key='uid'
 
         table = ddb.create_table(
             TableName="request_template",
@@ -53,24 +52,16 @@ def create_request_template_table(ddb):
                     'AttributeName': partition_key,
                     'KeyType': 'HASH'  # Partition key
                 },
-                {
-                    'AttributeName': sort_key,
-                    'KeyType': 'RANGE'  # Sort key
-                }
             ],
             AttributeDefinitions=[
                 {
                     'AttributeName': partition_key,
                     'AttributeType': 'S'  # String type for uid
                 },
-                {
-                    'AttributeName': sort_key,
-                    'AttributeType': 'S'  # String type for uid
-                }
             ],
             ProvisionedThroughput={
-                'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
-                'WriteCapacityUnits': 10   # Adjust based on your expected write workload
+                'ReadCapacityUnits': 5,   # Adjust based on your expected read workload
+                'WriteCapacityUnits': 1   # Adjust based on your expected write workload
             }
         )
         print("Waiting for request template table creation...")
@@ -83,8 +74,7 @@ def create_request_template_table(ddb):
         
 def create_request_permission_table(ddb):
     try:
-        partition_key='companyid'
-        sort_key='role'
+        partition_key='role'
 
         table = ddb.create_table(
             TableName="request_permission",
@@ -93,24 +83,16 @@ def create_request_permission_table(ddb):
                     'AttributeName': partition_key,
                     'KeyType': 'HASH'  # Partition key
                 },
-                {
-                    'AttributeName': sort_key,
-                    'KeyType': 'RANGE'  # Sort key
-                }
             ],
             AttributeDefinitions=[
                 {
                     'AttributeName': partition_key,
                     'AttributeType': 'S'  # String type for uid
                 },
-                {
-                    'AttributeName': sort_key,
-                    'AttributeType': 'S'  # String type for uid
-                },
             ],
             ProvisionedThroughput={
-                'ReadCapacityUnits': 10,   # Adjust based on your expected read workload
-                'WriteCapacityUnits': 10   # Adjust based on your expected write workload
+                'ReadCapacityUnits': 5,   # Adjust based on your expected read workload
+                'WriteCapacityUnits': 1   # Adjust based on your expected write workload
             },
         )
         print("Waiting for request permission table creation...")
@@ -134,7 +116,7 @@ def populate_request_db(ddb):
             "request_title": None,
             "requestor_id": "admin1",
             "approver_id": "admin2",
-            "created_at": "2023-10-15T05:16:49.626324",
+            "created_at": "2023-11-7T05:16:49.626324",
             "request_details": {
                 "increment": "true",
                 "amount": "100",
@@ -142,7 +124,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-10-20T05:16:49.626338",
+            "request_expiry": "2023-12-20T05:16:49.626338",
             "status": "approved"
         },
         {
@@ -162,7 +144,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-10-20T05:16:49.626338",
+            "request_expiry": "2023-12-20T05:16:49.626338",
             "status": "rejected"
         },
         {
@@ -179,7 +161,7 @@ def populate_request_db(ddb):
                 "account_id": "123"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-20T05:16:49.626338",
+            "request_expiry": "2023-12-20T05:16:49.626338",
             "status": "pending"
         },
         {
@@ -215,7 +197,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-15T05:16:49.631432",
-            "request_expiry": "2023-10-20T05:16:49.626338",
+            "request_expiry": "2023-12-20T05:16:49.626338",
             "status": "withdrawn"
         },
         {
@@ -232,7 +214,7 @@ def populate_request_db(ddb):
                 "account_id": "456"    # Change the account_id
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-21T05:16:49.626338",   # Change request_expiry
+            "request_expiry": "2023-12-21T05:16:49.626338",   # Change request_expiry
             "status": "pending"  # Change the status
         },
         {
@@ -267,7 +249,7 @@ def populate_request_db(ddb):
                 "account_id": "101"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-23T08:30:00.000000",
+            "request_expiry": "2023-12-23T08:30:00.000000",
             "status": "pending"
         },
         {
@@ -278,7 +260,7 @@ def populate_request_db(ddb):
             "request_title": "Custom Request Title 4",
             "requestor_id": "admin2",
             "approver_id": "admin1",
-            "created_at": "2023-10-16T09:45:00.000000",
+            "created_at": "2023-12-16T09:45:00.000000",
             "request_details": {
                 "increment": "false",
                 "amount": "500",
@@ -286,7 +268,7 @@ def populate_request_db(ddb):
             },
             "approval_role": "ADMINS",
             "resolution_at": "2023-10-17T09:45:00.000000",
-            "request_expiry": "2023-10-24T09:45:00.000000",
+            "request_expiry": "2023-11-24T09:45:00.000000",
             "status": "rejected"
         },
         {
@@ -304,7 +286,7 @@ def populate_request_db(ddb):
                 "account_id": "303"
             },
             "approval_role": "ADMINS",
-            "request_expiry": "2023-10-25T10:00:00.000000",
+            "request_expiry": "2023-11-25T10:00:00.000000",
             "status": "approved"
         },
         {
@@ -334,19 +316,46 @@ def populate_template_db(ddb):
 
     data = [
         {
-            "companyid": "ascenda",
             "uid": "cdf7f49f",
             "type": "Points Update",
             "details": {
-                "increment": "true",
-                "amount": "100",
-                "account_id": "123"
+                "increment": "bool",
+                "amount": "int",
+                "account_id": "str"
                 },
             "allowed_approvers": [
                 "Owner",
-                "Engineer"
             ]
-        }
+        },
+        {
+            "uid": "dcf5f6zx",
+            "type": "Update User Details",
+            "details": {
+                "firstName": "str",
+                "lastName": "str",
+                "email": "email",
+                "roles": "str",
+                },
+            "allowed_approvers": [
+                "Owner",
+                "Manager"
+            ]
+        },
+        {
+            "uid": "awfahj6z",
+            "type": "Additional Actions",
+            "details": {
+                "String Input": "str",
+                "Integer Input": "int",
+                "Float Input": "float",
+                "Email": "email",
+                "Date": "date",
+                },
+            "allowed_approvers": [
+                "Owner",
+                "Manager"
+            ]
+        },
     ]
     with table.batch_writer() as batch:
         for item in data:
@@ -357,10 +366,11 @@ def populate_permission_db(ddb):
 
     data = [
         {
-            "companyid": "ascenda",
             "role": "Owner",
             "approved_actions": [
-                "cdf7f49f",
+                "cdf7f49f", 
+                "dcf5f6zx",
+                "awfahj6z"
             ]
         },
     ]
