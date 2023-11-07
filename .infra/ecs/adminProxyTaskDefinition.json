@@ -27,11 +27,11 @@
                 },
                 {
                     "name": "MAKER_CHECKER_MS",
-                    "value": "logging.logging"
+                    "value": "maker-checker.maker-checker"
                 },
                 {
                     "name": "POINTS_MS",
-                    "value": "logging.logging"
+                    "value": "points.points"
                 },
                 {
                     "name": "AWS_DEFAULT_REGION",
@@ -55,7 +55,7 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "logging.logging"
+                    "value": "user.user"
                 },
                 {
                     "name": "LOGGING_MS",
