@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
+// Default components
 import SideBar from "../components/SideBar";
 import TopBar from "../components/TopBar";
 
+// Company Specific 
 import MakerCheckerNav from "../components/MakerCheckerNav";
+import CompanyDropdown from "../components/CompanyDropdown";
 
 export default function UserListingPage() {
   // Handle tab change
@@ -13,12 +16,17 @@ export default function UserListingPage() {
     setActiveTab(newState);
   };
 
+  // Handle selected company.
+  const [selectedCompany, setSelectedCompany] = useState();
+  const handleCompanyChange = (newState) => {
+    setSelectedCompany(newState);
+  };
+
   // Handle data fetching
   const [data, setData] = useState({});
   const [stringData, setStringData] = useState({});
 
-  // ...
-
+  // Fetch data form backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -65,8 +73,9 @@ export default function UserListingPage() {
       {/* Content Area */}
       <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
         <TopBar />
+        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
-        <div className="mt-10"> You are currently on {activeTab}</div>
+        <div className="mt-10"> You are currently on <span className="underline"> {activeTab}</span> for <span className="underline"> {selectedCompany}</span></div>
         <div className="mt-10"> Data: {stringData[activeTab]}</div>
         {/* TODO: Jye Yi create a way to represent the data over here. Use the data[activeTab] instead of String
             StringData is a stringified version of the data.
