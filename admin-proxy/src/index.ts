@@ -8,8 +8,6 @@ import { PolicyService } from "./services/Policy/PolicyService";
 import { Logger } from "./services/Logger/Logger";
 import authorize from "./middleware/auth/authorize";
 import cron from "node-cron";
-import axios from "axios";
-import { config } from "./config/config";
 
 //For env File
 dotenv.config();
@@ -46,25 +44,9 @@ PolicyService.initialize().then(() => {
 
   // Schedule a cron job to run at the start of every minute
   cron.schedule("*/60 * * * * *", () => {
-    // Trigger reinitialization of logger
+    // Trigger reinitialization of logger 
     console.log("Reinitializing Logger");
     Logger.getInstance().createLogger();
-
-    // Test api request to MS
-    axios.get(`${config.ProxyPaths.loggingProxy}`).then((res) => {
-      console.log("Logging Proxy Health Check Passed");
-      console.log(res.data);
-    }).catch((err) => {
-      console.log("Logging Proxy Health Check Failed");
-      console.log(err);
-    });
-    axios.get(`${config.ProxyPaths.userProxy}`).then((res) => {
-      console.log("Logging Proxy Health Check Passed"); 
-      console.log(res.data);
-    }).catch((err) => {
-      console.log("Logging Proxy Health Check Failed");
-      console.log(err);
-    });
   });
 
 }).catch((err) => {
