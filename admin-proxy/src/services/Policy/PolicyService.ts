@@ -30,7 +30,7 @@ export class PolicyService {
     return PolicyService.instance;
   }
 
-  public static async initialize(restart:boolean = false): Promise<void> {
+  public static async initialize(restart:boolean = true): Promise<void> {
     const policyService = PolicyService.getInstance();
     if (restart) {
       await PolicyService.tearDown();

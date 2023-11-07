@@ -27,15 +27,25 @@ export class LogService {
       AttributeDefinitions: [
         { AttributeName: "logGroup", AttributeType: "S" },
         { AttributeName: "timestamp", AttributeType: "S" },
-        // { AttributeName: "ttl", AttributeType: "N" },
+        { AttributeName: "ttl", AttributeType: "N" },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 1,
         WriteCapacityUnits: 1,
       },
+      LocalSecondaryIndexes: [
+        {
+          IndexName: "ttlIndex",
+          KeySchema: [
+            { AttributeName: "ttl", KeyType: "HASH" }, // Partition key
+          ],
+          Projection: {
+            ProjectionType: "ALL",
+          },
+        },
+      ],
       TimeToLiveSpecification: {
         AttributeName: "ttl",
-        AttributeType: "N",
         Enabled: true,
       },
     };
