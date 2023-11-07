@@ -33,20 +33,9 @@ export class LogService {
         ReadCapacityUnits: 1,
         WriteCapacityUnits: 1,
       },
-      LocalSecondaryIndexes: [
-        {
-          IndexName: "ttlIndex",
-          KeySchema: [
-            { AttributeName: "ttl", KeyType: "HASH" }, // Partition key
-          ],
-          Projection: {
-            ProjectionType: "ALL",
-          },
-        },
-      ],
       TimeToLiveSpecification: {
         AttributeName: "ttl",
-        Enabled: true,
+        Enabled: "TRUE",
       },
     };
 
