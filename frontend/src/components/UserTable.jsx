@@ -22,17 +22,27 @@ export default function UserTable() {
 
 
     useEffect(() => {
-      axios.get("http://localhost:8000/api/user/User/getAllUsers", {
-        withCredentials: true
-      })
-      .then((response) => {
-        console.log(response.data);
-        setUsers(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+      viewUser();
     }, []);
+
+    const viewUser = async () => {
+      // First check user permissions to access ?isAdmin=True
+      try {
+        const viewUserPermissions = await axios.post("http://localhost:8000/policy/permissions", {
+          pageLs: ["user/User/getAllUsers?isAdmin=True"],
+        }, {
+          withCredentials: true
+        });
+        const canViewAdmin = viewUserPermissions.data["user/User/getAllUsers?isAdmin=True"].GET;
+        const response = await axios.get(`http://localhost:8000/api/user/User/getAllUsers?isAdmin=${canViewAdmin}`, {
+          withCredentials: true
+        })
+        setUsers(response.data.data);
+      } catch (error) {
+        // Handle errors here
+        console.error("Cannot view user:", error);
+      }
+    }
 
   return (
     <div className="relative overflow-x-auto w-[85%] mb-[100px]">
@@ -75,7 +85,7 @@ export default function UserTable() {
               <td className="px-6 py-4">{user.roles.join(', ')}</td>
               
               <td>
-              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} />
+              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} id={user.userId} />
 
               </td>
             </tr>

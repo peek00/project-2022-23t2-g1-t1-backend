@@ -14,8 +14,21 @@ const PrivateRoute = ({ page,permission }) => {
           withCredentials: true
         });
 
+        const roleresponse = await axios.get("http://localhost:8000/auth/me", {
+          withCredentials: true
+        });
+
+        const userDetailsResponse = await axios.get("http://localhost:8000/api/user/User/getUser?userID=" + roleresponse.data.id, {
+          withCredentials: true
+        });
+
+        localStorage.setItem("role", JSON.stringify(roleresponse.data.role));
+        localStorage.setItem("id", JSON.stringify(roleresponse.data.id));
+        //Set the user name 
+        localStorage.setItem("UserName",JSON.stringify(userDetailsResponse.data.fullName))
         // Assuming the response contains the user's role
         localStorage.setItem("permissions", JSON.stringify(response.data));
+        console.log(localStorage.getItem("permissions"));
         return response.data; // This is the role
       } catch (error) {
         // Handle errors here
