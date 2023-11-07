@@ -17,7 +17,7 @@ export class LogService {
     return LogService.instance;
   };
 
-  async initialise(tearDown = true) {
+  async initialise(tearDown = false) {
     const params = {
       TableName: "logs",
       KeySchema: [
