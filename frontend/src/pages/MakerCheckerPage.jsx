@@ -73,7 +73,6 @@ export default function UserListingPage() {
       {/* Content Area */}
       <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
         <TopBar />
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
         <div className="mt-10"> You are currently on <span className="underline"> {activeTab}</span> for <span className="underline"> {selectedCompany}</span></div>
         <div className="mt-10"> Data: {stringData[activeTab]}</div>
