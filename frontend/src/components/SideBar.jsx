@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
+import CompanyDropdown from "../components/CompanyDropdown";
+
 export default function SideBar() {
   const [activeLink, setActiveLink] = useState('');
   const location = useLocation();
@@ -10,12 +12,20 @@ export default function SideBar() {
     setActiveLink(location.pathname);
   }, [location]);
 
+  // Handle selected company.
+  const [selectedCompany, setSelectedCompany] = useState();
+  const handleCompanyChange = (newState) => {
+    setSelectedCompany(newState);
+  };
+
   return (
     <div className="bg-[#1C2434] h-screen  overflow-y-auto w-[20%] z-50 fixed">
       <div className="flex flex-col items-center justify-center">
         <Link to="/users">
           <img src="/footerLogo.svg" className="h-[100px] w-[100px]" />
         </Link>
+        
+        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
 
         <NavLink
           to="/users"
