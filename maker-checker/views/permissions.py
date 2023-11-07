@@ -20,7 +20,7 @@ permission_repository = ApprovalRequestPermissionRepo(db)
 @router.get("/")
 async def get_all_permission(
     role: Optional[str] = None,
-    companyid: str = Header(None)
+    companyid: str = None, description="Company ID",
 ):
     """
     Get all permission by companyid
@@ -38,7 +38,7 @@ async def get_all_permission(
 @router.post("/")
 async def create_permission(
     permission: Permission,
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -65,7 +65,7 @@ async def create_permission(
 async def add_permission(
     role:str,
     action:str | List[str],
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -96,7 +96,7 @@ async def add_permission(
 @router.put("/")
 async def update_permission(
     permission: Permission,
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """

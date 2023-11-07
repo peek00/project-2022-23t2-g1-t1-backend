@@ -29,7 +29,7 @@ def validate_template_object(template: Templates):
 @router.get("/")
 async def get_all_templates(
     uid: Optional[str] = None,
-    companyid: str = Header(None)
+    companyid: str = None, description="Company ID",
 ):
     """
     Get all templates by companyid
@@ -53,7 +53,7 @@ async def get_all_templates(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_template(
     template: Templates,
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -81,7 +81,7 @@ async def create_template(
 @router.put("/")
 async def update_template(
     template: TemplateUpdate,
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
@@ -107,7 +107,7 @@ async def update_template(
 @router.delete("/")
 async def delete_template(
     uid: str,
-    companyid: str = Header(None),
+    companyid: str = None, description="Company ID",
     userid:str = Header(None)
 ):
     """
