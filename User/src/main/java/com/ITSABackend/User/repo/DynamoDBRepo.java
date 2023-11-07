@@ -20,12 +20,16 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
+import com.ITSABackend.User.models.User;
+import com.ITSABackend.User.utils.ResourceCSVFileParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class DynamoDBRepo {
@@ -82,6 +86,41 @@ public class DynamoDBRepo {
 
             System.out.println("Creating table " + AppConstant.USER + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+
+            if (!tableExists || restart) {
+                try{
+                
+                    System.out.println("Populating table " + AppConstant.USER + " with default values...");
+                    Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
+                    ArrayList<User> users = new ResourceCSVFileParser().retrieveUserFromCsv();
+                    int count = users.size();
+                    do {
+                    for (User user : users) {
+                        try {
+                        System.out.println("Adding a new item...");
+                        userTable.putItem(new Item().withPrimaryKey("userID", user.getUserId()).withString("email", user.getEmail())
+                            .withString("firstName", user.getfirstName()).withString("lastName", user.getlastName())
+                            .withStringSet("userRole", user.getRoles()));
+                        System.out.println("PutItem succeeded: " + user.getUserId());
+                        count--;
+                        } catch (Exception e) {
+                        System.err.println("Unable to add item: " + user.getUserId());
+                        System.err.println(e.getMessage());
+                        Thread.sleep(1000);
+                        break;
+                        }
+                    }
+                    } while (count > 0);
+                    System.out.println("Initialisation successful, added " + users.size() + " records");
+
+                } catch (Exception e) {
+                    System.err.println("Error occurred while populating user table from CSV file: " + e.getMessage());
+                }
+
+                
+            } else {
+                System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
+            }
             
         } catch (Exception e) {
             System.err.println("Cannot create the User table");
@@ -223,15 +262,6 @@ public class DynamoDBRepo {
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
-            // TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
-            // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
-
-            // Iterate through the items to write to the table
-            // for (Item item : defaultItems) {
-            //     PutItemOutcome outcome = companyTable.putItem(item);
-            //     System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
-            // }
 
             // Iterate through the items to write to the table 
             int i = 0;

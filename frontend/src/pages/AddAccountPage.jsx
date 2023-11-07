@@ -5,7 +5,7 @@ import TopBar from '../components/TopBar';
 
 import AddAccountForm from '../components/AddAccountForm';
 
-export default function AddPage(props) {
+export default function AddAccountPage(props) {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };

@@ -212,7 +212,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
+    @GetMapping(value = "/getUserEmails", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> userIDs) {
     Map<String, Object> response = new HashMap<>();
     HttpStatus status = HttpStatus.OK;
@@ -235,7 +235,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping(value = "/getUserEmails", produces = {"application/json"})
+    @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("roleName") String roleName, @RequestBody List<String> userIDs) {
     Map<String, Object> response = new HashMap<>();
     HttpStatus status = HttpStatus.OK;

@@ -485,6 +485,7 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
                 "balance": {"N" : inputbalance }
             },
             "TableName": config.aws_table_name,
+            "ConditionExpression": "attribute_not_exists(company_id) AND attribute_not_exists(user_id)",
             "ReturnConsumedCapacity":"TOTAL",
         }
 
@@ -498,7 +499,11 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         return data;
     }
     catch (err) {
-        console.log(err);
+        if (err.name === 'ConditionalCheckFailedException') {
+            console.log(`Account with user_id ${userId} already exists for company_id ${companyId}.`);
+        } else {
+            console.error(err);
+        }
         throw err;
     }
 }
