@@ -19,6 +19,8 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
+import com.ITSABackend.User.models.User;
+import com.ITSABackend.User.utils.ResourceCSVFileParser;
 
 import java.io.File;
 import java.io.FileReader;
@@ -101,93 +103,30 @@ public class DynamoDBRepo {
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
             if (!tableExists || (tableExists && restart)) {
-                
-                Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
-
-                // Define default items
-                List<Item> defaultItems = new ArrayList<>();
-
-                // Create a File object representing the working directory
-                // File directory = new File(workingDir);
-                // if (directory.isDirectory()) {
-                //     // List files in the working directory
-                //     File[] files = directory.listFiles();
-                //     if (files != null) {
-                //         System.out.println("Files in the working directory:");
-                //         for (File file : files) {
-                //             System.out.println(file.getName());
-                //         }
-                //     } else {
-                //         System.out.println("No files found in the working directory.");
-                //     }
-                // } else {
-                //     System.out.println("Invalid working directory path.");
-                // }
-                
-                // try (Reader reader = new FileReader("/users.csv");
-                //     CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
-
-                //     for (CSVRecord csvRecord : csvParser) {
-                //         String userID = csvRecord.get(0); 
-                //         String email = csvRecord.get(1); 
-                //         String firstName = csvRecord.get(2);
-                //         String lastName = csvRecord.get(2);
-
-
-                //         // Create a map of attribute values for the item
-                //         defaultItems.add(new Item().withPrimaryKey("userID", userID)
-                //                         .withString("email", email)
-                //                         .withString("firstName", firstName)
-                //                         .withString("lastName", lastName));
-
-                //         // Create a PutItemRequest and put the item into the user table
-                //     }
                 try{
-                   Set<String> roles = new HashSet<>(Arrays.asList("Owner", "Product Manager"));
-
-                    defaultItems.add(new Item().withPrimaryKey("userID", "da7da4ff-f10c-4b89-ab64-ea7263f6b624")
-                                        .withString("email", "waltraud_ondricka@oreilly.org")
-                                        .withString("firstName", "Waltraud")
-                                        .withString("lastName", "Ondricka")
-                                        .withStringSet("userRole", roles)); // Use withStringSet to add a set of strings as an attribute
-
-                    defaultItems.add(new Item().withPrimaryKey("userID",        "8c874087-9f1a-4c12-a4dc-4a4e53282b8e")
-                                        .withString("email", "latricia_schulist@abbott.com")
-                                        .withString("firstName", "Latricia")
-                                        .withString("lastName", "Schulist")
-                                        .withStringSet("userRole", roles));
-
-
-                    defaultItems.add(new Item().withPrimaryKey("userID",        "8cecd1af-6c38-4186-9fe7-ba1cf15a7379")
-                                        .withString("email", "russel.stephan@kihn.name")
-                                        .withString("firstName", "Ruseel")
-                                        .withString("lastName", "Stephan")
-                                        .withStringSet("userRole", roles));
-
-                    defaultItems.add(new Item().withPrimaryKey("userID",        "811082f02-d942-4ede-893c-0f75f36d4388")
-                                        .withString("email", "ryan_schuster@oberbrunner-sauer.name")
-                                        .withString("firstName", "Ryan")
-                                        .withString("lastName", "Schuster")
-                                        .withStringSet("userRole", roles));
-
-                    defaultItems.add(new Item().withPrimaryKey("userID",        "718b5985-6df4-4367-aff0-edc1bd90d66e")
-                                        .withString("email", "bobbie.mitchell@ward.org")
-                                        .withString("firstName", "Bobbie")
-                                        .withString("lastName", "Mitchell")
-                                        .withStringSet("userRole", roles));
-
-                    defaultItems.add(new Item().withPrimaryKey("userID",        "7e92ce5f-60d3-4224-b4b2-c9b29e73de16")
-                                        .withString("email", "reatha_becker@simonis.info")
-                                        .withString("firstName", "Reatha")
-                                        .withString("lastName", "Becker")
-                                        .withStringSet("userRole", roles));
-                                        
-                    
-                    
+                
                     System.out.println("Populating table " + AppConstant.USER + " with default values...");
-                    TableWriteItems writeItems = new TableWriteItems(userTable.getTableName()).withItemsToPut(defaultItems);
-                    BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-                    System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+                    Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
+                    ArrayList<User> users = new ResourceCSVFileParser().retrieveUserFromCsv();
+                    int count = users.size();
+                    do {
+                    for (User user : users) {
+                        try {
+                        System.out.println("Adding a new item...");
+                        userTable.putItem(new Item().withPrimaryKey("userID", user.getUserId()).withString("email", user.getEmail())
+                            .withString("firstName", user.getfirstName()).withString("lastName", user.getlastName())
+                            .withStringSet("userRole", user.getRoles()));
+                        System.out.println("PutItem succeeded: " + user.getUserId());
+                        count--;
+                        } catch (Exception e) {
+                        System.err.println("Unable to add item: " + user.getUserId());
+                        System.err.println(e.getMessage());
+                        Thread.sleep(1000);
+                        break;
+                        }
+                    }
+                    } while (count > 0);
+                    System.out.println("Initialisation successful, added " + users.size() + " records");
 
                 } catch (Exception e) {
                     System.err.println("Error occurred while populating user table from CSV file: " + e.getMessage());
