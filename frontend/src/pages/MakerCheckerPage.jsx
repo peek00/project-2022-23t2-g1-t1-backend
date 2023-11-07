@@ -7,13 +7,8 @@ import TopBar from "../components/common_utils/TopBar";
 import {API_BASE_URL} from "@/config/config";
 
 // Company Specific
-// Company Specific
 import MakerCheckerNav from "../components/MakerCheckerNav";
 import CreateRequest from "../components/CreateRequest";
-import PendingApprovalTable from "../components/PendingApprovalTable";
-import RequestedApprovalTable from "../components/RequestedApprovalTable";
-import HistoryApprovalTable from "../components/HistoryApprovalTable";
-import CompanyDropdown from "../components/CompanyDropdown";
 
 export default function UserListingPage() {
   // Handle tab change
@@ -23,47 +18,53 @@ export default function UserListingPage() {
   };
 
   // Start: Listener for local storage
-  const [selectedCompany, setSelectedCompany] = useState();
-  const handleCompanyChange = (newState) => {
-    setSelectedCompany(newState);
-  };
+  const [selectedCompany, setSelectedCompany] = useState("");
   const [data, setData] = useState({});
-  const [showTable, setShowTable] = useState(false);
+  const [stringData, setStringData] = useState({});
   useEffect(() => {
     // Listener for local storage
     const storedCompany = localStorage.getItem("selectedCompany");
     if (storedCompany) {
       setSelectedCompany(storedCompany);
     }
-
+  
     const fetchData = async () => {
-      if (selectedCompany) {
+      if (activeTab === "create") {
+        console.log("In create!");
+      } 
+      else if (selectedCompany) {
         try {
           let url = "";
           if (activeTab === "pending") {
-            url = API_BASE_URL+`/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
+            url = `http://localhost:8000/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
           } else if (activeTab === "requested") {
-            url = API_BASE_URL+`/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
+            url = `http://localhost:8000/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
           } else if (activeTab === "history") {
-            url = API_BASE_URL+`/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
+            url = `http://localhost:8000/api/maker-checker/approval/approver?companyid=${selectedCompany}`;
           }
-
+  
+          console.log("Fetching data from: " + url);
           const response = await axios.get(url, {
             withCredentials: true,
           });
-
+          console.log(response.data);
+  
           setData((prevData) => ({
             ...prevData,
             [activeTab]: response.data,
+          }));
+  
+          setStringData((prevData) => ({
+            ...prevData,
+            [activeTab]: JSON.stringify(response.data),
           }));
         } catch (error) {
           console.error("Error fetching data: ", error);
         }
       }
     };
-
+  
     fetchData();
-    setShowTable(true);
   }, [activeTab, selectedCompany]);
 
   return (
@@ -77,14 +78,18 @@ export default function UserListingPage() {
       <div className="w-4/5 min-h-screen overflow-y-auto ms-10 mt-28">
         <TopBar />
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange} />
-
-        {/* Switch tabs based on activeTab */}
-        {showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
-        {showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
-        {showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
-
-        {/* Switch to custom form */}
+        <div className="mt-10">
+          {" "}
+          You are currently on <span className="underline">
+            {" "}
+            {activeTab}
+          </span>{" "}
+          for <span className="underline"> {selectedCompany}</span>
+        </div>
+        <div className="mt-10"> Data: {stringData[activeTab]}</div>
+        {/* TODO: Jye Yi create a way to represent the data over here. Use the data[activeTab] instead of String
+            StringData is a stringified version of the data.
+        */}
         {activeTab === "create" && (
           <div>
             <CreateRequest />
