@@ -19,7 +19,7 @@ export class ProxyController{
         // console.log("target", target);
         // req.headers["userid"] = req.user!.id;
         proxyReq.setHeader("userid", req.user!.id);
-        proxyReq.setHeader("originalip", req.ip);
+        // proxyReq.setHeader("companyid", req.user!.companyId || "808aa552-94cf-4a0a-b17f-6c8b3bf50c85");
         proxyReq.setHeader("role", JSON.stringify(req.user!.role || ["User"]));
         req.headers["userid"] = req.user!.id;
         req.headers["originalip"] = req.ip;
