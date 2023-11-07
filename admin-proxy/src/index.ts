@@ -59,7 +59,7 @@ PolicyService.initialize().then(() => {
       console.log(err);
     });
     axios.get(`${config.ProxyPaths.userProxy}`).then((res) => {
-      console.log("Logging Proxy Health Check Passed"); 
+      console.log("Logging Proxy Health Check Passed");
       console.log(res.data);
     }).catch((err) => {
       console.log("Logging Proxy Health Check Failed");
