@@ -20,11 +20,26 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class DynamoDBRepo {
@@ -80,6 +95,46 @@ public class DynamoDBRepo {
 
             System.out.println("Creating table " + AppConstant.USER + "...");
             dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+
+            if (!tableExists || (tableExists && restart)) {
+                
+                Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
+
+                // Define default items
+                List<Item> defaultItems = new ArrayList<>();
+                
+                try (Reader reader = new FileReader("../../../../../users.csv");
+                    CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
+
+                    for (CSVRecord csvRecord : csvParser) {
+                        String userID = csvRecord.get(0); 
+                        String email = csvRecord.get(1); 
+                        String firstName = csvRecord.get(2);
+                        String lastName = csvRecord.get(2);
+
+
+                        // Create a map of attribute values for the item
+                        defaultItems.add(new Item().withPrimaryKey("userID", userID)
+                                        .withString("email", email)
+                                        .withString("firstName", firstName)
+                                        .withString("lastName", lastName));
+
+                        // Create a PutItemRequest and put the item into the user table
+                    }
+
+                    System.out.println("Populating table " + AppConstant.USER + " with default values...");
+                    TableWriteItems writeItems = new TableWriteItems(userTable.getTableName()).withItemsToPut(defaultItems);
+                    BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+                    System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+
+                } catch (Exception e) {
+                    System.err.println("Error occurred while populating user table from CSV file: " + e.getMessage());
+                }
+
+                
+            } else {
+                System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
+            }
             
         } catch (Exception e) {
             System.err.println("Cannot create the table");
@@ -131,22 +186,22 @@ public class DynamoDBRepo {
 
             if (!tableExists || (tableExists && restart)) {
                 
-            Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
+                Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
 
-            // Define default items
-            List<Item> defaultItems = new ArrayList<>();
-            defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
+                // Define default items
+                List<Item> defaultItems = new ArrayList<>();
+                defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
 
-            // Batch write the default items to the table
-            
-            System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
-            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+                // Batch write the default items to the table
+                
+                System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
+                TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
+                BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+                System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
