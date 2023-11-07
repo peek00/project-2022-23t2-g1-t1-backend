@@ -43,6 +43,7 @@ export class AuthenticationService {
   }
   private async findUserByEmail(email: string): Promise<any> {
     try {
+      console.log(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       console.log(user);
       if (!user.data) {
