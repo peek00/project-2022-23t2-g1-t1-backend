@@ -7,7 +7,7 @@ import TopBar from "../components/TopBar";
 
 // Company Specific 
 import MakerCheckerNav from "../components/MakerCheckerNav";
-import CompanyDropdown from "../components/CompanyDropdown";
+import CreateRequest from "../components/CreateRequest";
 
 export default function UserListingPage() {
   // Handle tab change
@@ -16,11 +16,18 @@ export default function UserListingPage() {
     setActiveTab(newState);
   };
 
-  // Handle selected company.
-  const [selectedCompany, setSelectedCompany] = useState();
-  const handleCompanyChange = (newState) => {
-    setSelectedCompany(newState);
-  };
+  // Start: Listener for local storage
+  const [selectedCompany, setSelectedCompany] = useState("");
+  useEffect(() => {
+    const storedCompany = localStorage.getItem("selectedCompany");
+    if (storedCompany) {
+      setSelectedCompany(storedCompany);
+    }
+  }, []);
+  window.addEventListener('storage', () => {
+    setSelectedCompany(localStorage.getItem('selectedCompany'));
+  })
+  // End: Listener for local storage
 
   // Handle data fetching
   const [data, setData] = useState({});
@@ -38,11 +45,13 @@ export default function UserListingPage() {
         console.log("Fetching data");
         let url = "";
         if (activeTab === "pending") {
-          url = "http://localhost:8000/api/maker-checker/approval/pending";
+          url = "http://localhost:8000/api/maker-checker/approval/pending?companyid=" + selectedCompany;
         } else if (activeTab === "requested") {
-          url = "http://localhost:8000/api/maker-checker/approval/";
+          url = "http://localhost:8000/api/maker-checker/approval/requestor?companyid=" + selectedCompany;
         } else if (activeTab === "history") {
-          console.log("Not implemented yet.");
+          url = "http://localhost:8000/api/maker-checker/approval/approver?companyid=" + selectedCompany;
+        } else if (activeTab === "create") {
+          console.log("now what")
         }
         const response = await axios.get(url, {
           withCredentials: true,
@@ -79,6 +88,11 @@ export default function UserListingPage() {
         {/* TODO: Jye Yi create a way to represent the data over here. Use the data[activeTab] instead of String
             StringData is a stringified version of the data.
         */}
+      {activeTab === "create" && (
+        <div>
+          <CreateRequest />
+        </div>
+      )}
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ function DropdownMenu({ selectedCompany, onSelectCompany }) {
     onSelectCompany(state);
     setIsOpen(false); // Close the dropdown when an option is clicked
     localStorage.setItem('selectedCompany', state);
-
+    window.dispatchEvent(new Event("storage"));
   };
 
   // Read the selectedCompany from local storage during initialization

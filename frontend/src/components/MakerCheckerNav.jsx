@@ -27,7 +27,10 @@ export default function MakerCheckerNav({ activeTab, onTabChange }) {
       >
         History
       </button>
-      <button className="float-right px-4 py-2 text-white bg-blue-500 rounded">
+      <button 
+      className="float-right px-4 py-2 text-white bg-blue-500 rounded"
+      onClick={() => handleButtonClick("create")}
+      >
         Create Request
       </button>
     </div>
