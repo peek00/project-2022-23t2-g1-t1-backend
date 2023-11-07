@@ -409,11 +409,11 @@ router.post('/createAccount', async (req,res) => {
   console.log(userId)
   console.log(inputbalance)
   console.log("uuid: " + new_pointsId)
-  allquery.companyExists(companyId)
-  .then((companyresults) => {
-    console.log(companyresults)
-    if (companyresults) {
-        console.log("valid company id");
+  // allquery.companyExists(companyId)
+  // .then((companyresults) => {
+  //   console.log(companyresults)
+  //   if (companyresults) {
+        // console.log("valid company id");
         allquery.pointsAccExist(companyId, new_pointsId)
         .then((results) => {
           if (!results) {
@@ -457,24 +457,24 @@ router.post('/createAccount', async (req,res) => {
             "message" : error.message
           });
         })
-    }
-    else {
-      res.status(400).json({
-        "code" : 400,
-        "data": [],
-        "message" : 'Company ID do not exists'
-      })
-    }
+    // }
+    // else {
+    //   res.status(400).json({
+    //     "code" : 400,
+    //     "data": [],
+    //     "message" : 'Company ID do not exists'
+    //   })
+    // }
     
-  })
-  .catch((companyerror) => {
-    console.log(companyerror);
-    res.status(404).json({
-      "code" : 404,
-      "data" : [],
-      "message" : error.message
-    });
-  })
+  // })
+  // .catch((companyerror) => {
+  //   console.log(companyerror);
+  //   res.status(404).json({
+  //     "code" : 404,
+  //     "data" : [],
+  //     "message" : error.message
+  //   });
+  // })
   
 })
 
