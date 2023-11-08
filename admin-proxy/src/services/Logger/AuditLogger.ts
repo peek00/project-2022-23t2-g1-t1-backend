@@ -24,10 +24,10 @@ class AuditLogger {
     originalIP: string,
     userId: string,
   ) {
-    let ip = originalIP.replace("::ffff:", "");
+    let ip = originalIP || '';
     // let ip = requestIP.getClientIp(req)?.replace("::ffff:", "");
     let country = "unknown";
-    if (ip) {
+    if (ip.length > 0) {
       console.log(ip);
       const lookup = geoIp.lookup(ip);
       console.log(lookup);
