@@ -21,9 +21,11 @@ class AuditLogger {
     status: number,
     details: any,
     req: Request,
+    originalIP: string,
     userId: string,
   ) {
-    let ip = requestIP.getClientIp(req)?.replace("::ffff:", "");
+    let ip = originalIP.replace("::ffff:", "");
+    // let ip = requestIP.getClientIp(req)?.replace("::ffff:", "");
     let country = "unknown";
     if (ip) {
       console.log(ip);

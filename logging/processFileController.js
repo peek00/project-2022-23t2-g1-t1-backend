@@ -13,6 +13,7 @@ const deleteLogFile = (logFileName) => {
 
 const getOldLogFiles = () => {
   const logFiles = fs.readdirSync('/tmp');
+  console.log("Reading FileDir: ", logFiles);
   const curDate = new Date();
   // Return a list of old log files
   return logFiles.filter((logFile) => {
