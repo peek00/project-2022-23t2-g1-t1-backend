@@ -7,7 +7,7 @@ import UserListingPage from '../pages/UserListingPage';
 import AddUserPage from '../pages/AddUserPage';
 import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
-import AddAccountPage from '../pages/addAccountPage';
+import AddAccountPage from '../pages/AddAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
 import UserAccountPage from '../pages/UserAccountPage';
 import CompanyGatewayPage from '../pages/CompanyGatewayPage';
@@ -42,10 +42,10 @@ function Routing() {
       <Route path ="/updatePoints" element={<PrivateRoute page={"points"} permission={"PUT"}/>}>
       <Route path ="/updatePoints" element={<UpdatePointsPage/>}/>
       </Route>
-      <Route path ="/addAccount" element={<AddAccountPage/>}  />
+      <Route path ="/addAccount" element={<AddAccountPage/>}/>
 
 
-      <Route path ="/makerchecker" element={<MakerCheckerPage/>}  />
+      <Route path ="/makerchecker" element={<MakerCheckerPage/>}/>
 
       <Route path="/user/accounts" element={<UserAccountPage/>}/>
       <Route path ="/user/accounts/company" element ={<CompanyGatewayPage/>}/>
