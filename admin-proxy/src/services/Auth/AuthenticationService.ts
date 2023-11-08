@@ -51,7 +51,7 @@ export class AuthenticationService {
       }
       return user.data;
     } catch (error) {
-      console.log("Axios error: " + error);
+      console.log("Axios error: " + error); 
       throw error;
     }
   }
