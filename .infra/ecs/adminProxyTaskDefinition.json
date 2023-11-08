@@ -55,7 +55,7 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "http://user.ecs-be-cluster"
+                    "value": "http://user.ecs-be-cluster:8080"
                 },
                 {
                     "name": "LOGGING_MS",
