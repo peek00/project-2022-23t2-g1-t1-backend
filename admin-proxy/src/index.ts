@@ -23,7 +23,7 @@ PolicyService.initialize().then(() => {
   app.use(passport.initialize());
   app.use(
     // cors({
-    //   origin: process.env.CLIENT_BASE_URL, 
+    //   origin: process.env.CLIENT_BASE_URL,
     //   credentials: true, 
     // }),
     cors()
