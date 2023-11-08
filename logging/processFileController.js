@@ -45,6 +45,10 @@ export const processLog = async () => {
       console.log(logFileName);
       const log = readLogFile(logFileName);
       const logRecords = parseLogFile(log);
+      if (logRecords.length > 0) {
+        deleteLogFile(logFileName);
+        return
+      } 
       await Promise.all(logRecords.map(async (r) => {
         const logGroup = r.logGroup;
         const retentionPolicy = r.retentionPolicy;
