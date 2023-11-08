@@ -62,7 +62,13 @@
                     "value": "http://logging.ecs-be-cluster:3000"
                 }
             ],
-            "mountPoints": [],
+            "mountPoints": [
+                {
+                    "sourceVolume": "LogFileSystem",
+                    "containerPath": "/tmp",
+                    "readOnly": false
+                }
+            ],
             "volumesFrom": [],
             "secrets": [
                 {

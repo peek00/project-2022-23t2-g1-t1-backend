@@ -36,8 +36,13 @@ export const processLog = async () => {
   // const logFileName = `logs-${curDate.getFullYear()}-${curDate.getMonth()}-${curDate.getDate()}:${curDate.getHours()}:${curDate.getMinutes()}.log`;
   const logFiles = getOldLogFiles();
   await Promise.all(logFiles.map(async (logFileName) => {
-    // Get old log files
+    // Get old log files that fits the format logs-2023-10-8:17:11.log
+    if (!logFileName.endsWith('.log')) {
+      console.log(logFileName);
+      return
+    }
     try {
+      console.log(logFileName);
       const log = readLogFile(logFileName);
       const logRecords = parseLogFile(log);
       await Promise.all(logRecords.map(async (r) => {
@@ -71,6 +76,7 @@ export const parseLogFile = (log) => {
     try {
       // logLine = logLine.trim();
       const logLineParts = logLine.split('\t');
+      if (logLineParts.length !== 5) throw new Error("Invalid Log Line")
       console.log(logLineParts)
       let logRecord = {};
       logRecord.level = logLineParts[0].slice(1, -1);

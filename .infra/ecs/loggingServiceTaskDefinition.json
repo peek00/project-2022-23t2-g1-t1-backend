@@ -23,7 +23,13 @@
                 }
             ],
             "environmentFiles": [],
-            "mountPoints": [],
+            "mountPoints": [
+                {
+                    "sourceVolume": "LogFileSystem",
+                    "containerPath": "/tmp",
+                    "readOnly": false
+                }
+            ],
             "volumesFrom": [],
             "secrets": [
                 {
