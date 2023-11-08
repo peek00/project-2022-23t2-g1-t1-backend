@@ -11,6 +11,7 @@ import AddAccountPage from '../pages/addAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
 import UserAccountPage from '../pages/UserAccountPage';
 import CompanyGatewayPage from '../pages/CompanyGatewayPage';
+import EditPolicyPage from '../pages/EditPolicyPage'
 
 
 
@@ -20,6 +21,7 @@ function Routing() {
     <Routes>
       
       <Route exact path='/' element={<LandingPage/>}/>
+      <Route exact path='/editPolicy' element={<EditPolicyPage/>}/>
       <Route path="/login" element={<LoginPage />} />
       <Route path ="/users" element={<PrivateRoute page={"user"} permission ={"GET"}/>}>
       <Route index element={<UserListingPage/>}/>
