@@ -84,11 +84,11 @@ public class DynamoDBRepo {
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema)
                 .withGlobalSecondaryIndexes(createEmailIndex);
 
-            System.out.println("Creating table " + AppConstant.USER + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-
+                
             if (!tableExists || restart) {
                 try{
+                    System.out.println("Creating table " + AppConstant.USER + "...");
+                    dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
                 
                     System.out.println("Populating table " + AppConstant.USER + " with default values...");
                     Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
@@ -167,10 +167,10 @@ public class DynamoDBRepo {
                     new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
 
-            System.out.println("Creating table " + AppConstant.ROLE + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-
+                
             if (!tableExists || restart) {
+                System.out.println("Creating table " + AppConstant.ROLE + "...");
+                dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
                 Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
 
@@ -246,10 +246,10 @@ public class DynamoDBRepo {
                     new ProvisionedThroughput().withReadCapacityUnits((long) 2).withWriteCapacityUnits((long) 2))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
 
-            System.out.println("Creating table " + AppConstant.COMPANY + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-
+                
             if (!tableExists || restart) {
+                System.out.println("Creating table " + AppConstant.COMPANY + "...");
+                dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
                 
             Table companyTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY);
 
