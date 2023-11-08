@@ -55,7 +55,7 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "http://be-cluster.user:8080"
+                    "value": "http://user.user:8080"
                 },
                 {
                     "name": "LOGGING_MS",
