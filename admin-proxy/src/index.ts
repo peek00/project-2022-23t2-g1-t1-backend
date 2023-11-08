@@ -24,7 +24,7 @@ PolicyService.initialize().then(() => {
   app.use(
     // cors({
     //   origin: process.env.CLIENT_BASE_URL,
-    //   credentials: true,
+    //   credentials: true, 
     // }),
     cors()
   );
