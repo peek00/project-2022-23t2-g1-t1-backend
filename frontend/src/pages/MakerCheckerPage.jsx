@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
 // Default components
-import SideBar from "../components/SideBar";
-import TopBar from "../components/TopBar";
+import SideBar from "../components/common_utils/SideBar";
+import TopBar from "../components/common_utils/TopBar";
 
 // Company Specific 
 import MakerCheckerNav from "../components/MakerCheckerNav";

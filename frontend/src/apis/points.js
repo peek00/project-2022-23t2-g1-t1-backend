@@ -9,3 +9,18 @@ export async function addPoint(requestBody,id){
       });
       return response;
     }
+
+export async function getPoints(id){
+
+  const response = await axios.get("http://localhost:8000/api/points/allpointsaccounts", {
+    withCredentials: true,
+    headers: {
+    userid :id
+    }
+  });
+  return response;
+}
+
+
+
+  

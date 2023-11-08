@@ -10,6 +10,7 @@ import UpdatePointsPage from '../pages/UpdatePointsPage';
 import AddAccountPage from '../pages/addAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
 import UserAccountPage from '../pages/UserAccountPage';
+import CompanyGatewayPage from '../pages/CompanyGatewayPage';
 
 
 
@@ -44,9 +45,10 @@ function Routing() {
 
       <Route path ="/makerchecker" element={<MakerCheckerPage/>}  />
 
-      <Route path="/user/accounts" element={<UserAccountPage/>}>
+      <Route path="/user/accounts" element={<UserAccountPage/>}/>
+      <Route path ="/user/accounts/company" element ={<CompanyGatewayPage/>}/>
 
-      </Route>
+      
 
 
      

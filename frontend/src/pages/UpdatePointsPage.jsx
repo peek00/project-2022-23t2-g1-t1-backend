@@ -3,9 +3,9 @@
 
 import React from 'react';
 
-import SideBar from '../components/SideBar';
-import TopBar from '../components/TopBar';
-import UserSearch from '../components/UserSearch';
+import SideBar from '../components/common_utils/SideBar';
+import TopBar from '../components/common_utils/TopBar';
+import UserSearch from '../components/common_utils/UserSearch';
 import UserTable from '../components/UserTable';
 import LogsTable from '../components/LogsTable';
 import UpdatePointsTable from '../components/UpdatePointsTable';

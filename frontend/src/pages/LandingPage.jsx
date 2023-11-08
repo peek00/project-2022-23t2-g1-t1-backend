@@ -2,7 +2,7 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import NavBar from "../components/NavBar";
-import SignUpForm from '../components/SignUpForm';
+import SignUpForm from '../components/login/SignUpForm';
 
 
 function LandingPage(){
