@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import AlertIcon from '../components/AlertIcon';
+import AlertIcon from '../components/common_utils/AlertIcon';
 import axios from 'axios';
 
 const PrivateRoute = ({ page,permission }) => {

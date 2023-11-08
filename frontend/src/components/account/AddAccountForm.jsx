@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import axios from 'axios';
-import { addPoint } from '../apis/points';
-import { useUserContext } from '../context/userContext';
+import { addPoint } from '../../apis/points';
+import { useUserContext } from '../../context/userContext';
 
 export default function AddAccountForm() {
   const { userData, updateUserData } = useUserContext();

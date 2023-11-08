@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { addUser } from '../apis/users';
+import { addUser } from '../../apis/users';
 
 export default function AddUserForm() {
   const [formData, setFormData] = useState({

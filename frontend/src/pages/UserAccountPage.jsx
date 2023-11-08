@@ -1,7 +1,7 @@
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
-import UserAccountTable from '../components/UserAccountTable';
+import UserAccountTable from '../components/account/UserAccountTable';
 
 export default function UserAccountPage() {
   return (

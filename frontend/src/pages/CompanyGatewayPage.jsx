@@ -2,7 +2,7 @@
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
-import ListWithIcon from '../components/ListWithIcon';
+import ListWithIcon from '../components/account/ListWithIcon';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../context/userContext';

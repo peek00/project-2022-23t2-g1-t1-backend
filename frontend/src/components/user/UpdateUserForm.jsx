@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useUserContext } from '../context/userContext';
+import { useUserContext } from '../../context/userContext';
 
 
 export default function UpdateUserForm() {
