@@ -14,10 +14,9 @@ const config = {
         dynamoDBEndpoint: process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000",
     },
     aws_remote_config: {
-      accessKeyId: 'ACCESS_KEY_ID',
-      secretAccessKey: 'SECRET_ACCESS_KEY',
-      region: 'us-east-1',
-      dynamoDBEndpoint: undefined
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION,
     }
 };
 

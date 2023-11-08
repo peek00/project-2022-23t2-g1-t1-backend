@@ -43,6 +43,7 @@ export class AuthenticationService {
   }
   private async findUserByEmail(email: string): Promise<any> {
     try {
+      console.log(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       console.log(user);
       if (!user.data) {
@@ -50,6 +51,7 @@ export class AuthenticationService {
       }
       return user.data;
     } catch (error) {
+      console.log("Axios error: " + error); 
       throw error;
     }
   }
@@ -72,6 +74,7 @@ export class AuthenticationService {
   public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {
     const token = this.jwtService.generateToken("temporary");
     const response = { id: "temporary", role: roleLs, companyId: 'test-company-id', token };
+    console.log(response);
     await this.cacheProvider.write("temporary", JSON.stringify(response), 60 * 3); // 3 minutes
     return response;
   }

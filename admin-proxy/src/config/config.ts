@@ -5,13 +5,8 @@ export const config = {
   GoogleOauth2Config: {
     clientID: process.env.GOOGLE_CLIENT_ID || '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    callbackURL: "/auth/google/callback",
+    callbackURL: `${process.env.DNS || ''}/auth/google/callback`,
     passReqToCallback: true as true,
-  },
-  CloudWatchConfigPartial: {
-    awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    awsRegion: process.env.CLOUDWATCH_REGION || '',
   },
   RententionPolicy: {
     User: 30, // 30 days

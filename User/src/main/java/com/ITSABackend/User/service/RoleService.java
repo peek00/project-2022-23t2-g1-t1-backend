@@ -27,7 +27,7 @@ public class RoleService {
     
     @PostConstruct
     public void createTable() throws Exception{
-        dynamoDBRepo.createRoleTable(true);
+        dynamoDBRepo.createRoleTable(false);
     }
 
     public void deleteTable(String tableName) throws Exception{

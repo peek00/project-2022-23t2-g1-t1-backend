@@ -9,10 +9,21 @@ const port = Number(process.env.REDIS_PORT) || 6379;
 
 class Redis {
     constructor() {
-        this.client = redis.createClient({
-        url: `redis://${username}:${password}@${host}:${port}`,
-        legacyMode: true,
-        });
+        // this.client = redis.createClient({
+        // url: `redis://${username}:${password}@${host}:${port}`,
+        // legacyMode: true,
+        // });
+        if (process.env.NODE_ENV === "production") {
+            this.client = redis.createClient({
+            url: `redis://${host}:${port}`,
+            legacyMode: true,
+            });
+        } else{
+            this.client = redis.createClient({
+            url: `redis://${username}:${password}@${host}:${port}`,
+            legacyMode: true,
+            });
+        }
         this.client.connect().then(() => {
           this.connected = true;
         }).catch((err) => {

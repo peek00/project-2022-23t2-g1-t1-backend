@@ -13,14 +13,23 @@ export class Redis implements ICacheProvider {
   private connected: boolean = false;
 
   private constructor() {
-    this.client = createClient({
-      url: `redis://${username}:${password}@${host}:${port}`,
-      legacyMode: true,
-    });
+    if (process.env.NODE_ENV === "production") {
+      this.client = createClient({
+        url: `redis://${host}:${port}`,
+        legacyMode: true,
+      });
+    } else{
+      this.client = createClient({
+        url: `redis://${username}:${password}@${host}:${port}`,
+        legacyMode: true,
+      });
+    }
     this.client.connect().then(() => {
+      console.log("Connected to Redis");
       this.connected = true;
-    }).catch((err) => {
-      console.log(err);
+    }).catch((e) => {
+      console.log(e);
+      this.connected = false;
     });
   }
 

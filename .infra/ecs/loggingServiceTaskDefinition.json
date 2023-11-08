@@ -1,0 +1,86 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "logging",
+            "image": "717942231127.dkr.ecr.ap-southeast-1.amazonaws.com/logging:latest",
+            "cpu": 512,
+            "memory": 2048,
+            "memoryReservation": 1024,
+            "portMappings": [
+                {
+                    "name": "logging-3000-tcp",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-southeast-1"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [
+                {
+                    "sourceVolume": "LogFileSystem",
+                    "containerPath": "/tmp",
+                    "readOnly": false
+                }
+            ],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_SECRET_ACCESS_KEY::"
+                }
+            ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/logging",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "logging",
+    "taskRoleArn": "arn:aws:iam::717942231127:role/ECSTaskRole",
+    "executionRoleArn": "arn:aws:iam::717942231127:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [
+        {
+            "name": "LogFileSystem",
+            "efsVolumeConfiguration": {
+                "fileSystemId": "fs-0318a716695de5a2d",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED",
+                "authorizationConfig": {
+                    "accessPointId": "fsap-07540bf5378d986fa",
+                    "iam": "DISABLED"
+                }
+            }
+        }
+    ],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": []
+}

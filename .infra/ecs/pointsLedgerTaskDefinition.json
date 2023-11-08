@@ -1,0 +1,79 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "points",
+            "image": "717942231127.dkr.ecr.ap-southeast-1.amazonaws.com/points:latest",
+            "cpu": 512,
+            "memory": 2048,
+            "memoryReservation": 1024,
+            "portMappings": [
+                {
+                    "name": "points-3000-tcp",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-southeast-1"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "value": "loyalty-redis.leeatg.ng.0001.apse1.cache.amazonaws.com"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "value": "6379"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_SECRET_ACCESS_KEY::"
+                }
+            ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/points",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "points",
+    "taskRoleArn": "arn:aws:iam::717942231127:role/ECSTaskRole",
+    "executionRoleArn": "arn:aws:iam::717942231127:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": []
+}

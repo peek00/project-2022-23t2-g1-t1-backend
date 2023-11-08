@@ -22,13 +22,17 @@ PolicyService.initialize().then(() => {
   // Adding Passport
   app.use(passport.initialize());
   app.use(
-    cors({
-      origin: process.env.CLIENT_BASE_URL,
-      credentials: true,
-    }),
+    // cors({
+    //   origin: process.env.CLIENT_BASE_URL, 
+    //   credentials: true, 
+    // }),
+    cors()
   );
 
   // Add Proxy Middleware
+  app.use("/health",(req, res) => {
+    res.send('health check');
+  })
   app.use("/",authorize(), router);
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -38,9 +42,9 @@ PolicyService.initialize().then(() => {
     console.log(`Server is running on port ${port}`);
   });
 
-  // Schedule a cron job to run at the start of every second
-  cron.schedule("* * * * * *", () => {
-    // Trigger reinitialization of logger
+  // Schedule a cron job to run at the start of every minute
+  cron.schedule("*/60 * * * * *", () => {
+    // Trigger reinitialization of logger 
     console.log("Reinitializing Logger");
     Logger.getInstance().createLogger();
   });

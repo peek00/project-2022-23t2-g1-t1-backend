@@ -1,0 +1,67 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "maker-checker",
+            "image": "717942231127.dkr.ecr.ap-southeast-1.amazonaws.com/maker-checker:latest",
+            "cpu": 512,
+            "memory": 2048,
+            "memoryReservation": 1024,
+            "portMappings": [
+                {
+                    "name": "maker-checker-5000-tcp",
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "AWS_REGION",
+                    "value": "ap-southeast-1"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:717942231127:secret:ecsSecrets-uRN4DD:AWS_SECRET_ACCESS_KEY::"
+                }
+            ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/maker-checker",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "family": "maker-checker",
+    "taskRoleArn": "arn:aws:iam::717942231127:role/ECSTaskRole",
+    "executionRoleArn": "arn:aws:iam::717942231127:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": []
+}

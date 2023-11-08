@@ -89,7 +89,7 @@ passport.use(
         email: profile.emails![0].value,
         provider: "google",
       };
-      // console.log(userProfile);
+      console.log(userProfile);
       try {
         const user = await authenticationService.authenticate(
           userProfile.email,
