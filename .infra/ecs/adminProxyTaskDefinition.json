@@ -27,11 +27,11 @@
                 },
                 {
                     "name": "MAKER_CHECKER_MS",
-                    "value": "http://ecs-be-cluster.maker-checker:5000"
+                    "value": "http://ecs-be-cluster.maker-checker"
                 },
                 {
                     "name": "POINTS_MS",
-                    "value": "http://ecs-be-cluster.points:3000"
+                    "value": "http://ecs-be-cluster.points"
                 },
                 {
                     "name": "AWS_DEFAULT_REGION",
@@ -55,11 +55,11 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "http://ecs-be-cluster.user:8080"
+                    "value": "http://ecs-be-cluster.user"
                 },
                 {
                     "name": "LOGGING_MS",
-                    "value": "http://ecs-be-cluster.logging:3000"
+                    "value": "http://ecs-be-cluster.logging"
                 }
             ],
             "mountPoints": [],
