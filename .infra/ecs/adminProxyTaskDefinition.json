@@ -27,11 +27,11 @@
                 },
                 {
                     "name": "MAKER_CHECKER_MS",
-                    "value": "http://ecs-be-cluster.maker-checker"
+                    "value": "http://maker-checker"
                 },
                 {
                     "name": "POINTS_MS",
-                    "value": "http://ecs-be-cluster.points"
+                    "value": "http://points"
                 },
                 {
                     "name": "AWS_DEFAULT_REGION",
@@ -55,11 +55,11 @@
                 },
                 {
                     "name": "USER_MS",
-                    "value": "http://ecs-be-cluster.user"
+                    "value": "http://user"
                 },
                 {
                     "name": "LOGGING_MS",
-                    "value": "http://ecs-be-cluster.logging"
+                    "value": "http://logging"
                 }
             ],
             "mountPoints": [],
