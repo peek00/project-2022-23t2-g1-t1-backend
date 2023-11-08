@@ -20,6 +20,7 @@ export default function UserAccountPage() {
           </div>
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
+            
             <UserAccountTable />
           </div>
         </div>

@@ -25,11 +25,12 @@ export default function AddAccountForm() {
         // Handle the successful response and set the data to the state
         setCompany(response.data.data);
         
+        
       // Set the companyID in the formData state to the first item in companyData
       if (response.data.data.length > 0) {
         setFormData({
           ...formData,
-          companyID: response.data.data[0].id
+          companyID: response.data.data[0]
         });
       }
     })
@@ -39,7 +40,8 @@ export default function AddAccountForm() {
       });
   }, []);
 
-  console.log(companyData);
+  
+  console.log(formData)
 
   const handleChange = (e) => {
     console.log(formData);
@@ -74,7 +76,7 @@ export default function AddAccountForm() {
   
       // Assuming the response contains the user's role
 
-      // window.location.href = "/users";
+      window.location.href = "/users";
   
     
       console.log(response);

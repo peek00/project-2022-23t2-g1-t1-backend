@@ -30,7 +30,9 @@ export default function MenuDefault({firstName,lastName,email,id}) {
       <MenuList className="">
         {role && role.user && role.user.PUT && (
           <MenuItem>
+          <Link to ="/user/accounts">
           View Accounts
+          </Link>
            
           </MenuItem>
         )}
