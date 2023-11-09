@@ -5,43 +5,51 @@ import axios from "axios"; // Import Axios
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 
-export default function UserListingPage() {
-    // Handle tab change
-    const [activeTab, setActiveTab] = useState("pending");
-    const handleTabChange = (newState) => {
-        setActiveTab(newState);
-    };
+// Specific
+import Template from "../components/maker_checker/Template";
 
+export default function UserListingPage() {
     const [templateData, setTemplateData] = useState([]);
 
+    // Create a state variable to track editing state for each row
+
+    const onUpdate = async (updatedData) => {
+        try {
+            console.log(updatedData);
+            // Make an HTTP request to update the data on the server
+            const updatedTemplate = await axios.put(
+                `http://localhost:8000/api/maker-checker/templates/`,
+                updatedData,
+                {
+                    withCredentials: true,
+                }
+            );
+            // Update the local state with the updated data
+            const newTemplateData = [...templateData];
+            setTemplateData(newTemplateData);
+        } catch (error) {
+            console.error("Error updating template:", error);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 let templateUrl = `http://localhost:8000/api/maker-checker/templates/`;
-                let permissionUrl = `http://localhost:8000/api/maker-checker/permission/`;
-                console.log("Fetching data from: " + permissionUrl);
-                
+
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,
                 });
                 setTemplateData(templateResponse.data);
-                console.log(templateResponse.data);
-                // Fetching permission data
-                const permissionResponse = await axios.get(permissionUrl, {
-                    withCredentials: true,
-                });
-                console.log(permissionResponse.data);
-                
-
-
             } catch (error) {
                 console.log(error);
             }
         };
         fetchData();
     }, []);
+
+    // Function to toggle editing state for a specific row
 
     return (
         <div className="flex min-h-screen">
@@ -76,35 +84,13 @@ export default function UserListingPage() {
                     </thead>
                     {/* Body */}
                     <tbody>
-                        {templateData.map((request, index) => (
-                            <tr
+                        {templateData.map((template, index) => (
+                            <Template
                                 key={index}
-                                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                            >
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    {request.type}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <button> Click Me</button>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    {request.allowed_approvers}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    {request.allowed_requestors}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div>
-                                        <div>
-                                            <button
-                                                className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
-                                            >
-                                                Update
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                index={index}
+                                data={template}
+                                onUpdate={onUpdate}
+                            />
                         ))}
                     </tbody>
                 </table>
