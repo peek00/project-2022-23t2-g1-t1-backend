@@ -293,12 +293,7 @@ router.get('/allpointsaccounts', async(req,res) => {
 // WHEN USER_ID IS IN REQ.BODY - ADMIN USE
 // GET request that returns all points account by a particular user_id through req.body
 router.get('/allpointsaccountsAdmin', async(req,res) => {
-  // console.log(req.headers);
-  // const companyId = req.headers.companyid;
-  // console.log("body: ")
   console.log(req.body);
-  // console.log("params");
-  // console.log(req.params);
   const userId = req.body.user_id;
   if (!userId) {
     return res.status(400).json({
@@ -339,7 +334,6 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
 // takes in companyid in request headers
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
