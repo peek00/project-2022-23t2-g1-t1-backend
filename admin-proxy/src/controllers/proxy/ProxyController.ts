@@ -7,7 +7,7 @@ export class ProxyController{
   constructor(target: string, path: string, logger?: AuditLogger){
     this.proxy = createProxyMiddleware({
       target: target,
-      changeOrigin: true,
+      changeOrigin: false,
       pathRewrite: {
         [`^${path}`]: "",
       },

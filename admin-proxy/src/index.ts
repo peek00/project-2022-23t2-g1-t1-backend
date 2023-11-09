@@ -16,21 +16,18 @@ const app: Application = express();
 const host = "0.0.0.0";
 const port = Number(process.env.PORT) || 8000;
 
+app.use(cors({
+  origin: ['*',process.env.CLIENT_BASE_URL as string],
+  credentials: true, 
+}));
+
 // Initialize Policy Service
 PolicyService.initialize().then(() => {
   console.log("Policy Service Initialized");
+  console.log(process.env.CLIENT_BASE_URL);
   // Adding Passport
   app.use(passport.initialize());
-  app.use(
-    // cors({
-    //   origin: process.env.CLIENT_BASE_URL, 
-    //   credentials: true, 
-    // }),
-    cors({
-      origin: '*',
-      credentials: true
-    })
-  );
+  
 
   // Add Proxy Middleware
   app.use("/health",(req, res) => {
