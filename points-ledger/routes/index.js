@@ -20,14 +20,14 @@ router.get('/allcompanyids', async (req, res) => {
     if (!results || results.length === 0) {
       return res.status(404).json({
         "code": 404,
-        "logs_info": "Accessed /allcompanyids, status: 404",
+        "logInfo": "Accessed /allcompanyids, status: 404",
         "message": "No company records found."
       });
     }
 
     return res.status(200).json({
       "code": 200,
-      "logs_info": "Accessed /allcompanyids, status: 200",
+      "logInfo": "Accessed /allcompanyids, status: 200",
       "data": results,
       "message": "Success"
     });
@@ -35,7 +35,7 @@ router.get('/allcompanyids', async (req, res) => {
     console.log(error);
     res.status(500).json({
       "code": 500,
-      "logs_info": "Accessed /allcompanyids, status: 500",
+      "logInfo": "Accessed /allcompanyids, status: 500",
       "message": error.message
     });
   }
@@ -51,14 +51,14 @@ router.get('/allcompanyids', async (req, res) => {
 //     if (!results || results.length === 0) {
 //       return res.status(404).json({
 //         "code": 404,
-//         "logs_info": "Accessed /allcompanyids, status: 404",
+//         "logInfo": "Accessed /allcompanyids, status: 404",
 //         "message": "No company records found."
 //       });
 //     }
 
 //     return res.status(200).json({
 //       "code": 200,
-//       "logs_info": "Accessed /allcompanyids, status: 200",
+//       "logInfo": "Accessed /allcompanyids, status: 200",
 //       "data": results,
 //       "message": "Success"
 //     });
@@ -66,7 +66,7 @@ router.get('/allcompanyids', async (req, res) => {
 //     console.log(error);
 //     res.status(500).json({
 //       "code": 500,
-//       "logs_info": "Accessed /allcompanyids, status: 500",
+//       "logInfo": "Accessed /allcompanyids, status: 500",
 //       "message": error.message
 //     });
 //   }
@@ -75,7 +75,7 @@ router.get('/allcompanyids', async (req, res) => {
 router.get('/testing', function(req, res, next) {
   res.status(200).json({
     "code" : 200,
-    "logs_info":  "Accessed /testing, status: 200, points ms connection works",
+    "logInfo":  "Accessed /testing, status: 200, points ms connection works",
     "data": [],
     "message": "Accessed /testing, status: 200, points ms connection works"
   })
@@ -96,15 +96,15 @@ router.get('/allaccounts', async(req,res) => {
     if (results.length==0) {
       res.status(400).json({
         "code" : 400,
-        "logs_info": userId + " accessed '/allaccounts', status: 400",
-        "logs_info": userId + " accessed '/allaccounts', status: 400",
+        "logInfo": userId + " accessed '/allaccounts', status: 400",
+        "logInfo": userId + " accessed '/allaccounts', status: 400",
         "data": results,
         "message": "No records found."
       })
     }else{
       res.status(200).json({
         "code" : 200,
-        "logs_info": userId + " accessed '/allaccounts', status: 200",
+        "logInfo": userId + " accessed '/allaccounts', status: 200",
         "data": results,
         "message": "Success"
       });
@@ -114,7 +114,7 @@ router.get('/allaccounts', async(req,res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": userId + " accessed '/allaccounts', status: 500",
+      "logInfo": userId + " accessed '/allaccounts', status: 500",
       "data": [],
       "message": error.message
     });
@@ -138,14 +138,14 @@ router.get('/allpointsaccounts', async(req,res) => {
     if (results.length==0) {
       res.status(404).json({
         "code" : 404,
-        "logs_info": userId + " accessed all /allpointsaccounts, status: 404",
+        "logInfo": userId + " accessed all /allpointsaccounts, status: 404",
         "data": results,
         "message": "No records found."
       })
     }
     res.status(200).json({
       "code" : 200,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 200",
+      "logInfo": userId + " accessed '/allpointsaccounts', status: 200",
       "data": results,
       "message": "Success"
     });
@@ -154,7 +154,7 @@ router.get('/allpointsaccounts', async(req,res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 500",
+      "logInfo": userId + " accessed '/allpointsaccounts', status: 500",
       "data": [],
       "message": error.message
     });
@@ -182,7 +182,7 @@ router.get('/alluseraccounts', async(req, res) => {
     if (!results || results.length === 0) {
       return res.status(404).json({
         "code" : 404,
-        "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 404`,
+        "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 404`,
         "data": [],
         "message": "No records found."
       });
@@ -190,7 +190,7 @@ router.get('/alluseraccounts', async(req, res) => {
 
     return res.status(200).json({
       "code" : 200,
-      "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 200`,
+      "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 200`,
       "data": results,
       "message": "Success"
     });
@@ -198,7 +198,7 @@ router.get('/alluseraccounts', async(req, res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 500`,
+      "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 500`,
       "data": [],
       "message": error.message
     });
@@ -226,7 +226,7 @@ router.get('/allidsbycompany', async(req, res) => {
     if (!results || results.length === 0) {
       return res.status(404).json({
         "code": 404,
-        "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 404`,
+        "logInfo": `Company ID ${companyId} accessed '/allidsbycompany', status: 404`,
         "message": "No accounts found for the provided company ID."
       });
     }
@@ -234,7 +234,7 @@ router.get('/allidsbycompany', async(req, res) => {
     // If there are results, return them
     res.status(200).json({
       "code": 200,
-      "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 200`,
+      "logInfo": `Company ID ${companyId} accessed '/allidsbycompany', status: 200`,
       "data": results,
       "message": "Success"
     });
@@ -243,7 +243,7 @@ router.get('/allidsbycompany', async(req, res) => {
     console.log(error);
     res.status(500).json({
       "code": 500,
-      "logs_info": `Company ID ${companyId} accessed '/allidsbycompany', status: 500`,
+      "logInfo": `Company ID ${companyId} accessed '/allidsbycompany', status: 500`,
       "message": error.message
     });
   }
@@ -267,14 +267,14 @@ router.get('/allpointsaccounts', async(req,res) => {
     if (results.length==0) {
       res.status(404).json({
         "code" : 404,
-        "logs_info": userId + " accessed all /allpointsaccounts, status: 404",
+        "logInfo": userId + " accessed all /allpointsaccounts, status: 404",
         "data": results,
         "message": "No records found."
       })
     }
     res.status(200).json({
       "code" : 200,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 200",
+      "logInfo": userId + " accessed '/allpointsaccounts', status: 200",
       "data": results,
       "message": "Success"
     });
@@ -283,7 +283,59 @@ router.get('/allpointsaccounts', async(req,res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 500",
+      "logInfo": userId + " accessed '/allpointsaccounts', status: 500",
+      "data": [],
+      "message": error.message
+    });
+  })
+})
+
+// WHEN USER_ID IS IN REQ.BODY - ADMIN USE
+// GET request that returns all points account by a particular user_id through req.body
+router.get('/allpointsaccountsAdmin', async(req,res) => {
+  console.log(req.body);
+  const adminUserId = req.headers.userid;
+  const userId = req.body.user_id;
+  if (!userId) {
+    return res.status(400).json({
+      "code": 400,
+      "message": "UserId is required."
+    });
+  }
+  allquery.getAllAccountsByUserId(userId)
+  .then((results) => {
+    console.log("Results: ", results);
+    if (results.length==0) {
+      res.status(404).json({
+        "code" : 404,
+        "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
+        "data": results,
+        "message": "No records found."
+      })
+    }
+    const filteredResults = {}
+    for (let i=0;i<results.length;i++) {
+      let info = results[i];
+      // find the company id
+      let companyname = info["company_id"]
+      if (companyname in filteredResults){
+        filteredResults[companyname].push(info);
+      } else{
+        filteredResults[companyname] = [info];
+      }
+    }
+    res.status(200).json({
+      "code" : 200,
+      "logs_info": "admin-user_id: " + adminUserId + " accessed '/allpointsaccounts' for user:" + userId + ", status: 200",
+      "data": filteredResults,
+      "message": "Success"
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({
+      "code" : 500,
+      "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
       "data": [],
       "message": error.message
     });
@@ -294,7 +346,6 @@ router.get('/allpointsaccounts', async(req,res) => {
 // takes in companyid in request headers
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
@@ -311,7 +362,7 @@ router.get('/alluseraccounts', async(req, res) => {
     if (!results || results.length === 0) {
       return res.status(404).json({
         "code" : 404,
-        "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 404`,
+        "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 404`,
         "data": [],
         "message": "No records found."
       });
@@ -319,7 +370,7 @@ router.get('/alluseraccounts', async(req, res) => {
 
     return res.status(200).json({
       "code" : 200,
-      "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 200`,
+      "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 200`,
       "data": results,
       "message": "Success"
     });
@@ -327,7 +378,7 @@ router.get('/alluseraccounts', async(req, res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": `Company ID ${companyId} accessed '/alluseraccounts', status: 500`,
+      "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 500`,
       "data": [],
       "message": error.message
     });
@@ -338,10 +389,8 @@ router.get('/alluseraccounts', async(req, res) => {
 // takes in a particular points account's id and company id
 router.get('/accdetails', async (req,res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
-  // const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.getPointsBalance(companyId,pointsId)
@@ -356,7 +405,7 @@ router.get('/accdetails', async (req,res) => {
     }
     res.status(200).json({
       "code" : 200,
-      "logs_info": "Accessed '/accdetails' for points account {pointsId}, status: 200",
+      "logInfo": "Accessed '/accdetails' for points account {pointsId}, status: 200",
       "data" : results,
       "message" : "Success"
     });
@@ -403,79 +452,54 @@ router.post('/createAccount', async (req,res) => {
   const companyId = req.body.company_id;
   const userId = req.headers.userid;
   const inputbalance = req.body.balance;
-  // const inputbalance = req.headers.balance;
   const new_pointsId = uuidv4();
   console.log(companyId);
   console.log(userId)
   console.log(inputbalance)
   console.log("uuid: " + new_pointsId)
-  allquery.companyExists(companyId)
-  .then((companyresults) => {
-    console.log(companyresults)
-    if (companyresults) {
-        console.log("valid company id");
-        allquery.pointsAccExist(companyId, new_pointsId)
-        .then((results) => {
-          if (!results) {
-            console.log("valid unique points_balance id");
-            // if no such points_id balance
-            allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
-            .then((newresults) => {
-              const status = newresults.$metadata.httpStatusCode;
-              if (status ==200) {
-                res.status(200).json({
-                  "code": 200,
-                  "logs_info": "Accessed '/createAccount', new points account created, status: 200",
-                  "data": newresults,
-                  "message": "Account successfully created"
-                });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(500).json({
-                "code" : 500,
-                "data" : [],
-                "message" : err.message
-              });
-            })
-          }
-          //points acc id already exists
-          else {
-            res.status(400).json({
-              "code" : 400,
-              "data": [],
-              "message" : 'Points Balance ID already exists'
-            })
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          res.status(500).json({
-            "code" : 500,
-            "data" : [],
-            "message" : error.message
+  allquery.pointsAccExist(companyId, new_pointsId)
+  .then((results) => {
+    if (!results) {
+      console.log("valid unique points_balance id");
+      // if no such points_id balance
+      allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
+      .then((newresults) => {
+        const status = newresults.$metadata.httpStatusCode;
+        if (status ==200) {
+          res.status(200).json({
+            "code": 200,
+            "logInfo": "Accessed '/createAccount', new points account created, status: 200",
+            "data": newresults,
+            "message": "Account successfully created"
           });
-        })
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          "code" : 500,
+          "data" : [],
+          "message" : err.message
+        });
+      })
     }
+    //points acc id already exists
     else {
       res.status(400).json({
         "code" : 400,
         "data": [],
-        "message" : 'Company ID do not exists'
+        "message" : 'Points Balance ID already exists'
       })
     }
-    
   })
-  .catch((companyerror) => {
-    console.log(companyerror);
-    res.status(404).json({
-      "code" : 404,
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({
+      "code" : 500,
       "data" : [],
       "message" : error.message
     });
-  })
-  
+  })  
 })
 
 // POST request to delete a points balance account
@@ -496,7 +520,7 @@ router.delete('/deleteAccount', function(req,res){
         // if (status==200){
           res.status(200).json({
             "code": 200,
-            "logs_info": "Accessed '/deleteAccount', points account deleted, status: 200",
+            "logInfo": "Accessed '/deleteAccount', points account deleted, status: 200",
             "data": results,
             "message": "Account successfully deleted"
           })
@@ -506,7 +530,7 @@ router.delete('/deleteAccount', function(req,res){
         console.log(err);
         res.status(500).json({
           "code": 500,
-          "logs_info": "Accessed '/deleteAccount', points account failed to delete, status: 500",
+          "logInfo": "Accessed '/deleteAccount', points account failed to delete, status: 500",
           "data": [],
           "message": err.message
         })
@@ -515,7 +539,7 @@ router.delete('/deleteAccount', function(req,res){
     else {
       res.status(400).json({
         "code": 400,
-        "logs_info": "Accessed '/deleteAccount', no points account to delete, status: 400",
+        "logInfo": "Accessed '/deleteAccount', no points account to delete, status: 400",
         "data": [],
         "message": "No such Points Account Exists"
       })
@@ -544,7 +568,7 @@ router.put('/updatebalance', async (req,res) => {
         if (status == 200) {
           res.status(200).json({
             "code" : 200,
-            "logs_info": "Accessed '/updatebalance', points account balance updated, status: 200",
+            "logInfo": "Accessed '/updatebalance', points account balance updated, status: 200",
             "data" : newresults,
             "message" : "Update Success"
           });
@@ -554,7 +578,7 @@ router.put('/updatebalance', async (req,res) => {
         console.log(err);
         res.status(500).json({
           "code" : 500,
-          "logs_info": "Accessed '/updatebalance', points account balance failed to update, status: 500",
+          "logInfo": "Accessed '/updatebalance', points account balance failed to update, status: 500",
           "data" : [],
           "message" : err.message
         });
@@ -563,7 +587,7 @@ router.put('/updatebalance', async (req,res) => {
     else {
       res.status(400).json({
         "code" : 400,
-        "logs_info": "Accessed '/updatebalance', no such points account balance to update, status: 400",
+        "logInfo": "Accessed '/updatebalance', no such points account balance to update, status: 400",
         "data" : [],
         "message" : "No record of points account found."
       })

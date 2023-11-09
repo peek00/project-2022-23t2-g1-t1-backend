@@ -29,12 +29,12 @@ export class LogService {
         { AttributeName: "timestamp", AttributeType: "S" },
       ],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5,
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
       },
-      ttl: {
+      TimeToLiveSpecification: {
         AttributeName: "ttl",
-        Enabled: true,
+        Enabled: "TRUE",
       },
     };
 

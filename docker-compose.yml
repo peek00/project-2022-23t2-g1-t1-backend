@@ -16,9 +16,8 @@ services:
       - microservice1=http://microservice1:3000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - CLOUDWATCH_REGION=us-east-1
-      - AWS_DEFAULT_REGION=local
-      - AWS_DYNAMODB_ENDPOINT=http://db:8000
+      - AWS_DEFAULT_REGION=local #Change to `ap-southeast-1` for prod
+      - AWS_DYNAMODB_ENDPOINT=http://db:8000 #Comment this out to use prod db
       - CLIENT_BASE_URL=http://localhost:5173 #Update to the url of the FE
       - CLIENT_AUTH_REDIRECT_URL=http://localhost:5173/users #Update this to the FE url with the path to redirect the client to after authentication
       - USER_MS=http://user:8080

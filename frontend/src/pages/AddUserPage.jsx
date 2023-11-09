@@ -1,8 +1,8 @@
 import React from 'react';
-import SideBar from '../components/SideBar';
-import TopBar from '../components/TopBar';
-import UpdateUserForm from '../components/UpdateUserForm';
-import AddUserForm from '../components/AddUserForm';
+import SideBar from '../components/common_utils/SideBar';
+import TopBar from '../components/common_utils/TopBar';
+import UpdateUserForm from '../components/user/UpdateUserForm';
+import AddUserForm from '../components/user/AddUserForm';
 
 export default function AddUserPage(props) {
   const goBack = () => {

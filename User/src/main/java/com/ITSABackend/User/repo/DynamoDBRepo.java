@@ -3,6 +3,7 @@ package com.ITSABackend.User.repo;
 
 import com.amazonaws.services.dynamodbv2.document.BatchWriteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.TableCollection;
 import com.amazonaws.services.dynamodbv2.document.TableWriteItems;
@@ -19,12 +20,16 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
+import com.ITSABackend.User.models.User;
+import com.ITSABackend.User.utils.ResourceCSVFileParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class DynamoDBRepo {
@@ -47,6 +52,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.USER + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER).getTableName());
             }
 
@@ -74,20 +80,54 @@ public class DynamoDBRepo {
 
             CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.USER)
                 .withProvisionedThroughput(
-                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 2).withWriteCapacityUnits((long) 2))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema)
                 .withGlobalSecondaryIndexes(createEmailIndex);
 
-            System.out.println("Creating table " + AppConstant.USER + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+                
+            if (!tableExists || restart) {
+                try{
+                    System.out.println("Creating table " + AppConstant.USER + "...");
+                    dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
+                
+                    System.out.println("Populating table " + AppConstant.USER + " with default values...");
+                    Table userTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.USER);
+                    ArrayList<User> users = new ResourceCSVFileParser().retrieveUserFromCsv();
+                    int count = users.size();
+                    do {
+                    for (User user : users) {
+                        try {
+                        System.out.println("Adding a new item...");
+                        userTable.putItem(new Item().withPrimaryKey("userID", user.getUserId()).withString("email", user.getEmail())
+                            .withString("firstName", user.getfirstName()).withString("lastName", user.getlastName())
+                            .withStringSet("userRole", user.getRoles()));
+                        System.out.println("PutItem succeeded: " + user.getUserId());
+                        count--;
+                        } catch (Exception e) {
+                        System.err.println("Unable to add item: " + user.getUserId());
+                        System.err.println(e.getMessage());
+                        Thread.sleep(1000);
+                        break;
+                        }
+                    }
+                    } while (count > 0);
+                    System.out.println("Initialisation successful, added " + users.size() + " records");
+
+                } catch (Exception e) {
+                    System.err.println("Error occurred while populating user table from CSV file: " + e.getMessage());
+                }
+
+                
+            } else {
+                System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
+            }
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the User table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
     }
-
     public void createRoleTable(boolean restart) throws Exception {
         // Create a new role table with secondary index
         boolean tableExists = false;
@@ -104,6 +144,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.ROLE + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE).getTableName());
             }
             // Attribute definitions
@@ -126,34 +167,50 @@ public class DynamoDBRepo {
                     new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
 
-            System.out.println("Creating table " + AppConstant.ROLE + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-
-            if (!tableExists || (tableExists && restart)) {
                 
-            Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
+            if (!tableExists || restart) {
+                System.out.println("Creating table " + AppConstant.ROLE + "...");
+                dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
 
-            // Define default items
-            List<Item> defaultItems = new ArrayList<>();
-            defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
-            defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
+                Table roleTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.ROLE);
 
-            // Batch write the default items to the table
-            
-            System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
-            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+                // Define default items
+                List<Item> defaultItems = new ArrayList<>();
+                defaultItems.add(new Item().withPrimaryKey("roleName", "User"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Owner"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Manager"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Engineer"));
+                defaultItems.add(new Item().withPrimaryKey("roleName", "Product Manager"));
+
+                // Batch write the default items to the table
+                
+                System.out.println("Populating table " + AppConstant.ROLE + " with default values...");
+                // TableWriteItems writeItems = new TableWriteItems(roleTable.getTableName()).withItemsToPut(defaultItems);
+                // BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
+                // System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+
+                // Do while loop to try to write the default items to the table 1 by 1
+                int i = 0;
+                do {
+                    try {
+                        PutItemOutcome outcome = roleTable.putItem(defaultItems.get(i));
+                        System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+                        i++;
+                    } catch (Exception e) {
+                        System.err.println("Unable to add item: " + defaultItems.get(i));
+                        System.err.println(e.getMessage());
+                        System.out.println("Retrying...");
+                        // Sleep for 1 second
+                        Thread.sleep(1000);
+                    }
+                } while (i < defaultItems.size());
             
             } else {
                 System.out.println("Table " + AppConstant.ROLE + " already exists, skipping population of default values.");
             }
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the Role table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }
@@ -174,6 +231,7 @@ public class DynamoDBRepo {
             }
             // Delete the table if it already exists
             if (tableExists && restart) {
+                System.out.println("Table " + AppConstant.COMPANY + " already exists, deleting...");
                 deleteTable(dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY).getTableName());
             }
             // Attribute definitions
@@ -185,13 +243,13 @@ public class DynamoDBRepo {
 
             CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(AppConstant.COMPANY)
                 .withProvisionedThroughput(
-                    new ProvisionedThroughput().withReadCapacityUnits((long) 1).withWriteCapacityUnits((long) 1))
+                    new ProvisionedThroughput().withReadCapacityUnits((long) 2).withWriteCapacityUnits((long) 2))
                 .withAttributeDefinitions(attributeDefinitions).withKeySchema(tableKeySchema);
 
-            System.out.println("Creating table " + AppConstant.COMPANY + "...");
-            dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
-
-            if (!tableExists || (tableExists && restart)) {
+                
+            if (!tableExists || restart) {
+                System.out.println("Creating table " + AppConstant.COMPANY + "...");
+                dynamoDBConfig.getDynamoDB().createTable(createTableRequest);
                 
             Table companyTable = dynamoDBConfig.getDynamoDB().getTable(AppConstant.COMPANY);
 
@@ -201,20 +259,32 @@ public class DynamoDBRepo {
             defaultItems.add(new Item().withPrimaryKey("companyID", "POSB").withString("companyName", "POSB"));
             defaultItems.add(new Item().withPrimaryKey("companyID", "BofA").withString("companyName", "Bank Of America"));
 
-
             // Batch write the default items to the table
             
             System.out.println("Populating table " + AppConstant.COMPANY + " with default values...");
-            TableWriteItems writeItems = new TableWriteItems(companyTable.getTableName()).withItemsToPut(defaultItems);
-            BatchWriteItemOutcome outcome = dynamoDBConfig.getDynamoDB().batchWriteItem(writeItems);
-            System.out.println("Batch write successful: " + outcome.getBatchWriteItemResult());
+
+            // Iterate through the items to write to the table 
+            int i = 0;
+            do {
+                try {
+                    PutItemOutcome outcome = companyTable.putItem(defaultItems.get(i));
+                    System.out.println("PutItem succeeded: " + outcome.getPutItemResult());
+                    i++;
+                } catch (Exception e) {
+                    System.err.println("Unable to add item: " + defaultItems.get(i));
+                    System.err.println(e.getMessage());
+                    System.out.println("Retrying...");
+                    // Sleep for 1 second
+                    Thread.sleep(1000);
+                }
+            } while (i < defaultItems.size());
             
             } else {
                 System.out.println("Table " + AppConstant.COMPANY + " already exists, skipping population of default values.");
             }
             
         } catch (Exception e) {
-            System.err.println("Cannot create the table");
+            System.err.println("Cannot create the Company table");
             System.err.println(e.getMessage());
             throw new Exception("Error has occured");
         }

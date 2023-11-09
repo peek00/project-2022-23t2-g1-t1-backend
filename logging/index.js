@@ -12,8 +12,8 @@ const logService = LogService.getInstance();
 // cron.schedule('0 * * * *', () => {
 //   processLog();
 // });
-cron.schedule('*/10 * * * * *', () => {
-  console.log('running a task every 10 second');
+cron.schedule('*/60 * * * * *', () => {
+  console.log('running a task every 1 minute');
   // readLogs();
   processLog();
 });

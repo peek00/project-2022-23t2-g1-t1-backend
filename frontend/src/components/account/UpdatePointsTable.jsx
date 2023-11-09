@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import AvatarText from './AvatarText';
+import AvatarText from '../common_utils/AvatarText';
 export default function UpdatePointsTable(){
     const goBack = () => {
         window.history.back();

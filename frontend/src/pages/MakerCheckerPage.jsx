@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
 // Default components
-import SideBar from "../components/SideBar";
-import TopBar from "../components/TopBar";
+import SideBar from "../components/common_utils/SideBar";
+import TopBar from "../components/common_utils/TopBar";
 
 // Company Specific
-import MakerCheckerNav from "../components/MakerCheckerNav";
-import CreateRequest from "../components/CreateRequest";
-import PendingApprovalTable from "../components/PendingApprovalTable";
-import RequestedApprovalTable from "../components/RequestedApprovalTable";
-import HistoryApprovalTable from "../components/HistoryApprovalTable";
-import CompanyDropdown from "../components/CompanyDropdown";
+import MakerCheckerNav from "../components/maker_checker/MakerCheckerNav";
+import CreateRequest from "../components/maker_checker/CreateRequest";
+import PendingApprovalTable from "../components/maker_checker/PendingApprovalTable";
+import RequestedApprovalTable from "../components/maker_checker/RequestedApprovalTable";
+import HistoryApprovalTable from "../components/maker_checker/HistoryApprovalTable";
+import CompanyDropdown from "../components/maker_checker/CompanyDropdown";
 
 
 export default function UserListingPage() {

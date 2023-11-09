@@ -1,11 +1,11 @@
 
 import React from 'react';
-import SideBar from '../components/SideBar';
-import TopBar from '../components/TopBar';
+import SideBar from '../components/common_utils/SideBar';
+import TopBar from '../components/common_utils/TopBar';
 
-import AddAccountForm from '../components/AddAccountForm';
+import AddAccountForm from '../components/account/AddAccountForm';
 
-export default function AddPage(props) {
+export default function AddAccountPage() {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };

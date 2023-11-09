@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import CompanyDropdown from "../components/CompanyDropdown";
+import CompanyDropdown from "../account/CompanyDropdown";
 
 export default function SideBar() {
   const [activeLink, setActiveLink] = useState('');

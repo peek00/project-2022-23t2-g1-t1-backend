@@ -1,7 +1,7 @@
 import React from 'react';
-import SideBar from '../components/SideBar';
-import TopBar from '../components/TopBar';
-import UserAccountTable from '../components/UserAccountTable';
+import SideBar from '../components/common_utils/SideBar';
+import TopBar from '../components/common_utils/TopBar';
+import UserAccountTable from '../components/account/UserAccountTable';
 
 export default function UserAccountPage() {
   return (
@@ -20,6 +20,7 @@ export default function UserAccountPage() {
           </div>
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
+            
             <UserAccountTable />
           </div>
         </div>

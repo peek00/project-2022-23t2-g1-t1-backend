@@ -218,7 +218,7 @@ async function getAllAccountsByUserId(userId) {
         const result = items.map(item => unmarshall(item));
 
         // Cache result in Redis for 10min
-        await CacheProvider.write(redisKey, JSON.stringify(result), 300);
+        // await CacheProvider.write(redisKey, JSON.stringify(result), 300);
         console.log(result);
 
         return result.length > 0 ? result : null;
@@ -485,6 +485,7 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
                 "balance": {"N" : inputbalance }
             },
             "TableName": config.aws_table_name,
+            "ConditionExpression": "attribute_not_exists(company_id) AND attribute_not_exists(user_id)",
             "ReturnConsumedCapacity":"TOTAL",
         }
 
@@ -492,13 +493,19 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         
         // Invalidating cached data for this user (as their data might have changed with this new record)
         const redisKeyAccounts = `accounts:${userId}`;
+        const redisKey = `accountsByUserId:${userId}`;
         await CacheProvider.remove(redisKeyAccounts);
+        await CacheProvider.remove(redisKey);
 
         console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
         return data;
     }
     catch (err) {
-        console.log(err);
+        if (err.name === 'ConditionalCheckFailedException') {
+            console.log(`Account with user_id ${userId} already exists for company_id ${companyId}.`);
+        } else {
+            console.error(err);
+        }
         throw err;
     }
 }

@@ -18,8 +18,7 @@ const ITEMS_PER_PAGE = 5; // Set the number of items per page
 
 const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
-
-export default function LogsTable() {
+ function LogsTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -203,3 +202,5 @@ export default function LogsTable() {
     </div>
   );
 }
+
+export default LogsTable;
