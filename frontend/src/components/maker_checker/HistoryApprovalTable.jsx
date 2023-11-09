@@ -16,92 +16,53 @@ export default function HistoryApprovalTable({ data, activeTab, selectedCompany 
         return <div className="ms-[40px]">No data available.</div>;
     }
     // @ChatGPT 
-    function getRelativeTimeOrExpired(timestamp) {
+    function getElapsedRelativeTime(timestamp) {
         const now = new Date();
         const timestampDate = new Date(timestamp);
-        // const timeDifference =  now -timestampDate ;
-        const timeDifference = timestampDate - now;
-
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        const timeDifference = now - timestampDate;
 
         if (timeDifference < 0) {
             return false;
-        } else if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''}, ${hours} hr${hours > 1 ? 's' : ''}`;
+        }
+
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+            (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+            (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+
+        if (days > 0) {
+            return `${days} day${days > 1 ? "s" : ""}, ${hours} hr${hours > 1 ? "s" : ""
+                } ago`;
         } else if (hours > 0) {
-            return `${hours} hr${hours > 1 ? 's' : ''}, ${minutes} min${minutes > 1 ? 's' : ''}`;
+            return `${hours} hr${hours > 1 ? "s" : ""}, ${minutes} min${minutes > 1 ? "s" : ""
+                } ago`;
         } else {
-            return `${minutes} min${minutes > 1 ? 's' : ''}`;
+            return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
         }
     }
 
-    // Handle approval or response
-    const handleApprove = async (uid) => {
-        // const formObject = {
-        //     uid: uid,
-        //     status: "approved",
-        //     companyid: selectedCompany,
-        // };
-        console.log("Edit not implemented");
 
-        // const approveUrl = `http://localhost:8000/api/maker-checker/approval/resolve`;
-
-        // try {
-        //     const response = await axios.post(approveUrl, formObject, {
-        //         withCredentials: true,
-        //     });
-
-        //     // Handle the success response here
-        //     console.log("Approved:", response.data);
-
-        //     // You may want to update your UI or perform other actions here
-        // } catch (error) {
-        //     // Handle errors here
-        //     console.error("Error approving:", error);
-        // }
-    };
-
-    // Handle approval or response
-    const handleWithdraw = async (uid) => {
-        const formObject = {
-            uid: uid,
-            status: "withdrawn",
-            companyid: selectedCompany,
-        };
-
-        const approveUrl = `http://localhost:8000/api/maker-checker/approval/withdraw`;
-
-        try {
-            const response = await axios.post(approveUrl, formObject, {
-                withCredentials: true,
-            });
-
-            // Handle the success response here
-            console.log("Approved:", response.data);
-
-            // You may want to update your UI or perform other actions here
-        } catch (error) {
-            // Handle errors here
-            console.error("Error approving:", error);
-        }
-    };
     return (
-        <div className="ms-[40px]">
+        <div >
             <table className="min-w-full">
                 <thead>
                     <tr>
-                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
                             Request Type
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
                             Request Details
                         </th>
-                        <th className="w-6 px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
+                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase truncate text-black-500">
+                            Requested Time
+                        </th>
+                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase truncate text-black-500">
                             Requested By
                         </th>
-                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
                             Status
                         </th>
                     </tr>
@@ -112,16 +73,19 @@ export default function HistoryApprovalTable({ data, activeTab, selectedCompany 
                             key={index}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                         >
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 {request.request_type}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 <button> Click Me</button>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
+                                {getElapsedRelativeTime(request.resolution_at) || "N/A"}
+                            </td>
+                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 {request.requestor_id || "N/A"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 <span className={`font-bold ${request.status === "approved" ? 'text-green-500' : request.status === "rejected" ? 'text-red-500' : ''}`}>
                                     {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                                 </span>

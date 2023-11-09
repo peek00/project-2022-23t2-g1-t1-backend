@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
 import RequestTemplate from "./RequestTemplate";
@@ -17,8 +17,6 @@ function CreateRequest() {
             if (company) {
                 setSelectedCompany(company);
             }
-
-            // let url = `http://localhost:8000/api/maker-checker/permission/?role=${role}`;
             let url = `http://localhost:8000/api/maker-checker/templates/allowed_requestors?role=${role}`;
             const response = await axios.get(url, {
                 withCredentials: true,
@@ -99,7 +97,6 @@ function CreateRequest() {
                     selectedCompany={selectedCompany}/>
             )}
         </div>
-
     );
 }
 
