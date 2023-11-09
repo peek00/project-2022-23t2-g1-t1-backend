@@ -5,10 +5,6 @@ import axios from "axios"; // Import Axios
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 
-// Specific imports
-import Template from "../components/maker_checker/Template";
-import {API_BASE_URL} from "@/config/config";
-
 export default function UserListingPage() {
     // Handle tab change
     const [activeTab, setActiveTab] = useState("pending");
@@ -18,28 +14,14 @@ export default function UserListingPage() {
 
     const [templateData, setTemplateData] = useState([]);
 
-    const onUpdate = async (updatedData) => {
-        try {
-            // Make an HTTP request to update the data on the server
-            const updatedTemplate = await axios.put(
-                API_BASE_URL+"/api/maker-checker/templates/",
-                updatedData,
-                {
-                    withCredentials: true,
-                }
-            );
-            // Update the local state with the updated data
-            const newTemplateData = [...templateData];
-            setTemplateData(newTemplateData);
-        } catch (error) {
-            console.error("Error updating template:", error);
-        }
-    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let templateUrl = API_BASE_URL+"/api/maker-checker/templates/";
+                let templateUrl = `http://localhost:8000/api/maker-checker/templates/`;
+                let permissionUrl = `http://localhost:8000/api/maker-checker/permission/`;
+                console.log("Fetching data from: " + permissionUrl);
+                
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,
@@ -67,12 +49,11 @@ export default function UserListingPage() {
             <div className="w-[20%]  min-h-screen ">
                 <SideBar />
             </div>
+
             {/* Content Area */}
             <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
                 <TopBar />
-                <div className="mb-5 text-4xl">
-                    Edit Maker Checker Permissions
-                </div>
+                Templates Permissions
                 <table className="min-w-full">
                     <thead>
                         <tr>
