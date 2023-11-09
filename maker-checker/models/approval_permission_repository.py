@@ -2,6 +2,7 @@ from botocore.exceptions import ClientError
 from boto3.resources.base import ServiceResource
 from boto3.dynamodb.conditions import Key, Attr  # Import Key and Attr
 from datetime import datetime
+from typing import List
 
 from models.Permission import Permission
 
@@ -14,7 +15,7 @@ class ApprovalRequestPermissionRepo:
         """
         Get all permission.
         """
-        response = self.__table.query()
+        response = self.__table.scan()
         return response['Items']
     
     def get_specific_permission(self, role:str):
@@ -41,26 +42,27 @@ class ApprovalRequestPermissionRepo:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-    def add_permission(self, userid:str, role:str, action:str):
-        """
-        Adds a permission, creates if not. 
-        Used when creating a new template.
-        """
+    def update_permissions(self, userid, roles, action):
         try:
-            # Check if permissions for this role exists
-            permission = self.get_specific_permission(role)
-            if permission == []:
-                # Create new permission object
-                permission = Permission(
-                    role=role,
-                    approved_actions=[action]
-                )
-                self.create_permission(userid, permission)
-            else:
-                # Append action to permission
-                permission = permission[0]
-                if action not in permission['approved_actions']:
-                    permission['approved_actions'].append(action)
+            updated_responses = []
+            for role in roles:
+                permission = self.get_specific_permission(role)
+
+                # Create new permission if it doesn't exist
+                if not permission:
+                    permission = Permission(
+                        role=role,
+                        approved_actions=[action]
+                    )
+                    self.create_permission(userid, permission)
+                else:
+                    permission = permission[0]
+
+                    if action in permission['approved_actions']:
+                        permission['approved_actions'].remove(action)
+                    else:
+                        permission['approved_actions'].append(action)
+
                     response = self.__table.update_item(
                         Key={
                             'role': role
@@ -71,29 +73,32 @@ class ApprovalRequestPermissionRepo:
                             ':u': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                             ':i': userid
                         },
-                        ReturnValues="UPDATED_NEW"
+                        ReturnValues="ALL_NEW"
                     )
+                    updated_responses.append(response)
+
+            return updated_responses
         except ClientError as e:
             print(e.response['Error']['Message'])
     
-    def update_permission(self, userid:str, permission:Permission):
-        """
-        Involves replacing the roles. Should use add if you want to just add.
-        """
-        try:
-            response = self.__table.update_item(
-                Key={
-                    'role': permission.role
-                },
-                UpdateExpression="set approved_actions=:p, updated_at=:u, updated_by=:i",
-                ExpressionAttributeValues={
-                    ':p': permission.approved_actions,
-                    ':u': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                    ':i': userid
-                },
-                ReturnValues="UPDATED_NEW"
-            )
-            return response
-        except ClientError as e:
-            print(e.response['Error']['Message'])
+    # def update_permission(self, userid:str, permission:Permission):
+    #     """
+    #     Involves replacing the roles. Should use add if you want to just add.
+    #     """
+    #     try:
+    #         response = self.__table.update_item(
+    #             Key={
+    #                 'role': permission.role
+    #             },
+    #             UpdateExpression="set approved_actions=:p, updated_at=:u, updated_by=:i",
+    #             ExpressionAttributeValues={
+    #                 ':p': permission.approved_actions,
+    #                 ':u': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+    #                 ':i': userid
+    #             },
+    #             ReturnValues="UPDATED_NEW"
+    #         )
+    #         return response
+    #     except ClientError as e:
+    #         print(e.response['Error']['Message'])
     

@@ -11,7 +11,8 @@ import AddAccountPage from '../pages/AddAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
 import UserAccountPage from '../pages/UserAccountPage';
 import CompanyGatewayPage from '../pages/CompanyGatewayPage';
-import EditPolicyPage from '../pages/EditPolicyPage'
+import EditPolicyPage from '../pages/EditPolicyPage';
+import EditMakerCheckerPage from '../pages/EditMakerCheckerPage';
 
 
 
@@ -46,6 +47,7 @@ function Routing() {
 
 
       <Route path ="/makerchecker" element={<MakerCheckerPage/>}/>
+      <Route path ="/makerchecker/edit" element={<EditMakerCheckerPage/>}/>
 
       <Route path="/user/accounts" element={<UserAccountPage/>}/>
       <Route path ="/user/accounts/company" element ={<CompanyGatewayPage/>}/>

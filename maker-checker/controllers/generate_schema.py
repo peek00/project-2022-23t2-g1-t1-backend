@@ -321,6 +321,11 @@ def populate_template_db(ddb):
                 },
             "allowed_approvers": [
                 "Owner",
+            ],
+            "allowed_requestors": [
+                "Owner",
+                "Admin",
+                "Engineer"
             ]
         },
         {
@@ -335,6 +340,10 @@ def populate_template_db(ddb):
             "allowed_approvers": [
                 "Owner",
                 "Manager"
+            ],
+            "allowed_requestors": [
+                "Owner",
+                "Engineer"
             ]
         },
         {
@@ -350,7 +359,11 @@ def populate_template_db(ddb):
             "allowed_approvers": [
                 "Owner",
                 "Manager"
+            ],
+            "allowed_requestors": [
+                "Engineer"
             ]
+            
         },
     ]
     with table.batch_writer() as batch:

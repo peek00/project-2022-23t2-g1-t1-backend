@@ -6,11 +6,8 @@ import RequestTemplate from "./RequestTemplate";
 function CreateRequest() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState("");
-    const [permission, setPermission] = useState([]);
     const [templates, setTemplates] = useState([]);
-    const [dropdownOptions, setDropdownOptions] = useState([]);
-    const [selectedTemplate, setSelectedTemplate] = useState();
-    const [seletedTemplateIndex, setSelectedTemplateIndex] = useState();
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
     const role = JSON.parse(localStorage.getItem("role"));
 
     const fetchData = async () => {
@@ -20,30 +17,12 @@ function CreateRequest() {
                 setSelectedCompany(company);
             }
 
-            let url = `http://localhost:8000/api/maker-checker/permission/?role=${role}`;
+            // let url = `http://localhost:8000/api/maker-checker/permission/?role=${role}`;
+            let url = `http://localhost:8000/api/maker-checker/templates/allowed_requestors?role=${role}`;
             const response = await axios.get(url, {
                 withCredentials: true,
             });
-            setPermission(response.data);
-
-            if (response.data[0] && response.data[0].approved_actions) {
-                const actions = response.data[0].approved_actions;
-
-                const templatesPromises = actions.map((action) => {
-                    const templateUrl = `http://localhost:8000/api/maker-checker/templates/?uid=${action}`;
-                    return axios.get(templateUrl, {
-                        withCredentials: true,
-                    });
-                });
-
-                const templatesData = await Promise.all(templatesPromises);
-                setTemplates(templatesData.map((template) => template.data));
-
-                const dropdownOptions = templatesData.map(
-                    (template) => template.data[0].type
-                );
-                setDropdownOptions(dropdownOptions);
-            }
+            setTemplates(response.data);
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
@@ -53,9 +32,9 @@ function CreateRequest() {
         setIsOpen(!isOpen);
     };
 
-    const handleButtonClick = (index, state) => {
-        setSelectedTemplate(state);
-        setSelectedTemplateIndex(index);
+    const handleButtonClick = (index, data) => {
+        console.log(data)
+        setSelectedTemplate(data);
         setIsOpen(false);
     };
 
@@ -87,7 +66,7 @@ function CreateRequest() {
                     onClick={toggleDropdown}
                     className="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
                 >
-                    {selectedTemplate || "Select an action."}
+                     {selectedTemplate == null ? "Select an action." : selectedTemplate.type}
                 </button>
                 {isOpen && (
                     <div className="right-0 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
@@ -97,14 +76,14 @@ function CreateRequest() {
                             aria-orientation="vertical"
                             aria-labelledby="options-menu"
                         >
-                            {dropdownOptions.map((name, index) => (
+                            {templates.map((data, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => handleButtonClick(index, name)}
+                                    onClick={() => handleButtonClick(index, data)}
                                     className="block px-4 py-2 text-sm text-gray-700"
                                     role="menuitem"
                                 >
-                                    {name}
+                                    {data.type}
                                 </button>
                             ))}
                         </div>
@@ -112,9 +91,9 @@ function CreateRequest() {
                 )}
 
             </div>
-            {seletedTemplateIndex !== undefined && (
+            {selectedTemplate != null && (
                 <RequestTemplate 
-                    requestDetail={templates[seletedTemplateIndex][0]} 
+                    requestDetail={selectedTemplate} 
                     onSubmit={ handleFormSubmit} 
                     selectedCompany={selectedCompany}/>
             )}
