@@ -45,7 +45,7 @@ export const processLog = async () => {
       console.log(logFileName);
       const log = readLogFile(logFileName);
       const logRecords = parseLogFile(log);
-      if (logRecords.length > 0) {
+      if (logRecords.length == 0) {
         deleteLogFile(logFileName);
         return
       } 
@@ -70,17 +70,15 @@ export const parseLogFile = (log) => {
   // Parse log file
   const logRecords = [];
   const logLines = log.trim().split('\n');
-  
-
   // SAMPLE:
   // [info]  [200]   GET     /User/getUser {"timestamp":"2023-10-25T17:47:14.787Z","logGroup":"user-audit-log","retentionPolicy":30,"userId":"1","message":"{\"firstName\":\"test\",\"lastName\":\"test\",\"email\":\"test@gmail.com\",\"fullName\":\"test test\",\"role\":null,\"userId\":\"ea59eec7-32c3-493b-a162-27ada8f52ad7\"}","userAgent":"PostmanRuntime/7.34.0","ip":"172.28.0.1","country":"unknown"}
   console.log(logLines);
   
   logLines.forEach((logLine) => {
     try {
-      // logLine = logLine.trim();
+      logLine = logLine.trim();
       const logLineParts = logLine.split('\t');
-      if (logLineParts.length !== 5) throw new Error("Invalid Log Line")
+      if (logLineParts.length < 5) throw new Error("Invalid Log Line")
       console.log(logLineParts)
       let logRecord = {};
       logRecord.level = logLineParts[0].slice(1, -1);
