@@ -6,8 +6,6 @@ import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
 import UserSearch from '../components/common_utils/UserSearch';
-import UserTable from '../components/user/UserTable';
-import LogsTable from '../components/logs/LogsTable';
 import UpdatePointsTable from '../components/account/UpdatePointsTable';
 
 
