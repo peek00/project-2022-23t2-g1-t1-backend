@@ -171,7 +171,7 @@ def get_pending_requests(
     try:
         if companyid == None:
             raise ValueError("Company ID is required.")
-        return approval_request_repository.get_pending_approval_requests(companyid)
+        return approval_request_repository.get_pending_approval_requests(companyid, userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:

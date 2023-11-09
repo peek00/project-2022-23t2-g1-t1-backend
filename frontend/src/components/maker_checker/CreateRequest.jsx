@@ -63,6 +63,23 @@ function CreateRequest() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    // Handle create request form submit
+    const handleFormSubmit = (formData) => {
+        // TODO Form validation here
+        console.log("Form data: ", formData);
+        const url = "http://localhost:8000/api/maker-checker/approval/create";
+        axios
+            .post(url, formData, {
+                withCredentials: true,
+            })
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    }
     return (
         <div>
             <div className="relative inline-block text-left bg-slate-600">
@@ -97,7 +114,10 @@ function CreateRequest() {
 
             </div>
             {seletedTemplateIndex !== undefined && (
-                <RequestTemplate requestDetail={templates[seletedTemplateIndex][0]} />
+                <RequestTemplate 
+                    requestDetail={templates[seletedTemplateIndex][0]} 
+                    onSubmit={ handleFormSubmit} 
+                    selectedCompany={selectedCompany}/>
             )}
         </div>
 
