@@ -18,7 +18,6 @@ on:
       - '.github/workflows/build.yml'
       - '.github/workflows/be-cd.yml'
       - 'admin-proxy/**'
-      - 'frontend/**'
       - 'maker-checker/**'
       - 'points-ledger/**'
       - 'logging/**'
