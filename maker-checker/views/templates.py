@@ -34,8 +34,8 @@ async def get_all_templates(
     Get all templates.
     """
     try:
-
-        if uid:
+        
+        if uid != None:
             response = template_repository.get_specific_template(uid)
             return response
         response = template_repository.get_all_templates()
@@ -62,7 +62,7 @@ async def create_template(
         template_repository.create_template(userid, template)
             # Updating permissions
         for role in template.allowed_requestors:
-            permission_repository.add_permission(userid, role, template.uid)
+            permission_repository.update_permissions(userid, role, template.uid)
 
         response = {
             "logInfo": f"User {userid} added template {template.uid} for action {template.type}.",
@@ -81,12 +81,14 @@ async def update_template(
 ):
     """
     Update a template, you can set a template to have no allowed requestors or approvers.
+    Update will automatically edited permissions too. 
     """
     try:
         # Get and check if it exists
         request = template_repository.get_specific_template(template.uid)
         if request != []:
             template_repository.update_template(userid, template)
+            permission_repository.update_permissions(userid, template.allowed_requestors, template.uid)
         else:
             raise ValueError("Template does not exist")
         response = {
@@ -98,7 +100,24 @@ async def update_template(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+@router.get("/allowed_requestors")
+async def get_allowed_requestors(
+    role: str
+    ):
+    """
+    Traverses entire DB and scans all templates to find all allowed requestors for a given role.
+    """
+    try:
+        response = template_repository.get_allowed_requestors(role)
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 @router.delete("/")
 async def delete_template(
     uid: str,
@@ -114,6 +133,7 @@ async def delete_template(
         request = template_repository.get_specific_template(uid)
         if request != []:
             template_repository.delete_template(uid)
+            # TODO: Delete permission
         else:
             raise ValueError("Template does not exist")
         response = {
