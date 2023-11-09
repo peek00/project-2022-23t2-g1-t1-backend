@@ -6,8 +6,8 @@ import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 
 // Company Specific 
-import MakerCheckerNav from "../components/MakerCheckerNav";
-import CreateRequest from "../components/CreateRequest";
+import MakerCheckerNav from "../components/maker_checker/MakerCheckerNav";
+import CreateRequest from "../components/maker_checker/CreateRequest";
 
 export default function UserListingPage() {
   // Handle tab change

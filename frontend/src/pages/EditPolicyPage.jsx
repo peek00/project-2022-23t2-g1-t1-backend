@@ -3,7 +3,7 @@ import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
 
-import EditPolicyTable from '../components/EditPolicyTable';
+import EditPolicyTable from '../components/permission/EditPolicyTable';
 
 export default function AddAccountPage(props) {
   const goBack = () => {
