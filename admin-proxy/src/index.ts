@@ -26,7 +26,10 @@ PolicyService.initialize().then(() => {
     //   origin: process.env.CLIENT_BASE_URL, 
     //   credentials: true, 
     // }),
-    cors()
+    cors({
+      origin: '*',
+      credentials: true
+    })
   );
 
   // Add Proxy Middleware
