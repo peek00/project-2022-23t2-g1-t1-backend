@@ -5,40 +5,37 @@ import axios from "axios"; // Import Axios
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 
-// Specific imports
-import Template from "../components/maker_checker/Template";
-import {API_BASE_URL} from "@/config/config";
-
 export default function UserListingPage() {
+    // Handle tab change
+    const [activeTab, setActiveTab] = useState("pending");
+    const handleTabChange = (newState) => {
+        setActiveTab(newState);
+    };
+
     const [templateData, setTemplateData] = useState([]);
 
-    const onUpdate = async (updatedData) => {
-        try {
-            // Make an HTTP request to update the data on the server
-            const updatedTemplate = await axios.put(
-                API_BASE_URL+"/api/maker-checker/templates/",
-                updatedData,
-                {
-                    withCredentials: true,
-                }
-            );
-            // Update the local state with the updated data
-            const newTemplateData = [...templateData];
-            setTemplateData(newTemplateData);
-        } catch (error) {
-            console.error("Error updating template:", error);
-        }
-    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let templateUrl = API_BASE_URL+"/api/maker-checker/templates/";
+                let templateUrl = `http://localhost:8000/api/maker-checker/templates/`;
+                let permissionUrl = `http://localhost:8000/api/maker-checker/permission/`;
+                console.log("Fetching data from: " + permissionUrl);
+                
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,
                 });
                 setTemplateData(templateResponse.data);
+                console.log(templateResponse.data);
+                // Fetching permission data
+                const permissionResponse = await axios.get(permissionUrl, {
+                    withCredentials: true,
+                });
+                console.log(permissionResponse.data);
+                
+
+
             } catch (error) {
                 console.log(error);
             }
@@ -52,12 +49,11 @@ export default function UserListingPage() {
             <div className="w-[20%]  min-h-screen ">
                 <SideBar />
             </div>
+
             {/* Content Area */}
             <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
                 <TopBar />
-                <div className="mb-5 text-4xl">
-                    Edit Maker Checker Permissions
-                </div>
+                Templates Permissions
                 <table className="min-w-full">
                     <thead>
                         <tr>
@@ -80,13 +76,35 @@ export default function UserListingPage() {
                     </thead>
                     {/* Body */}
                     <tbody>
-                        {templateData.map((template, index) => (
-                            <Template
+                        {templateData.map((request, index) => (
+                            <tr
                                 key={index}
-                                index={index}
-                                data={template}
-                                onUpdate={onUpdate}
-                            />
+                                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                            >
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {request.type}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <button> Click Me</button>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {request.allowed_approvers}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {request.allowed_requestors}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div>
+                                        <div>
+                                            <button
+                                                className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
+                                            >
+                                                Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>

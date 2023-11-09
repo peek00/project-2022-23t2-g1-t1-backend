@@ -9,6 +9,7 @@ function CreateRequest() {
     const [selectedCompany, setSelectedCompany] = useState("");
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
     const role = JSON.parse(localStorage.getItem("role"));
 
     const fetchData = async () => {
@@ -17,7 +18,9 @@ function CreateRequest() {
             if (company) {
                 setSelectedCompany(company);
             }
-            let url = API_BASE_URL+`/api/maker-checker/templates/allowed_requestors?role=${role}`;
+
+            // let url = `http://localhost:8000/api/maker-checker/permission/?role=${role}`;
+            let url = `http://localhost:8000/api/maker-checker/templates/allowed_requestors?role=${role}`;
             const response = await axios.get(url, {
                 withCredentials: true,
             });

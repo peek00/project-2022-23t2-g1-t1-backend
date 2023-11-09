@@ -295,6 +295,11 @@ def populate_template_db(ddb):
                 "Owner",
                 "Admin",
                 "Engineer"
+            ],
+            "allowed_requestors": [
+                "Owner",
+                "Admin",
+                "Engineer"
             ]
         },
         {
@@ -309,6 +314,10 @@ def populate_template_db(ddb):
             "allowed_approvers": [
                 "Owner",
                 "Manager"
+            ],
+            "allowed_requestors": [
+                "Owner",
+                "Engineer"
             ],
             "allowed_requestors": [
                 "Owner",
@@ -333,6 +342,23 @@ def populate_template_db(ddb):
                 "Engineer"
             ]
             
+        },
+    ]
+    with table.batch_writer() as batch:
+        for item in data:
+            batch.put_item(Item=item)
+
+def populate_permission_db(ddb):
+    table = ddb.Table('request_permission')
+
+    data = [
+        {
+            "role": "Owner",
+            "approved_actions": [
+                "cdf7f49f", 
+                "dcf5f6zx",
+                "awfahj6z"
+            ]
         },
     ]
     with table.batch_writer() as batch:

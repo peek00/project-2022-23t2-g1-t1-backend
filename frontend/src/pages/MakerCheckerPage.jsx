@@ -22,28 +22,24 @@ export default function UserListingPage() {
   const handleTabChange = (newState) => {
     setActiveTab(newState);
   };
-  
+
   // Start: Listener for local storage
   const [selectedCompany, setSelectedCompany] = useState();
   const handleCompanyChange = (newState) => {
     setSelectedCompany(newState);
   };
-    const [data, setData] = useState({});
+  const [data, setData] = useState({});
   console.log(data)
   const [showTable, setShowTable] = useState(false);
-  const [stringData, setStringData] = useState({});
   useEffect(() => {
     // Listener for local storage
     const storedCompany = localStorage.getItem("selectedCompany");
     if (storedCompany) {
       setSelectedCompany(storedCompany);
     }
-  
+
     const fetchData = async () => {
-      if (activeTab === "create") {
-        console.log("In create!");
-      } 
-      else if (selectedCompany) {
+      if (selectedCompany) {
         try {
           let url = "";
           if (activeTab === "pending") {
@@ -53,28 +49,23 @@ export default function UserListingPage() {
           } else if (activeTab === "history") {
             url = `http://localhost:8000/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
           }
-  
+
           console.log("Fetching data from: " + url);
           const response = await axios.get(url, {
             withCredentials: true,
           });
           console.log(response.data);
-  
+
           setData((prevData) => ({
             ...prevData,
             [activeTab]: response.data,
-          }));
-  
-          setStringData((prevData) => ({
-            ...prevData,
-            [activeTab]: JSON.stringify(response.data),
           }));
         } catch (error) {
           console.error("Error fetching data: ", error);
         }
       }
     };
-  
+
     fetchData();
     setShowTable(true);
   }, [activeTab, selectedCompany]);
@@ -89,12 +80,12 @@ export default function UserListingPage() {
       {/* Content Area */}
       <div className="w-4/5 min-h-screen overflow-y-auto ms-10 mt-28">
         <TopBar />
-      <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
+        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange} />
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
 
-        { showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
-        { showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
-        { showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
+        {showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
+        {showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
+        {showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
         {activeTab === "create" && (
           <div>
             <CreateRequest />

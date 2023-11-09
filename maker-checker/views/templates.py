@@ -34,6 +34,8 @@ async def get_all_templates(
     try:
         
         if uid != None:
+        
+        if uid != None:
             response = template_repository.get_specific_template(uid)
             return response
         response = template_repository.get_all_templates()
@@ -58,6 +60,9 @@ async def create_template(
         validate_template_object(template)
 
         template_repository.create_template(userid, template)
+            # Updating permissions
+        for role in template.allowed_requestors:
+            permission_repository.update_permissions(userid, role, template.uid)
 
         response = {
             "logInfo": f"User {userid} added template {template.uid} for action {template.type}.",
@@ -83,6 +88,7 @@ async def update_template(
         request = template_repository.get_specific_template(template.uid)
         if request != []:
             template_repository.update_template(userid, template)
+            permission_repository.update_permissions(userid, template.allowed_requestors, template.uid)
         else:
             raise ValueError("Template does not exist")
         response = {
@@ -127,6 +133,7 @@ async def delete_template(
         request = template_repository.get_specific_template(uid)
         if request != []:
             template_repository.delete_template(uid)
+            # TODO: Delete permission
         else:
             raise ValueError("Template does not exist")
         response = {
