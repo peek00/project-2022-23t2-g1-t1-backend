@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import CompanyDropdown from "../account/CompanyDropdown";
 
 export default function SideBar() {
   const [activeLink, setActiveLink] = useState('');
@@ -12,11 +11,6 @@ export default function SideBar() {
     setActiveLink(location.pathname);
   }, [location]);
 
-  // Handle selected company.
-  const [selectedCompany, setSelectedCompany] = useState();
-  const handleCompanyChange = (newState) => {
-    setSelectedCompany(newState);
-  };
 
   return (
     <div className="bg-[#1C2434] h-screen  overflow-y-auto w-[20%] z-50 fixed">
