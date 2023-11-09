@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
-import RequestDetailModal from "./RequestDetailModal";
-import {API_BASE_URL} from "@/config/config";
-
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
     const [shownData, setShownData] = useState([]);
@@ -18,7 +15,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     if (!shownData || shownData.length === 0) {
         return <div className="ms-[40px]">No data available.</div>;
     }
-    // @ChatGPT
+    // @ChatGPT 
     function getRelativeTimeOrExpired(timestamp) {
         const now = new Date();
         const timestampDate = new Date(timestamp);
@@ -26,57 +23,44 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
         const timeDifference = timestampDate - now;
 
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-            (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor(
-            (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-        );
+        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
 
         if (timeDifference < 0) {
             return false;
         } else if (days > 0) {
-            return `${days} day${days > 1 ? "s" : ""}, ${hours} hr${hours > 1 ? "s" : ""
-                }`;
+            return `${days} day${days > 1 ? 's' : ''}, ${hours} hr${hours > 1 ? 's' : ''}`;
         } else if (hours > 0) {
-            return `${hours} hr${hours > 1 ? "s" : ""}, ${minutes} min${minutes > 1 ? "s" : ""
-                }`;
+            return `${hours} hr${hours > 1 ? 's' : ''}, ${minutes} min${minutes > 1 ? 's' : ''}`;
         } else {
-            return `${minutes} min${minutes > 1 ? "s" : ""}`;
-        }
-    }
-
-    function getElapsedRelativeTime(timestamp) {
-        const now = new Date();
-        const timestampDate = new Date(timestamp);
-        const timeDifference = now - timestampDate;
-
-        if (timeDifference < 0) {
-            return false;
-        }
-
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-            (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor(
-            (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-
-        if (days > 0) {
-            return `${days} day${days > 1 ? "s" : ""}, ${hours} hr${hours > 1 ? "s" : ""
-                } ago`;
-        } else if (hours > 0) {
-            return `${hours} hr${hours > 1 ? "s" : ""}, ${minutes} min${minutes > 1 ? "s" : ""
-                } ago`;
-        } else {
-            return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
+            return `${minutes} min${minutes > 1 ? 's' : ''}`;
         }
     }
 
     // Handle approval or response
-    const handleEdit = async (uid) => {
+    const handleApprove = async (uid) => {
+        // const formObject = {
+        //     uid: uid,
+        //     status: "approved",
+        //     companyid: selectedCompany,
+        // };
         console.log("Edit not implemented");
+
+        // const approveUrl = `http://localhost:8000/api/maker-checker/approval/resolve`;
+
+        // try {
+        //     const response = await axios.post(approveUrl, formObject, {
+        //         withCredentials: true,
+        //     });
+
+        //     // Handle the success response here
+        //     console.log("Approved:", response.data);
+
+        //     // You may want to update your UI or perform other actions here
+        // } catch (error) {
+        //     // Handle errors here
+        //     console.error("Error approving:", error);
+        // }
     };
 
     // Handle approval or response
@@ -87,7 +71,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             companyid: selectedCompany,
         };
 
-        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/withdraw";
+        const approveUrl = `http://localhost:8000/api/maker-checker/approval/withdraw`;
 
         try {
             const response = await axios.post(approveUrl, formObject, {
@@ -103,63 +87,27 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             console.error("Error approving:", error);
         }
     };
-    if (!shownData || shownData.length === 0) {
-        return (
-            <div className="">
-                <table className="min-w-full">
-                <thead>
-                    <tr>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Request Type
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Request Details
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase truncate">
-                            Requested On
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Expiry
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Status
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                </table>
-                <div
-                    className="grid text-2xl text-center text-gray-300 place-items-center"
-                    style={{ height: "500px" }}
-                >
-                    No pending requests.
-                </div>
-            </div>
-        );
-    }
     return (
-        <div>
+        <div className="ms-[40px]">
             <table className="min-w-full">
                 <thead>
                     <tr>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                             Request Type
                         </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                             Request Details
                         </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase truncate">
+                        <th className="w-6 px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                             Requested On
                         </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase ">
                             Expiry
                         </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                             Status
                         </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                             Action
                         </th>
                     </tr>
@@ -170,38 +118,34 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                             key={index}
                             className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                         >
-                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">{request.request_type}</td>
-                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
-                                <RequestDetailModal data={request} />
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                {request.request_type}
                             </td>
-                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
-                                {getElapsedRelativeTime(request.created_at) || "N/A"}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <button> Click Me</button>
                             </td>
-                            <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
-                                {getRelativeTimeOrExpired(request.request_expiry) === false
-                                    ? "Expired"
-                                    : getRelativeTimeOrExpired(request.request_expiry)}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                {request.created_at || "N/A"}
                             </td>
-                            <td className="py-4 whitespace-nowrap">
-                                <span
-                                    className={`font-bold ${request.status === "pending"
-                                            ? "text-green-500"
-                                            : request.status === "withdrawn"
-                                                ? "text-pink-500"
-                                                : ""
-                                        }`}
-                                >
-                                    {request.status.charAt(0).toUpperCase() +
-                                        request.status.slice(1)}
+                            <td className="w-5 px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
+                                {
+                                    getRelativeTimeOrExpired(request.request_expiry) === false
+                                        ? "Expired"
+                                        : getRelativeTimeOrExpired(request.request_expiry)
+                                }
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`font-bold ${request.status === "pending" ? 'text-green-500' : request.status === "withdrawn" ? 'text-pink-500' : ''}`}>
+                                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                                 </span>
                             </td>
-                            <td className="py-4 whitespace-nowrap">
+                            <td className="px-6 py-4 whitespace-nowrap">
                                 <div>
                                     {request.status === "pending" ? (
                                         <div>
                                             <button
                                                 className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
-                                                onClick={() => handleEdit(request.uid)}
+                                                onClick={() => handleApprove(request.uid)}
                                             >
                                                 Edit
                                             </button>
@@ -217,6 +161,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                     )}
                                 </div>
                             </td>
+
                         </tr>
                     ))}
                 </tbody>
