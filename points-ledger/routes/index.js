@@ -290,11 +290,50 @@ router.get('/allpointsaccounts', async(req,res) => {
   })
 })
 
+// WHEN USER_ID IS IN REQ.BODY - ADMIN USE
+// GET request that returns all points account by a particular user_id through req.body
+router.get('/allpointsaccountsAdmin', async(req,res) => {
+  console.log(req.body);
+  const userId = req.body.user_id;
+  if (!userId) {
+    return res.status(400).json({
+      "code": 400,
+      "message": "UserId is required."
+    });
+  }
+  allquery.getAllAccountsByUserId(userId)
+  .then((results) => {
+    console.log("Results: ", results);
+    if (results.length==0) {
+      res.status(404).json({
+        "code" : 404,
+        "logs_info": userId + " accessed all /allpointsaccounts, status: 404",
+        "data": results,
+        "message": "No records found."
+      })
+    }
+    res.status(200).json({
+      "code" : 200,
+      "logs_info": userId + " accessed '/allpointsaccounts', status: 200",
+      "data": results,
+      "message": "Success"
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({
+      "code" : 500,
+      "logs_info": userId + " accessed '/allpointsaccounts', status: 500",
+      "data": [],
+      "message": error.message
+    });
+  })
+})
+
 // GET request to return all user_ids of a particular company_id
 // takes in companyid in request headers
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
