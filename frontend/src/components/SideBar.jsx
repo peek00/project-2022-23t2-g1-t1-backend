@@ -25,8 +25,7 @@ export default function SideBar() {
           <img src="/footerLogo.svg" className="h-[100px] w-[100px]" />
         </Link>
         
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
-
+        {/* <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/> */}
         <NavLink
           to="/users"
           activeclassname="active"

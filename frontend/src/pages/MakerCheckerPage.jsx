@@ -8,6 +8,11 @@ import TopBar from "../components/TopBar";
 // Company Specific
 import MakerCheckerNav from "../components/MakerCheckerNav";
 import CreateRequest from "../components/CreateRequest";
+import PendingApprovalTable from "../components/PendingApprovalTable";
+import RequestedApprovalTable from "../components/RequestedApprovalTable";
+import HistoryApprovalTable from "../components/HistoryApprovalTable";
+import CompanyDropdown from "../components/CompanyDropdown";
+
 
 export default function UserListingPage() {
   // Handle tab change
@@ -15,10 +20,15 @@ export default function UserListingPage() {
   const handleTabChange = (newState) => {
     setActiveTab(newState);
   };
-
+  
   // Start: Listener for local storage
-  const [selectedCompany, setSelectedCompany] = useState("");
-  const [data, setData] = useState({});
+  const [selectedCompany, setSelectedCompany] = useState();
+  const handleCompanyChange = (newState) => {
+    setSelectedCompany(newState);
+  };
+    const [data, setData] = useState({});
+  console.log(data)
+  const [showTable, setShowTable] = useState(false);
   const [stringData, setStringData] = useState({});
   useEffect(() => {
     // Listener for local storage
@@ -39,7 +49,7 @@ export default function UserListingPage() {
           } else if (activeTab === "requested") {
             url = `http://localhost:8000/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
           } else if (activeTab === "history") {
-            url = `http://localhost:8000/api/maker-checker/approval/approver?companyid=${selectedCompany}`;
+            url = `http://localhost:8000/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
           }
   
           console.log("Fetching data from: " + url);
@@ -64,6 +74,7 @@ export default function UserListingPage() {
     };
   
     fetchData();
+    setShowTable(true);
   }, [activeTab, selectedCompany]);
 
   return (
@@ -76,19 +87,12 @@ export default function UserListingPage() {
       {/* Content Area */}
       <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
         <TopBar />
+      <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
-        <div className="mt-10">
-          {" "}
-          You are currently on <span className="underline">
-            {" "}
-            {activeTab}
-          </span>{" "}
-          for <span className="underline"> {selectedCompany}</span>
-        </div>
-        <div className="mt-10"> Data: {stringData[activeTab]}</div>
-        {/* TODO: Jye Yi create a way to represent the data over here. Use the data[activeTab] instead of String
-            StringData is a stringified version of the data.
-        */}
+
+        { showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
+        { showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
+        { showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany}/>)}
         {activeTab === "create" && (
           <div>
             <CreateRequest />
