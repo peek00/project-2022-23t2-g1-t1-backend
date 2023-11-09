@@ -294,6 +294,7 @@ router.get('/allpointsaccounts', async(req,res) => {
 // GET request that returns all points account by a particular user_id through req.body
 router.get('/allpointsaccountsAdmin', async(req,res) => {
   console.log(req.body);
+  const adminUserId = req.headers.userid;
   const userId = req.body.user_id;
   if (!userId) {
     return res.status(400).json({
@@ -307,15 +308,26 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
     if (results.length==0) {
       res.status(404).json({
         "code" : 404,
-        "logs_info": userId + " accessed all /allpointsaccounts, status: 404",
+        "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
         "data": results,
         "message": "No records found."
       })
     }
+    const filteredResults = {}
+    for (let i=0;i<results.length;i++) {
+      let info = results[i];
+      // find the company id
+      let companyname = info["company_id"]
+      if (companyname in filteredResults){
+        filteredResults[companyname].push(info);
+      } else{
+        filteredResults[companyname] = [info];
+      }
+    }
     res.status(200).json({
       "code" : 200,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 200",
-      "data": results,
+      "logs_info": "admin-user_id: " + adminUserId + " accessed '/allpointsaccounts' for user:" + userId + ", status: 200",
+      "data": filteredResults,
       "message": "Success"
     });
   })
@@ -323,7 +335,7 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
     console.log(error);
     res.status(500).json({
       "code" : 500,
-      "logs_info": userId + " accessed '/allpointsaccounts', status: 500",
+      "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
       "data": [],
       "message": error.message
     });
@@ -377,10 +389,8 @@ router.get('/alluseraccounts', async(req, res) => {
 // takes in a particular points account's id and company id
 router.get('/accdetails', async (req,res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
-  // const pointsId = req.headers.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.getPointsBalance(companyId,pointsId)
@@ -442,79 +452,54 @@ router.post('/createAccount', async (req,res) => {
   const companyId = req.body.company_id;
   const userId = req.headers.userid;
   const inputbalance = req.body.balance;
-  // const inputbalance = req.headers.balance;
   const new_pointsId = uuidv4();
   console.log(companyId);
   console.log(userId)
   console.log(inputbalance)
   console.log("uuid: " + new_pointsId)
-  // allquery.companyExists(companyId)
-  // .then((companyresults) => {
-  //   console.log(companyresults)
-  //   if (companyresults) {
-        // console.log("valid company id");
-        allquery.pointsAccExist(companyId, new_pointsId)
-        .then((results) => {
-          if (!results) {
-            console.log("valid unique points_balance id");
-            // if no such points_id balance
-            allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
-            .then((newresults) => {
-              const status = newresults.$metadata.httpStatusCode;
-              if (status ==200) {
-                res.status(200).json({
-                  "code": 200,
-                  "logInfo": "Accessed '/createAccount', new points account created, status: 200",
-                  "data": newresults,
-                  "message": "Account successfully created"
-                });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(500).json({
-                "code" : 500,
-                "data" : [],
-                "message" : err.message
-              });
-            })
-          }
-          //points acc id already exists
-          else {
-            res.status(400).json({
-              "code" : 400,
-              "data": [],
-              "message" : 'Points Balance ID already exists'
-            })
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          res.status(500).json({
-            "code" : 500,
-            "data" : [],
-            "message" : error.message
+  allquery.pointsAccExist(companyId, new_pointsId)
+  .then((results) => {
+    if (!results) {
+      console.log("valid unique points_balance id");
+      // if no such points_id balance
+      allquery.createAccount(companyId, userId, new_pointsId, inputbalance)
+      .then((newresults) => {
+        const status = newresults.$metadata.httpStatusCode;
+        if (status ==200) {
+          res.status(200).json({
+            "code": 200,
+            "logInfo": "Accessed '/createAccount', new points account created, status: 200",
+            "data": newresults,
+            "message": "Account successfully created"
           });
-        })
-    // }
-    // else {
-    //   res.status(400).json({
-    //     "code" : 400,
-    //     "data": [],
-    //     "message" : 'Company ID do not exists'
-    //   })
-    // }
-    
-  // })
-  // .catch((companyerror) => {
-  //   console.log(companyerror);
-  //   res.status(404).json({
-  //     "code" : 404,
-  //     "data" : [],
-  //     "message" : error.message
-  //   });
-  // })
-  
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          "code" : 500,
+          "data" : [],
+          "message" : err.message
+        });
+      })
+    }
+    //points acc id already exists
+    else {
+      res.status(400).json({
+        "code" : 400,
+        "data": [],
+        "message" : 'Points Balance ID already exists'
+      })
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500).json({
+      "code" : 500,
+      "data" : [],
+      "message" : error.message
+    });
+  })  
 })
 
 // POST request to delete a points balance account
