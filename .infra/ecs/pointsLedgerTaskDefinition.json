@@ -23,7 +23,7 @@
                 },
                 {
                     "name": "REDIS_HOST",
-                    "value": "loyalty-redis.leeatg.ng.0001.apse1.cache.amazonaws.com"
+                    "value": "master.becachesmall.leeatg.apse1.cache.amazonaws.com"
                 },
                 {
                     "name": "REDIS_PORT",
