@@ -316,13 +316,13 @@ async function getPointsBalance(companyId, pointsId) {
 
 async function pointsAccExist(companyId, pointsId) {
     try{
-        const redisKey = `pointsExistence:${companyId}:${pointsId}`;
-        const cachedData = await CacheProvider.get(redisKey);
+        // const redisKey = `pointsExistence:${companyId}:${pointsId}`;
+        // const cachedData = await CacheProvider.get(redisKey);
         
-        if (cachedData !== null) {
-            console.log("Cache hit");
-            return cachedData === 'true';
-        }
+        // if (cachedData !== null) {
+        //     console.log("Cache hit");
+        //     return cachedData === 'true';
+        // }
 
         const params = {
             "TableName": config.aws_table_name,
@@ -333,14 +333,14 @@ async function pointsAccExist(companyId, pointsId) {
         };
         
         const data = await ddbClient.send(new GetItemCommand(params));
-        
+        console.log(data);
         let exists = false;
         if (data.Item){
             exists = true;
         }
 
         // Cache the existence result in Redis for 10min
-        await CacheProvider.write(redisKey, exists.toString(), 300);
+        // await CacheProvider.write(redisKey, exists.toString(), 300);
         
         return exists;
     }
