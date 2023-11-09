@@ -134,10 +134,9 @@ router.get('/allpointsaccounts', async(req,res) => {
 })
 
 // GET request to return all user_ids of a particular company_id
-// takes in companyid in request headers
+// takes in companyid in request body
 router.get('/alluseraccounts', async(req, res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
   // Check for companyId 
   if (!companyId) {
@@ -179,8 +178,8 @@ router.get('/alluseraccounts', async(req, res) => {
 });
 
 // GET request that returns all points account by a particular company_id
+// returns all info of each user_id under the company_id
 router.get('/allidsbycompany', async(req, res) => {
-  // const companyId = req.headers.companyid; 
   const companyId = req.body.company_id;
   // Check if the companyId is provided
   if (!companyId) {
@@ -191,7 +190,6 @@ router.get('/allidsbycompany', async(req, res) => {
   }
   else {
     try {
-      // Using the modified function to get all ids for the companyId
       const results = await allquery.getAllIdsByCompanyId(companyId);
       console.log("Results: ", results);
 
@@ -323,57 +321,14 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
   }
 })
 
-// GET request to return all user_ids of a particular company_id
-// takes in companyid in request headers
-router.get('/alluseraccounts', async(req, res) => {
-  console.log(req.headers);
-  const companyId = req.body.company_id;
-  // Check for companyId 
-  if (!companyId) {
-    return res.status(400).json({
-      "code": 400,
-      "message": "CompanyId is required."
-    });
-  }
-
-  else {
-    try {
-      const results = await allquery.getAllUserIdsByCompanyId(companyId); 
-      console.log("Results: ", results);
-
-      if (!results || results.length === 0) {
-        return res.status(404).json({
-          "code" : 404,
-          "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 404`,
-          "data": [],
-          "message": "No records found."
-        });
-      }
-
-      return res.status(200).json({
-        "code" : 200,
-        "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 200`,
-        "data": results,
-        "message": "Success"
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        "code" : 500,
-        "logInfo": `Company ID ${companyId} accessed '/alluseraccounts', status: 500`,
-        "data": [],
-        "message": error.message
-      });
-    }
-  }
-});
-
 // GET request to return details of a particular account
 // takes in a particular points account's id and company id
 router.get('/accdetails', async (req,res) => {
-  console.log(req.headers);
+  console.log(req.body);
   const companyId = req.body.company_id;
   const pointsId = req.body.pointsid;
+  console.log(companyId);
+  console.log(pointsId);
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.getPointsBalance(companyId,pointsId)
@@ -408,10 +363,9 @@ router.get('/accdetails', async (req,res) => {
 // GET request to return if a particular account exists
 // takes in a particular points account's id
 router.get('/validate', async (req,res) => {
-  console.log(req.headers);
-  // const companyId = req.headers.companyid;
+  console.log(req.body);
   const companyId = req.body.company_id;
-  const pointsId = req.headers.pointsid;
+  const pointsId = req.body.pointsid;
   /* The code is making a GET request to the '/points' endpoint and calling the `getPointsBalance`
   function from the `allquery` module. */
   allquery.pointsAccExist(companyId,pointsId)
@@ -490,15 +444,14 @@ router.post('/createAccount', async (req,res) => {
 // takes in pointsId
 router.delete('/deleteAccount', function(req,res){
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const companyId = req.body.company_id;
-  const pointsId = req.body.pointsid;
-  // const pointsId = req.headers.pointsid;
-  allquery.pointsAccExist(companyId,pointsId)
+  const userId = req.headers.userid;
+
+  allquery.userAccExist(companyId,userId)
   .then((ifexist) => {
     // if points account exist, then proceed with deleting
     if (ifexist) {
-      allquery.deleteAccount(companyId, pointsId)
+      allquery.deleteAccount(companyId, userId)
       .then((results) => {
           return res.status(200).json({
             "code": 200,
@@ -535,13 +488,14 @@ router.delete('/deleteAccount', function(req,res){
 router.put('/updatebalance', async (req,res) => {
   console.log(req.headers);
   // const companyId = req.headers.companyid;
+  const userId = req.headers.userid;
   const companyId = req.body.company_id;
-  const pointsId = req.body.pointsid;
+  // const pointsId = req.body.pointsid;
   const balance = req.body.newbalance;
-  allquery.pointsAccExist(companyId, pointsId)
+  allquery.userAccExist(companyId, userId)
   .then((results) => {
     if (results){
-      allquery.updatePoints(companyId,pointsId,balance)
+      allquery.updatePoints(companyId,userId,balance)
       .then((newresults) => {
         const status = newresults.$metadata.httpStatusCode;
         if (status == 200) {
