@@ -13,7 +13,6 @@ import RequestedApprovalTable from "../components/RequestedApprovalTable";
 import HistoryApprovalTable from "../components/HistoryApprovalTable";
 import CompanyDropdown from "../components/CompanyDropdown";
 
-
 export default function UserListingPage() {
   // Handle tab change
   const [activeTab, setActiveTab] = useState("pending");
@@ -27,7 +26,6 @@ export default function UserListingPage() {
     setSelectedCompany(newState);
   };
   const [data, setData] = useState({});
-  console.log(data)
   const [showTable, setShowTable] = useState(false);
   useEffect(() => {
     // Listener for local storage
@@ -48,11 +46,9 @@ export default function UserListingPage() {
             url = `http://localhost:8000/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
           }
 
-          console.log("Fetching data from: " + url);
           const response = await axios.get(url, {
             withCredentials: true,
           });
-          console.log(response.data);
 
           setData((prevData) => ({
             ...prevData,
@@ -76,14 +72,17 @@ export default function UserListingPage() {
       </div>
 
       {/* Content Area */}
-      <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
+      <div className="w-4/5 min-h-screen overflow-y-auto ms-10 mt-28">
         <TopBar />
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange} />
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
+        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange} />
 
+        {/* Switch tabs based on activeTab */}
         {showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
         {showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
         {showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
+
+        {/* Switch to custom form */}
         {activeTab === "create" && (
           <div>
             <CreateRequest />

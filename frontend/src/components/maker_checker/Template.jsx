@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function Template({ data, index, onUpdate}) {
+export default function Template({ data, index, onUpdate }) {
   const [onEdit, setOnEdit] = useState(false);
 
   // Define state to track the edited value
@@ -8,8 +8,7 @@ export default function Template({ data, index, onUpdate}) {
     // Original input is kinda weird, because it will not put the comma in the string
     let parsedString = "";
     for (let i = 0; i < string.length; i++) {
-   
-        parsedString += string[i] + ",";
+      parsedString += string[i] + ",";
     }
     return parsedString.slice(0, -1);
   }
@@ -31,7 +30,7 @@ export default function Template({ data, index, onUpdate}) {
     // Parse both fields to make it a list
     const parsedApprovers = parseStringToList(editedApprovers);
     const parsedRequestors = parseStringToList(editedRequestors);
-    
+
     const formData = {
       allowed_approvers: parsedApprovers,
       allowed_requestors: parsedRequestors,
@@ -50,7 +49,6 @@ export default function Template({ data, index, onUpdate}) {
     // Reset the edited value to its original value
     setEditedApprovers(data.allowed_approvers);
     setEditedRequestors(data.allowed_requestors);
-
     // Toggle off editing mode
     setOnEdit(false);
   };
@@ -75,7 +73,7 @@ export default function Template({ data, index, onUpdate}) {
         )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-      {onEdit ? (
+        {onEdit ? (
           // Show an input field when editing
           <input
             type="text"

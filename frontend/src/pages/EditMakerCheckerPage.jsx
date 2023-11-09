@@ -5,17 +5,14 @@ import axios from "axios"; // Import Axios
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 
-// Specific
+// Specific imports
 import Template from "../components/maker_checker/Template";
 
 export default function UserListingPage() {
     const [templateData, setTemplateData] = useState([]);
 
-    // Create a state variable to track editing state for each row
-
     const onUpdate = async (updatedData) => {
         try {
-            console.log(updatedData);
             // Make an HTTP request to update the data on the server
             const updatedTemplate = await axios.put(
                 `http://localhost:8000/api/maker-checker/templates/`,
@@ -36,7 +33,6 @@ export default function UserListingPage() {
         const fetchData = async () => {
             try {
                 let templateUrl = `http://localhost:8000/api/maker-checker/templates/`;
-
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,
@@ -49,19 +45,18 @@ export default function UserListingPage() {
         fetchData();
     }, []);
 
-    // Function to toggle editing state for a specific row
-
     return (
         <div className="flex min-h-screen">
             {/* Sidebar */}
             <div className="w-[20%]  min-h-screen ">
                 <SideBar />
             </div>
-
             {/* Content Area */}
             <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
                 <TopBar />
-                Templates Permissions
+                <div className="mb-5 text-4xl">
+                    Edit Maker Checker Permissions
+                </div>
                 <table className="min-w-full">
                     <thead>
                         <tr>
