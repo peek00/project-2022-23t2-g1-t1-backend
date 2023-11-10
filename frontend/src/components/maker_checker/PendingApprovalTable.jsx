@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
+import {API_BASE_URL} from "@/config/config";
+
+import RequestDetailModal from "./RequestDetailModal";
 
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
@@ -48,7 +51,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             companyid: selectedCompany,
         };
 
-        const approveUrl = `http://localhost:8000/api/maker-checker/approval/resolve`;
+        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/resolve";
 
         try {
             const response = await axios.post(approveUrl, formObject, {
@@ -73,7 +76,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             companyid: selectedCompany,
         };
 
-        const approveUrl = `http://localhost:8000/api/maker-checker/approval/resolve`;
+        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/resolve";
 
         try {
             const response = await axios.post(approveUrl, formObject, {
@@ -158,7 +161,8 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                 {request.request_type}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <button> Click Me</button>
+                                {/* <button> Click Me</button> */}
+                                <RequestDetailModal data={request}/>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 {request.comments || "N/A"}

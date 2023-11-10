@@ -7,6 +7,7 @@ import TopBar from "../components/common_utils/TopBar";
 
 // Specific imports
 import Template from "../components/maker_checker/Template";
+import {API_BASE_URL} from "@/config/config";
 
 export default function UserListingPage() {
     // Handle tab change
@@ -21,7 +22,7 @@ export default function UserListingPage() {
         try {
             // Make an HTTP request to update the data on the server
             const updatedTemplate = await axios.put(
-                `http://localhost:8000/api/maker-checker/templates/`,
+                API_BASE_URL+"/api/maker-checker/templates/",
                 updatedData,
                 {
                     withCredentials: true,
@@ -38,7 +39,7 @@ export default function UserListingPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let templateUrl = `http://localhost:8000/api/maker-checker/templates/`;
+                let templateUrl = API_BASE_URL+"/api/maker-checker/templates/";
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,

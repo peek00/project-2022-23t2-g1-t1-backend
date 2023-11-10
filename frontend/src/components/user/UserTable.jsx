@@ -2,6 +2,7 @@ import { useEffect, useState,useContext } from "react";
 import MenuDefault from "../common_utils/MenuDefault.jsx";
 import axios from "axios";
 import {API_BASE_URL} from "@/config/config";
+import {API_BASE_URL} from "@/config/config";
 
 export default function UserTable() {
     const [users, setUsers] = useState([]);

@@ -70,7 +70,7 @@ export default function TopBar(){
   </div>
 
  
- {settings&& (<div className="absolute right-0 z-10 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" action="http://localhost:8000/auth/logout">
+ {settings&& (<div className="absolute right-0 z-10 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" action={`${API_BASE_URL}/auth/logout`}>
     <div className="py-1" role="none">
      
      

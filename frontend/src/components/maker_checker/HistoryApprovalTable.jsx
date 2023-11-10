@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
+import RequestDetailModal from "./RequestDetailModal";
+
 export default function HistoryApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
     const [shownData, setShownData] = useState([]);
@@ -77,7 +79,7 @@ export default function HistoryApprovalTable({ data, activeTab, selectedCompany 
                                 {request.request_type}
                             </td>
                             <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
-                                <button> Click Me</button>
+                                <RequestDetailModal data={request} />
                             </td>
                             <td className="w-5 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 {getElapsedRelativeTime(request.resolution_at) || "N/A"}

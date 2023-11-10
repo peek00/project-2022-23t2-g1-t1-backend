@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
 import RequestTemplate from "./RequestTemplate";
+import {API_BASE_URL} from "@/config/config";
 
 function CreateRequest() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,7 @@ function CreateRequest() {
             if (company) {
                 setSelectedCompany(company);
             }
-            let url = `http://localhost:8000/api/maker-checker/templates/allowed_requestors?role=${role}`;
+            let url = API_BASE_URL+`/api/maker-checker/templates/allowed_requestors?role=${role}`;
             const response = await axios.get(url, {
                 withCredentials: true,
             });
@@ -45,7 +46,7 @@ function CreateRequest() {
     const handleFormSubmit = (formData) => {
         // TODO Form validation here
         console.log("Form data: ", formData);
-        const url = "http://localhost:8000/api/maker-checker/approval/create";
+        const url = API_BASE_URL+"/api/maker-checker/approval/create";
         axios
             .post(url, formData, {
                 withCredentials: true,
