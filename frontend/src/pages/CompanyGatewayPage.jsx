@@ -9,6 +9,7 @@ import { useUserContext } from '../context/userContext';
 import { getPoints, getAllCompanyIds } from '../apis/points';
 import { Link } from 'react-router-dom';
 import {API_BASE_URL} from "@/config/config";
+import {API_BASE_URL} from "@/config/config";
 
 
 export default function CompanyGatewayPage(props) {
@@ -18,6 +19,40 @@ export default function CompanyGatewayPage(props) {
   const [uniqueCompanyIdsArray, setUniqueCompanyIdsArray] = useState([]);
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
+  };
+
+
+
+
+
+  const fetchData = async () => {
+    try {
+      console.log(userData.id);
+
+      // Make an Axios GET request to the API endpoint
+      const response = await axios.get(API_BASE_URL+"/api/points/allpointsaccounts", {
+        withCredentials: true,
+        headers: {
+          userid: userData.id,
+        },
+      });
+      console.log(response);
+
+      if (response.data.data.length > 0) {
+        const uniqueCompanyIds = new Set();
+        response.data.data.forEach(item => {
+          uniqueCompanyIds.add(item.company_id);
+        });
+
+        const uniqueCompanyIdsArray = Array.from(uniqueCompanyIds);
+        setUniqueCompanyIdsArray(uniqueCompanyIdsArray);
+        console.log(uniqueCompanyIdsArray);
+      } else {
+        console.log('No data');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   useEffect(() => {
