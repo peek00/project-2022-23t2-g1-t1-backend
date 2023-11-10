@@ -2,9 +2,11 @@
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
-import UserSearch from '../components/common_utils/UserSearch';
+import UserSearch from '../components/common_utils/LogsSearch';
 
 import LogsTable from '../components/logging_utils/LogsTable';
+import FilterButton from '../components/common_utils/FilterButton';
+import LogsSearch from '../components/common_utils/LogsSearch';
 
 
 export default function LogsPage(){
@@ -15,9 +17,20 @@ export default function LogsPage(){
         <TopBar/>
         <div className='absolute left-[25%] w-full'>
           <div className='min-h-screen'>
-            <UserSearch user="Logs"/>
+        
           </div>
-          <div className='min-w-full'>
+       
+          <div className='min-w-full fixed top-[10%] mb-10'>
+            <div className='flex justify-around'>
+          <FilterButton/>
+          <LogsSearch/>
+          <div className='w-1/4'></div>
+
+          </div>
+
+
+            
+          
             <LogsTable/>
           </div>
         </div>

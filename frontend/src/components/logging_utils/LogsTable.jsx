@@ -14,7 +14,7 @@ import {
 
 
 
-const ITEMS_PER_PAGE = 5; // Set the number of items per page
+const ITEMS_PER_PAGE = 20; // Set the number of items per page
 
 const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
@@ -62,7 +62,8 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
   return (
     <div>
-      <Card className="w-full text-center absolute top-[20%]">
+      
+      <Card className="w-full text-center absolute top-[250%]">
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col justify between gap-8 md:flex-row md:items-center">
             <div>
