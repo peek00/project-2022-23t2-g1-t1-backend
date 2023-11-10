@@ -70,7 +70,7 @@ describe("AuthenticationService", () => {
       expect(cacheProvider.write).toBeCalledWith(
         "1",
         JSON.stringify(userWithToken),
-        60 * 60 * 1,
+        3 * 24 * 60 * 60 * 1,
       );
       
       // Assert User

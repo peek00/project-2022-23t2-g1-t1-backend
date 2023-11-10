@@ -19,7 +19,7 @@ export class JwtService {
   public generateToken(userId: string): string {
     console.log("JwtService.generateToken()");
     const token = jwt.sign({ id: userId }, this.secret, {
-      expiresIn: 60 * 60 * 1, // 1 hour
+      expiresIn: 3 * 24 * 60 * 60 * 1, // 3 days
     });
     return token;
   }
