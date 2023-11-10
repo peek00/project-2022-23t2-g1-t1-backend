@@ -76,8 +76,8 @@ class dbtableconfig {
           } catch (e) {
             console.error("Unable to add item:", user["user_id"]);
             console.error(e.message);
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            break;
+            await this.delay(1000) // Wait for 1 second
+            // break;
           }
         }
       } while (count > 0);
