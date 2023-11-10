@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import express from 'express';
 import { LogService } from './LogService.js';
-import { processLog, readLogs } from './processFileController.js';
+import { processLog } from './processFileController.js';
 import router from './logRoutes.js';
 import { handleError } from './errorHandler.js';
 
@@ -12,9 +12,8 @@ const logService = LogService.getInstance();
 // cron.schedule('0 * * * *', () => {
 //   processLog();
 // });
-cron.schedule('*/60 * * * * *', () => {
+cron.schedule('*/10 * * * * *', () => {
   console.log('running a task every 1 minute');
-  // readLogs();
   processLog();
 });
 

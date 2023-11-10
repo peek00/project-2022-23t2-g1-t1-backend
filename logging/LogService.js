@@ -78,11 +78,10 @@ export class LogService {
         data: [],
         nextPageKey: null,
       }
-      let ExclusiveStartKey = queryParams.ExclusiveStartKey || null;
+      // let ExclusiveStartKey = queryParams.ExclusiveStartKey || null;
       const params = {
         TableName: "logs",
-        ...queryParams,
-        ExclusiveStartKey,
+        ...queryParams
       };
       const data = await this.db.send(new QueryCommand(params));
       if (data.LastEvaluatedKey) {
@@ -102,28 +101,39 @@ export class LogService {
   };
 
   formatQueryParams(options){
-    const { logGroup, timeStamp, timeStampRange, limit, offsetId } = options;
+    const { logGroup, startTime, endTime, limit, offsetId, order, userId } = options;
     let queryParams = {};
     let FilterExpressionLs = [];
+    let timeAdded = false;
 
     if (logGroup) {
       queryParams.KeyConditionExpression = "logGroup = :logGroup";
       queryParams.ExpressionAttributeValues = marshall({ ":logGroup": logGroup });
     } else {
-      // throw new Error("logGroup is required");
+      throw new Error("logGroup is required");
     }
     
-    if (timeStamp) {
-      FilterExpressionLs.push("timestamp = :timestamp");
-      queryParams.ExpressionAttributeValues[":timestamp"] = marshall(timeStamp);
-    } else if (timeStampRange) {
-      FilterExpressionLs.push("timestamp BETWEEN :start AND :end");
-      queryParams.ExpressionAttributeValues[":start"] = marshall(timeStampRange.start);
-      queryParams.ExpressionAttributeValues[":end"] = marshall(timeStampRange.end);
+    if (startTime && !endTime) {
+      FilterExpressionLs.push("#timestamp >= :start");
+      queryParams.ExpressionAttributeValues[":start"] = marshall(startTime);
+      timeAdded = true;
+    } else if (!startTime && endTime) {
+      FilterExpressionLs.push("#timestamp <= :end");
+      queryParams.ExpressionAttributeValues[":end"] = marshall(endTime);
+      timeAdded = true;
+    } else if (startTime && endTime) {
+      FilterExpressionLs.push("#timestamp BETWEEN :start AND :end");
+      queryParams.ExpressionAttributeValues[":start"] = marshall(startTime);
+      queryParams.ExpressionAttributeValues[":end"] = marshall(endTime);
+      timeAdded = true;
     };
 
-    if (limit) {
-      queryParams.Limit = limit;
+    if (timeAdded) {
+      queryParams.ExpressionAttributeNames = { "#timestamp": "timestamp" };
+    }
+
+    if (Number(limit)!==20) {
+      queryParams.Limit = Number(limit);
     }
 
     if (offsetId) {
@@ -131,6 +141,20 @@ export class LogService {
         logGroup: logGroup,
         id: offsetId 
       });
+    }
+
+    if (order === "ASC") {
+      queryParams.ScanIndexForward = true;
+    } else if (order === "DESC") {
+      queryParams.ScanIndexForward = false;
+    } else {
+      throw new Error("Invalid order");
+    }
+
+    if (userId) {
+      queryParams.IndexName = "userId";
+      FilterExpressionLs.push("userId = :userId");
+      queryParams.ExpressionAttributeValues = marshall({ ":userId": userId });
     }
 
     if (FilterExpressionLs.length > 0) {
@@ -157,12 +181,10 @@ export class LogService {
       Item: marshall({
         logGroup,
         id: uuid(),
-        timestamp: Date.now(),
         ttl: (Date.now() + Number(retentionPolicy) * 24 * 60 * 60 * 1000),
         // ttl: (Date.now() + Number(retentionPolicy) * 60 * 1000), // 1 minute
         ...data,
       }),
-      ttl: Math.floor(Date.now() / 1000) + Number(retentionPolicy) * 60, // 1 minute
     };
     console.log("Uploading Logs with params: ", params);
     return await this.db.send(new PutItemCommand(params));
