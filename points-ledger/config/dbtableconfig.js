@@ -236,21 +236,21 @@ class dbtableconfig {
         await this.loadBaseData();
         if (data.TableNames.includes("new-points-ledger")) {
             console.log("Table exists");
-            // if (tearDown) {
+            if (tearDown) {
               // Delete table if it exists
               await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
+              await this.delay(5000);
               await this.db.send(new CreateTableCommand(params));
               console.log("Table is created");
               await this.delay(5000);
               this.batchWrite();
-            // }
+            }
         } else {
           await this.db.send(new CreateTableCommand(params));
           console.log("Table is created");
           await this.delay(5000);
           await this.batchWrite();
-          // this.seedData();
         }
     } catch (err) {
       console.log("Error", err);
