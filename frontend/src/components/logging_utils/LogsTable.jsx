@@ -55,7 +55,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const displayedRows = TABLE_ROWS.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(TABLE_ROWS.length / ITEMS_PER_PAGE);
+ 
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -179,7 +179,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
   >
     1
   </IconButton>
-  {Array.from({ length: totalPages - 1 }, (_, index) => (
+  {/* {Array.from({ length: totalPages - 1 }, (_, index) => (
     <IconButton
       key={index + 2}
       variant={currentPage === index + 2 ? "outlined" : "text"}
@@ -188,12 +188,12 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
     >
       {index + 2}
     </IconButton>
-  ))}
+  ))} */}
 </div>
           <Button
             variant="outlined"
             size="sm"
-            disabled={currentPage === totalPages}
+           
             onClick={() => handlePageChange(currentPage + 1)}
           >
             Next

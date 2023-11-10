@@ -35,7 +35,7 @@ export class AuthenticationService {
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(id);
       const response = { ...user, token };
-      await this.cacheProvider.write(id, JSON.stringify(response), 60 * 60 * 1); // 1 hour
+      await this.cacheProvider.write(id, JSON.stringify(response), 3 * 24 * 60 * 60 * 1); // 3 day
       return { id, role, companyId, token };
     } catch (error) {
       throw error;
