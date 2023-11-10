@@ -71,37 +71,6 @@ def create_request_template_table(ddb):
             print('Table already exists. Skipping table creation.')
         else:
             raise e
-        
-def create_request_permission_table(ddb):
-    try:
-        partition_key='role'
-
-        table = ddb.create_table(
-            TableName="request_permission",
-            KeySchema=[
-                {
-                    'AttributeName': partition_key,
-                    'KeyType': 'HASH'  # Partition key
-                },
-            ],
-            AttributeDefinitions=[
-                {
-                    'AttributeName': partition_key,
-                    'AttributeType': 'S'  # String type for uid
-                },
-            ],
-            ProvisionedThroughput={
-                'ReadCapacityUnits': 5,   # Adjust based on your expected read workload
-                'WriteCapacityUnits': 1   # Adjust based on your expected write workload
-            },
-        )
-        print("Waiting for request permission table creation...")
-        table.wait_until_exists()
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'ResourceInUseException':
-            print('Table already exists. Skipping table creation.')
-        else:
-            raise e
 
 def populate_request_db(ddb):
     table = ddb.Table('approval_request')
@@ -364,23 +333,6 @@ def populate_template_db(ddb):
                 "Engineer"
             ]
             
-        },
-    ]
-    with table.batch_writer() as batch:
-        for item in data:
-            batch.put_item(Item=item)
-
-def populate_permission_db(ddb):
-    table = ddb.Table('request_permission')
-
-    data = [
-        {
-            "role": "Owner",
-            "approved_actions": [
-                "cdf7f49f", 
-                "dcf5f6zx",
-                "awfahj6z"
-            ]
         },
     ]
     with table.batch_writer() as batch:
