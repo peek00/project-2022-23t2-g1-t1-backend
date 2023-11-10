@@ -1,7 +1,7 @@
 import { createDynamoDBClient } from "./db.js";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { CreateTableCommand, DeleteTableCommand, ScanCommand, PutItemCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
-
+import { CreateTableCommand, DeleteTableCommand, ScanCommand, QueryCommand, PutItemCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
+import { v4 as uuid } from "uuid";
 export class LogService {
   static instance;
   db;
@@ -22,16 +22,31 @@ export class LogService {
       TableName: "logs",
       KeySchema: [
         { AttributeName: "logGroup", KeyType: "HASH" }, // Partition key
-        { AttributeName: "timestamp", KeyType: "RANGE" }, // Sort key
+        { AttributeName: "id", KeyType: "RANGE" }, // Sort key
       ],
       AttributeDefinitions: [
         { AttributeName: "logGroup", AttributeType: "S" },
-        { AttributeName: "timestamp", AttributeType: "S" },
+        { AttributeName: "id", AttributeType: "S" },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 1,
         WriteCapacityUnits: 1,
       },
+      GlobalSecondaryIndex: [
+        {
+          IndexName: "userId",
+          KeySchema: [
+            { AttributeName: "userId", KeyType:"HASH"}
+          ],
+          Projection: {
+            ProjectionType: "ALL"
+          },
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
+      ],
       TimeToLiveSpecification: {
         AttributeName: "ttl",
         Enabled: "TRUE",
@@ -59,44 +74,94 @@ export class LogService {
 
   async queryLog(queryParams) {
     try {
-      const data = await this.db.send(new ScanCommand(queryParams));
-      console.log("Scan successful.");
-      console.log(data);
-      console.log("Success", data.Items);
-      if (data.Items === undefined) {
-        return [];
+      let response = {
+        data: [],
+        nextPageKey: null,
       }
-      return data.Items.map((item) => unmarshall(item));
+      // let ExclusiveStartKey = queryParams.ExclusiveStartKey || null;
+      const params = {
+        TableName: "logs",
+        ...queryParams
+      };
+      const data = await this.db.send(new QueryCommand(params));
+      if (data.LastEvaluatedKey) {
+        response.nextPageKey = unmarshall(data.LastEvaluatedKey).id;
+      }
+      
+      if (data.Items.length === 0) {
+        return response
+      }
+      console.log("Total Number of Logs Retrieved: ", data.Items.length);
+      response.data = data.Items.map((item) => unmarshall(item));
+      console.log(response);
+      return response;
     } catch (err) {
       console.log("Error", err);
     }
   };
 
   formatQueryParams(options){
-    const { logGroup, timeStamp, timeStampRange } = options;
+    const { logGroup, startTime, endTime, limit, offsetId, order, userId } = options;
     let queryParams = {};
     let FilterExpressionLs = [];
-    let ExpressionAttributeValuesLs = {};
+    let timeAdded = false;
 
     if (logGroup) {
-      queryParams.logGroup = logGroup;
-      FilterExpressionLs.push("logGroup = :logGroup");
-      ExpressionAttributeValuesLs[":logGroup"] = logGroup;
+      queryParams.KeyConditionExpression = "logGroup = :logGroup";
+      queryParams.ExpressionAttributeValues = marshall({ ":logGroup": logGroup });
+    } else {
+      throw new Error("logGroup is required");
     }
     
-    if (timeStamp) {
-      FilterExpressionLs.push("timestamp = :timestamp");
-      ExpressionAttributeValuesLs[":timestamp"] = timeStamp;
-    } else if (timeStampRange) {
-      FilterExpressionLs.push("timestamp BETWEEN :start AND :end");
-      ExpressionAttributeValuesLs[":start"] = timeStampRange.start;
-      ExpressionAttributeValuesLs[":end"] = timeStampRange.end;
+    if (startTime && !endTime) {
+      FilterExpressionLs.push("#timestamp >= :start");
+      queryParams.ExpressionAttributeValues[":start"] = marshall(startTime);
+      timeAdded = true;
+    } else if (!startTime && endTime) {
+      FilterExpressionLs.push("#timestamp <= :end");
+      queryParams.ExpressionAttributeValues[":end"] = marshall(endTime);
+      timeAdded = true;
+    } else if (startTime && endTime) {
+      FilterExpressionLs.push("#timestamp BETWEEN :start AND :end");
+      queryParams.ExpressionAttributeValues[":start"] = marshall(startTime);
+      queryParams.ExpressionAttributeValues[":end"] = marshall(endTime);
+      timeAdded = true;
     };
-    console.log(FilterExpressionLs);
+
+    if (timeAdded) {
+      queryParams.ExpressionAttributeNames = { "#timestamp": "timestamp" };
+    }
+
+    if (Number(limit)!==20) {
+      queryParams.Limit = Number(limit);
+    }
+
+    if (offsetId) {
+      queryParams.ExclusiveStartKey = marshall({ 
+        logGroup: logGroup,
+        id: offsetId 
+      });
+    }
+
+    if (order === "ASC") {
+      queryParams.ScanIndexForward = true;
+    } else if (order === "DESC") {
+      queryParams.ScanIndexForward = false;
+    } else {
+      throw new Error("Invalid order");
+    }
+
+    if (userId) {
+      queryParams.IndexName = "userId";
+      FilterExpressionLs.push("userId = :userId");
+      queryParams.ExpressionAttributeValues = marshall({ ":userId": userId });
+    }
+
     if (FilterExpressionLs.length > 0) {
       queryParams.FilterExpression = FilterExpressionLs.join(" AND ");
-      queryParams.ExpressionAttributeValues = ExpressionAttributeValuesLs;
     }
+
+    console.log(queryParams)
     return queryParams;
   }
 
@@ -106,7 +171,7 @@ export class LogService {
       TableName: "logs",
       ...queryParams,
     };
-    console.log(params);
+    console.log(params)
     return this.queryLog(params);
   }
   // Upload with TTL index in days
@@ -115,14 +180,14 @@ export class LogService {
       TableName: "logs",
       Item: marshall({
         logGroup,
-        timestamp: Date.now(),
-        // ttl: (Date.now() + Number(retentionPolicy) * 24 * 60 * 60 * 1000).toString(),
+        id: uuid(),
+        ttl: (Date.now() + Number(retentionPolicy) * 24 * 60 * 60 * 1000),
         // ttl: (Date.now() + Number(retentionPolicy) * 60 * 1000), // 1 minute
         ...data,
       }),
-      ttl: Math.floor(Date.now() / 1000) + Number(retentionPolicy) * 60, // 1 minute
     };
-    console.log(params);
+    console.log("Uploading Logs with params: ", params);
     return await this.db.send(new PutItemCommand(params));
   }
+
 }
