@@ -66,6 +66,7 @@ export class PolicyController {
     try {
       const { role } = req.user!;
       const { pageLs } = req.body;
+      console.log(`getUserPolicyMapping for ${pageLs} based on user role ${role}`)
       if (pageLs === undefined) {
         throw new Error("Invalid Request");
       }
