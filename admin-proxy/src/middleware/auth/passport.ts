@@ -31,7 +31,7 @@ const cookieExtractor = (req: any) => {
       }
     });
   }
-  console.log(token);
+  console.log("Token: ", token);
   return token;
 };
 
