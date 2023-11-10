@@ -5,6 +5,7 @@ import axios from "axios";
 
 export default function UserTable() {
     const [users, setUsers] = useState([]);
+    const [role, setRole] = useState(null);
 
     
 
@@ -22,7 +23,12 @@ export default function UserTable() {
 
 
     useEffect(() => {
-      viewUser();
+      viewUser()
+      // Fetch the role from localStorage or an API here
+      const storedRole = JSON.parse(localStorage.getItem("permissions"));
+      console.log(storedRole);
+      setRole(storedRole);
+      
     }, []);
 
     const viewUser = async () => {
@@ -85,7 +91,7 @@ export default function UserTable() {
               <td className="px-6 py-4">{user.roles.join(', ')}</td>
               
               <td>
-              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} id={user.userId} />
+              <MenuDefault firstName={user.firstName} lastName ={user.lastName} email={user.email} id={user.userId} role={role} />
 
               </td>
             </tr>

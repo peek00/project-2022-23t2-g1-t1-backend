@@ -49,8 +49,19 @@ export default function SideBar() {
         </NavLink>
         
         <NavLink
+          to="/user/editPolicy"
+          activeClassName="active"
+          className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
+            activeLink === '/user/editPolicy' ? 'opacity-100 font-bold' : 'opacity-60'
+          }`}
+        >
+          Permissions
+        </NavLink>
+
+        <NavLink
           to="/logs"
-          className={`text-white mt-20 text-sm font-thin hover:font-bold cursor-pointer ${
+          activeClassName="active"
+          className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
         >
