@@ -24,6 +24,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -299,16 +300,21 @@ public class UserService {
 
 
 
-    // public List<User> getUsersByRoleFromCompany(String companyID, String roleName) {
-    //     List<User> users = getUsersByCompany(companyID);
+    public List<String> getUsersByRole(List<String> roleNames) {
+        Set<String> validRoleNames = new HashSet<>();
+        validRoleNames.add("Owner");
+        validRoleNames.add("Engineer");
+        User[] usersArray = getAllUsers(validRoleNames);
+        List<User> users = Arrays.asList(usersArray);
 
-    //     // Filter users by roleName in userRole array
-    //     List<User> filteredUsers = users.stream()
-    //             .filter(user -> user.getRoles().contains(roleName))
-    //             .collect(Collectors.toList());
+        // Filter users by roleName in userRole array
+        List<String> filteredEmails = users.stream()
+            .filter(user -> user.getRoles().stream().anyMatch(roleNames::contains))
+            .map(User::getEmail)
+            .collect(Collectors.toList());
 
-    //     return filteredUsers;
-    // }
+        return filteredEmails;
+    }
 
     // public List<String> getUserEmailsByUserIDsFromCompany(String companyID, List<String> userIDs) {
     //     List<User> users = getUsersByCompany(companyID);
