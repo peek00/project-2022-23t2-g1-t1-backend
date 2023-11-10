@@ -16,8 +16,12 @@ export default function UserListingPage() {
       <div className="w-4/5 min-h-screen overflow-y-auto">
         <TopBar />
         <div className="min-h-screen overflow-y-auto">
-          <UserSearch user="Users" />
+          {/* <UserSearch user="Users" /> */}
+        
+
+
           <div className='absolute  left-[25%] top-[50%] min-w-[80%]'>
+          <UserSearch/>
             <UserTable />
           </div>
         </div>
