@@ -41,7 +41,7 @@ export default function SideBar() {
         <NavLink
           to="/makerchecker"
           className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${
-            activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
+            activeLink === '/makerchecker' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
         >
           Maker Checker
