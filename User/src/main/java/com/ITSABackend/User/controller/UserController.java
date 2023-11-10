@@ -212,31 +212,31 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping(value = "/getUserEmails", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> userIDs) {
-    Map<String, Object> response = new HashMap<>();
-    HttpStatus status = HttpStatus.OK;
+    // @GetMapping(value = "/getUserEmails", produces = {"application/json"})
+    // public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> userIDs) {
+    // Map<String, Object> response = new HashMap<>();
+    // HttpStatus status = HttpStatus.OK;
 
-        try {
-            List<String> emails = userService.getUserEmailsFromCompany(userIDs);
-            if (emails.isEmpty()) {
-                throw new RuntimeException("No users found with the specified company / role");
-            }
+    //     try {
+    //         List<String> emails = userService.getUserEmailsFromCompany(userIDs);
+    //         if (emails.isEmpty()) {
+    //             throw new RuntimeException("No users found with the specified company / role");
+    //         }
             
-            response.put("logInfo", "User emails from entered list retrieved successfully");
-            response.put("data", emails);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            response.put("logInfo", "Error occurred");
-            response.put("data", e.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+    //         response.put("logInfo", "User emails from entered list retrieved successfully");
+    //         response.put("data", emails);
+    //     } catch (Exception e) {
+    //         System.err.println(e.getMessage());
+    //         response.put("logInfo", "Error occurred");
+    //         response.put("data", e.getMessage());
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //     }
 
-        return new ResponseEntity<>(response, status);
-    }
+    //     return new ResponseEntity<>(response, status);
+    // }
 
-    @GetMapping(value = "/getUserEmailsByRole", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("roleName") String roleName, @RequestBody List<String> userIDs) {
+    @GetMapping(value = "/getUserEmailsByRoleFromList", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getUserEmailsByRoleFromList(@PathParam("roleName") String roleName, @RequestBody List<String> userIDs) {
     Map<String, Object> response = new HashMap<>();
     HttpStatus status = HttpStatus.OK;
 
@@ -258,6 +258,28 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @GetMapping(value="/getUserEmailsByRole", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> roleNames){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            List<String> emails = userService.getUsersByRole(roleNames);
+            if (emails.isEmpty()) {
+                throw new RuntimeException("No users found with the specified company / role");
+            }
+            
+            response.put("logInfo", "User emails retrieved successfully");
+            response.put("data", emails);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "Error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
 
 
 }
