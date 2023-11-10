@@ -21,7 +21,7 @@ export class Logger {
     // Get name of the log file based on timestamp
     const curDate = new Date();
     // Format of log file: logs-YYYY-MM-DD:HH.log
-    const logFileName = `logs-${curDate.getFullYear()}-${curDate.getMonth()}-${curDate.getDate()}:${curDate.getHours()}:${curDate.getMinutes()}.log`;
+    const logFileName = `logs-${curDate.toUTCString()}.log`;
     console.log("Creating logger for", logFileName);
     this.logger = createLogger({
       format: combine(
@@ -42,7 +42,7 @@ export class Logger {
 
   public log(level: string, message: string, addedInfo: any) {
     let additionalInfo = JSON.stringify({
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toUTCString(),
       ...JSON.parse(addedInfo),
     });
     try {
