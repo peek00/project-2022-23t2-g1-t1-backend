@@ -36,7 +36,7 @@ describe("JwtService", () => {
       expect(payload).toEqual({
         id: "1",
         iat: Date.now() / 1000,
-        exp: Date.now() / 1000 + 60 * 60 * 1,
+        exp: Date.now() / 1000 + 60 * 60 * 24 * 3,
       });
     });
   });
