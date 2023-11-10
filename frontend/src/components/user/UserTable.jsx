@@ -6,22 +6,7 @@ import axios from "axios";
 export default function UserTable() {
     const [users, setUsers] = useState([]);
     const [role, setRole] = useState(null);
-
     
-
-
-
-   
-    
-
-
-
-    
-
-    
-
-
-
     useEffect(() => {
       viewUser()
       // Fetch the role from localStorage or an API here
