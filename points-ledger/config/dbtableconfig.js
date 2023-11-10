@@ -1,6 +1,3 @@
-// import { createDynamoDBClient } from "./db.js";
-// import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-// import { CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 const { CreateTableCommand, DeleteTableCommand,ListTablesCommand, BatchWriteItemCommand, DescribeTableCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const createDynamoDBClient = require("./dbconfig.js")
@@ -235,17 +232,11 @@ class dbtableconfig {
         } else {
           await this.db.send(new CreateTableCommand(params));
           console.log("Table is created");
-
-            // After table creation, wait for the table to become active
-        //   await this.waitForTableToBecomeActive("new-points-ledger");
-        // //   await this.db.send(new BatchWriteItemCommand(table_data));
-        //   await this.seedData();
-        //   console.log("seeding done");
         }
-        } catch (err) {
-        console.log("Error", err);
-        }
-    };
+    } catch (err) {
+      console.log("Error", err);
+    }
+  };
 }
 
 module.exports = dbtableconfig;
