@@ -1,13 +1,17 @@
 const { CreateTableCommand, DeleteTableCommand,ListTablesCommand, BatchWriteItemCommand, DescribeTableCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
 const createDynamoDBClient = require("./dbconfig.js")
+const fs = require('fs').promises;
+const path = require('path');
 
 class dbtableconfig {
   static instance;
   db;
-
+  baseData;
+  
   constructor() {
     this.db = createDynamoDBClient();
+    this.baseData = [];
   }
 
   static getInstance() {
@@ -17,13 +21,25 @@ class dbtableconfig {
     return dbtableconfig.instance;
   };
 
-  async batchWrite(items) {
-    // Divide items array into chunks of 25 items each
-    const chunks = [];
-    for (let i = 0; i < items.length; i += 25) {
-      chunks.push(items.slice(i, i + 25));
+  async loadBaseData() {
+    try {
+      const filePath = path.resolve(__dirname, "baseData.json");
+      const data = await fs.readFile(filePath, 'utf8');
+      this.baseData = JSON.parse(data);
+    } catch (error) {
+      console.error('Error reading base data from file:', error);
+      throw error;
     }
+  }
 
+  async batchWrite() {
+    // Divide items array into chunks of 25 items each
+    console.log("Start writing base data into database")
+    const chunks = [];
+    for (let i = 0; i < this.baseData.length; i += 25) {
+      chunks.push(this.baseData.slice(i, i + 25));
+    }
+    console.log(chunks);
     // Process each chunk
     for (const chunk of chunks) {
       const putRequests = chunk.map(item => ({
@@ -54,71 +70,72 @@ class dbtableconfig {
         }
       } while (unprocessedItems && unprocessedItems["new-points-ledger"]); // Continue until all are processed
     }
+    console.log("Batch write completed")
   }
 
 
-  async seedData() {
-    const items = [
-      // Replace these with your actual data items to seed
-      {
-        company_id: "apple",
-        id: "a73bab06-1baf-4605-a79c-54a43603c0d3",
-        user_id: "da7da4ff-f10c-4b89-ab64-ea7263f6b624",
-        balance: "5130"
-      },
-      {
-        company_id: "apple",
-        id: "6062f766-5313-4521-9c56-954185b85362",
-        user_id: "8c874087-9f1a-4c12-a4dc-4a4e53282b8e",
-        balance: "9860"
-      },
-      {
-        company_id: "apple",
-        id: "0617e6c3-11ee-4429-909b-5d30ac65987e",
-        user_id: "8cecd1af-6c38-4186-9fe7-ba1cf15a7379",
-        balance: "7977"
-      },
-      {
-        company_id: "pear",
-        id: "08f57648-0761-4877-a889-d8842695e1ad",
-        user_id: "11082f02-d942-4ede-893c-0f75f36d4388",
-        balance: "3468"
-      },
-      {
-        company_id: "pear",
-        id: "9f7073b8-c2a6-4aff-9446-f4b629e4085a",
-        user_id: "718b5985-6df4-4367-aff0-edc1bd90d66e",
-        balance: "6502"
-      },
-      {
-        company_id: "pear",
-        id: "69353168-a74a-49a1-964b-7afe981886ce",
-        user_id: "7e92ce5f-60d3-4224-b4b2-c9b29e73de16",
-        balance: "7075"
-      },
+  // async seedData() {
+  //   const items = [
+  //     // Replace these with your actual data items to seed
+  //     {
+  //       company_id: "apple",
+  //       id: "a73bab06-1baf-4605-a79c-54a43603c0d3",
+  //       user_id: "da7da4ff-f10c-4b89-ab64-ea7263f6b624",
+  //       balance: "5130"
+  //     },
+  //     {
+  //       company_id: "apple",
+  //       id: "6062f766-5313-4521-9c56-954185b85362",
+  //       user_id: "8c874087-9f1a-4c12-a4dc-4a4e53282b8e",
+  //       balance: "9860"
+  //     },
+  //     {
+  //       company_id: "apple",
+  //       id: "0617e6c3-11ee-4429-909b-5d30ac65987e",
+  //       user_id: "8cecd1af-6c38-4186-9fe7-ba1cf15a7379",
+  //       balance: "7977"
+  //     },
+  //     {
+  //       company_id: "pear",
+  //       id: "08f57648-0761-4877-a889-d8842695e1ad",
+  //       user_id: "11082f02-d942-4ede-893c-0f75f36d4388",
+  //       balance: "3468"
+  //     },
+  //     {
+  //       company_id: "pear",
+  //       id: "9f7073b8-c2a6-4aff-9446-f4b629e4085a",
+  //       user_id: "718b5985-6df4-4367-aff0-edc1bd90d66e",
+  //       balance: "6502"
+  //     },
+  //     {
+  //       company_id: "pear",
+  //       id: "69353168-a74a-49a1-964b-7afe981886ce",
+  //       user_id: "7e92ce5f-60d3-4224-b4b2-c9b29e73de16",
+  //       balance: "7075"
+  //     },
       
-    ];
+  //   ];
   
-    const putRequests = items.map(item => ({
-      PutRequest: {
-        Item: marshall(item)
-      }
-    }));
+  //   const putRequests = items.map(item => ({
+  //     PutRequest: {
+  //       Item: marshall(item)
+  //     }
+  //   }));
   
-    const params = {
-      RequestItems: {
-        "new-points-ledger": putRequests
-      }
-    };
+  //   const params = {
+  //     RequestItems: {
+  //       "new-points-ledger": putRequests
+  //     }
+  //   };
   
-    try {
-        console.log(params);
-      const result = await this.db.send(new BatchWriteItemCommand(params));
-      console.log("Seed data added:", result);
-    } catch (error) {
-      console.error("Error seeding data:", error);
-    }
-  }
+  //   try {
+  //       console.log(params);
+  //     const result = await this.db.send(new BatchWriteItemCommand(params));
+  //     console.log("Seed data added:", result);
+  //   } catch (error) {
+  //     console.error("Error seeding data:", error);
+  //   }
+  // }
 
 
   async waitForTableToBecomeActive(tableName) {
@@ -141,6 +158,10 @@ class dbtableconfig {
     } else {
       throw new Error(`Table ${tableName} is not active after ${maxAttempts} attempts.`);
     }
+  }
+
+  async delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
   }
 
   async initialise(tearDown = false) {
@@ -220,18 +241,24 @@ class dbtableconfig {
     try {
         const data = await this.db.send(new ListTablesCommand({}));
         console.log(data);
+        this.loadBaseData();
         if (data.TableNames.includes("new-points-ledger")) {
             console.log("Table exists");
-            // if (tearDown) {
+            if (tearDown) {
               // Delete table if it exists
               await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
               await this.db.send(new CreateTableCommand(params));
               console.log("Table is created");
-            // }
+              await this.delay(5000);
+              this.batchWrite();
+            }
         } else {
           await this.db.send(new CreateTableCommand(params));
           console.log("Table is created");
+          await this.delay(5000);
+          this.batchWrite();
+          // this.seedData();
         }
     } catch (err) {
       console.log("Error", err);
