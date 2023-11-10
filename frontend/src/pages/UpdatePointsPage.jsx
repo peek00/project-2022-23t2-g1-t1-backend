@@ -9,9 +9,6 @@ import UserSearch from '../components/common_utils/LogsSearch';
 import UpdatePointsTable from '../components/account/UpdatePointsTable';
 
 
-
-
-
 export default function UpdatePointsPage(){
 
     return(

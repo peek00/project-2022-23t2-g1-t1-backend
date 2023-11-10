@@ -47,3 +47,12 @@ export const getAllLogs = async (req, res, next) => {
   }
 };
 
+export const getAllLogGroups = async (req, res, next) => {
+  try {
+    const logGroups = await LogService.getInstance().getLogGroups();
+    res.status(200).json(logGroups);
+  } catch (error) {
+    next(error);
+  }
+}
+

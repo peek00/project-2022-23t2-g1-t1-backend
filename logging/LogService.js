@@ -27,14 +27,15 @@ export class LogService {
       AttributeDefinitions: [
         { AttributeName: "logGroup", AttributeType: "S" },
         { AttributeName: "id", AttributeType: "S" },
+        { AttributeName: "userId", AttributeType: "S" },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 1,
         WriteCapacityUnits: 1,
       },
-      GlobalSecondaryIndex: [
+      GlobalSecondaryIndexes: [
         {
-          IndexName: "userId",
+          IndexName: "UserId-Index",
           KeySchema: [
             { AttributeName: "userId", KeyType:"HASH"}
           ],
@@ -44,7 +45,7 @@ export class LogService {
           ProvisionedThroughput: {
             ReadCapacityUnits: 1,
             WriteCapacityUnits: 1,
-          },
+          }
         },
       ],
       TimeToLiveSpecification: {
@@ -152,9 +153,10 @@ export class LogService {
     }
 
     if (userId) {
-      queryParams.IndexName = "userId";
-      FilterExpressionLs.push("userId = :userId");
+      queryParams.IndexName = "UserId-Index";
+      queryParams.KeyConditionExpression = "userId = :userId";
       queryParams.ExpressionAttributeValues = marshall({ ":userId": userId });
+  
     }
 
     if (FilterExpressionLs.length > 0) {
@@ -190,4 +192,25 @@ export class LogService {
     return await this.db.send(new PutItemCommand(params));
   }
 
+  async getLogGroups() {
+    const params = {
+      TableName: "logs",
+      ProjectionExpression: "logGroup",
+      ScanIndexForward: false
+    };
+    try {
+      const data = await this.db.send(new ScanCommand(params));
+      if (data.Count === 0) {
+        throw new Error("No log groups found");
+      }
+      let output = new Set()
+      data.Items.forEach((item) => {
+        output.add(unmarshall(item).logGroup);
+      });
+      return Array.from(output);
+    } catch (error) {
+      console.log(error.message);
+      return [];
+    }
+  }
 }
