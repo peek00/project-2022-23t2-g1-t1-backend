@@ -2,10 +2,10 @@
 
 
 import axios from 'axios';
-
+import {API_BASE_URL} from "@/config/config";
 
 export async function addUser(requestBody){
-    const response = await axios.post("http://localhost:8000/api/user/User/createUser", requestBody, {
+    const response = await axios.post(API_BASE_URL+"/api/user/User/createUser", requestBody, {
         withCredentials: true
       });
       return response;
@@ -22,7 +22,7 @@ export async function addUser(requestBody){
         };
     
         const userId = formData.id;
-        const response = await axios.put(`http://localhost:8000/api/user/User/updateUser?userID=${userId}`, requestBody, {
+        const response = await axios.put(API_BASE_URL+`/api/user/User/updateUser?userID=${userId}`, requestBody, {
           withCredentials: true
         });
     

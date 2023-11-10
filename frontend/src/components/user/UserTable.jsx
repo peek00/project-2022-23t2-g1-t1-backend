@@ -1,12 +1,12 @@
 import { useEffect, useState,useContext } from "react";
 import MenuDefault from "../common_utils/MenuDefault.jsx";
 import axios from "axios";
-
+import {API_BASE_URL} from "@/config/config";
 
 export default function UserTable() {
     const [users, setUsers] = useState([]);
     const [role, setRole] = useState(null);
-    
+
     useEffect(() => {
       viewUser()
       // Fetch the role from localStorage or an API here
@@ -19,13 +19,13 @@ export default function UserTable() {
     const viewUser = async () => {
       // First check user permissions to access ?isAdmin=True
       try {
-        const viewUserPermissions = await axios.post("http://localhost:8000/policy/permissions", {
+        const viewUserPermissions = await axios.post(API_BASE_URL+"/policy/permissions", {
           pageLs: ["user/User/getAllUsers?isAdmin=True"],
         }, {
           withCredentials: true
         });
         const canViewAdmin = viewUserPermissions.data["user/User/getAllUsers?isAdmin=True"].GET;
-        const response = await axios.get(`http://localhost:8000/api/user/User/getAllUsers?isAdmin=${canViewAdmin}`, {
+        const response = await axios.get(API_BASE_URL+`/api/user/User/getAllUsers?isAdmin=${canViewAdmin}`, {
           withCredentials: true
         })
         setUsers(response.data.data);

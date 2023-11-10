@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from uuid import uuid4
 from enum import Enum
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from datetime import datetime, timedelta
 
 class ApprovalStatus(str, Enum):
@@ -21,7 +21,7 @@ class ApprovalRequest(BaseModel):
     comments: Optional[str] = None
     request_title: Optional[str] = None
     request_expiry: str = (datetime.now() + timedelta(days=5)).isoformat()
-    approval_role: str 
+    approval_role: List[str] 
 
 class ApprovalUpdate(BaseModel):
     """
