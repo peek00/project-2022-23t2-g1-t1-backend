@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../../context/userContext';
+import {API_BASE_URL} from "@/config/config";
 
 
 export default function UpdateUserForm() {
@@ -43,7 +44,7 @@ export default function UpdateUserForm() {
       
      const userId = userData.id;
       console.log(requestBody);
-      const response = await axios.put(`http://localhost:8000/api/user/User/updateUser?userID=${userId}`, requestBody, {
+      const response = await axios.put(API_BASE_URL+`/api/user/User/updateUser?userID=${userId}`, requestBody, {
         withCredentials: true
       });
 

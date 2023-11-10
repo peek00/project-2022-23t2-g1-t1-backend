@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import RequestDetailModal from "./RequestDetailModal";
 
 export default function Template({ data, index, onUpdate }) {
   const [onEdit, setOnEdit] = useState(false);
-
   // Define state to track the edited value
   const parseOriginalInput = (string) => {
     // Original input is kinda weird, because it will not put the comma in the string
@@ -15,6 +15,9 @@ export default function Template({ data, index, onUpdate }) {
 
   const [editedApprovers, setEditedApprovers] = useState(parseOriginalInput(data.allowed_approvers));
   const [editedRequestors, setEditedRequestors] = useState(parseOriginalInput(data.allowed_requestors));
+
+  const requestDetail = data.request_details;
+  console.log(data)
 
   const parseStringToList = (string) => {
     // Split the string by commas and trim whitespace
@@ -57,7 +60,7 @@ export default function Template({ data, index, onUpdate }) {
     <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
       <td className="px-6 py-4 whitespace-nowrap">{data.type}</td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <button> Click Me</button>
+        {/* <RequestDetailModal data={data} /> */}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         {onEdit ? (

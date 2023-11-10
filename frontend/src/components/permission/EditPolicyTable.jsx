@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Table from 'react-bootstrap/Table'
 import Container from 'react-bootstrap/Container';
 import axios from 'axios';
+import {API_BASE_URL} from "@/config/config";
 
 function PolicyTable() {
 
@@ -40,7 +41,7 @@ function PolicyTable() {
     const fetchData = async () => {
       try {
         console.log("Fetching data")
-        const response = await axios.get('http://localhost:8000/policy',{withCredentials: true});
+        const response = await axios.get(API_BASE_URL+'/policy',{withCredentials: true});
         console.log(response.data)
         setCurrentRoles(response.data);
        
@@ -129,7 +130,7 @@ function PolicyTable() {
 
 
           try {
-            const response = await axios.put("http://localhost:8000/policy", newPermission, { withCredentials: true });
+            const response = await axios.put(API_BASE_URL+"/policy", newPermission, { withCredentials: true });
             console.log(response);
            
 

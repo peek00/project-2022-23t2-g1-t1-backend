@@ -1,23 +1,18 @@
 import React from 'react';
 import Carousell from './CarousellTransition.jsx';
 import axios from 'axios';
+import {API_BASE_URL} from "@/config/config";
 
 
 export default function SignInForm(){
- 
-  
-
-  
-
     return(
-
         <div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
     <div
       class="min-h-screen min-w-full m-0 bg-[#1C2434] shadow  flex justify-center flex-1"
 
     >
         
-      <form class="lg:w-1/2 xl:w-5/12 sm:p-12" action="http://localhost:8000/auth/google">
+      <form class="lg:w-1/2 xl:w-5/12 sm:p-12" action={`${API_BASE_URL}/auth/google`}>
         
         <img src="/footerLogo.svg" class='w-30 h-30'/>
         

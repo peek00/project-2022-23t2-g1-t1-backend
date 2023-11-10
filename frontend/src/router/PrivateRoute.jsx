@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import AlertIcon from '../components/common_utils/AlertIcon';
 import axios from 'axios';
+import {API_BASE_URL} from "@/config/config";
 
 const PrivateRoute = ({ page,permission }) => {
   const [authorized, setAuthorized] = useState(null);
@@ -10,15 +11,15 @@ const PrivateRoute = ({ page,permission }) => {
     const fetchRole = async () => {
       const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging"] };
       try {
-        const response = await axios.post("http://localhost:8000/policy/permissions", body, {
+        const response = await axios.post(API_BASE_URL+'/policy/permissions', body, {
           withCredentials: true
         });
 
-        const roleresponse = await axios.get("http://localhost:8000/auth/me", {
+        const roleresponse = await axios.get(API_BASE_URL+"/auth/me", {
           withCredentials: true
         });
 
-        const userDetailsResponse = await axios.get("http://localhost:8000/api/user/User/getUser?userID=" + roleresponse.data.id, {
+        const userDetailsResponse = await axios.get(API_BASE_URL+"/api/user/User/getUser?userID=" + roleresponse.data.id, {
           withCredentials: true
         });
 

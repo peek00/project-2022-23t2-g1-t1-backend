@@ -10,6 +10,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 // ... (other imports)
+import {API_BASE_URL} from "@/config/config";
 
 
 
@@ -25,7 +26,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
     // This code will run when the component mounts
 
     // Make a GET request using Axios
-    axios.get('http://localhost:8000/api/logging/logs', {
+    axios.get(API_BASE_URL+'/api/logging/logs', {
   withCredentials: true
 })
   .then((response) => {

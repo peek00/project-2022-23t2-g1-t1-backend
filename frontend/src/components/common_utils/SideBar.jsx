@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-
 export default function SideBar() {
   const [activeLink, setActiveLink] = useState('');
   const location = useLocation();
@@ -50,7 +49,7 @@ export default function SideBar() {
         
         <NavLink
           to="/user/editPolicy"
-          activeClassName="active"
+          activeclassname="active"
           className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/user/editPolicy' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
@@ -60,7 +59,7 @@ export default function SideBar() {
 
         <NavLink
           to="/logs"
-          activeClassName="active"
+          activeclassname="active"
           className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
