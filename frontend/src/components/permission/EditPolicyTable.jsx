@@ -1,33 +1,99 @@
 import React, { useState,useEffect } from 'react';
 import Table from 'react-bootstrap/Table'
 import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
+import axios from 'axios';
 
 function PolicyTable() {
-    const actions = [
-        'View Users',
-        'Add Users',
-        'Edit User Details',
-        'Delete Users',
-        'Update Points',
-        'View Account Points',
-        'Read Logging Information'
 
-        // Add more actions as needed
-      ];
+  const [currentRoles,setCurrentRoles] = useState({});
+  const [selectedRoles, setSelectedRoles] = useState({});
+  const roles = ['Owner', 'Manager', 'Engineer', 'Product Manager'];
+  const actions = [
+    'View Users',
+    'View Admin Users',
+    'Add Users',
+    'Edit User Details',
+    'Delete Users',
+    'Update Points',
+    'View Account Points',
+    'Read Logging Information',
+    'Edit Permissons of Users'
+
+    // Add more actions as needed
+  ];
+  
+  const policyMapping={"View Users": ["/api/user","GET"],
+"View Admin Users": ["/api/user/User/getAllUsers?isAdmin=True","GET"],
+"Add Users" :["/api/user" ,"POST"],
+"Edit User Details" :["/api/user" ,"PUT"],
+"Delete Users" :["/api/user" ,"DELETE"],
+"Update Points" :["/api/point" ,"PUT"],
+"View Account Points":["/api/point","GET"],
+"Read Logging Information":["/api/logging","GET"],
+"Edit Permissons of Users" :["/policy","PUT"]
+
+
+}
+   
+     
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching data")
+        const response = await axios.get('http://localhost:8000/policy',{withCredentials: true});
+        console.log(response.data)
+        setCurrentRoles(response.data);
+       
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData(); // Call the fetchData function
+
+    // Cleanup function (optional)
+    return () => {
+      // Any cleanup code (if needed)
+    };
+  }, []); 
+
+  useEffect(() => {
     
-      const roles = ['owner', 'manager', 'engineer', 'Product Manager'];
+    if (Object.keys(currentRoles).length === 0) return;
+    let newMapping = actions.reduce((acc, action) => {
+      acc[action] = {};
+      
+      roles.forEach(role => {
+        console.log(role);
+        console.log(acc);
+        const url =policyMapping[action][0];
+        
+        const method = policyMapping[action][1];
+        console.log(currentRoles);
+        console.log(url);
+        console.log(method);
+        if (currentRoles[url][method].includes(role)){
+          acc[action][role] = true;
+        }
+        else{
+          acc[action][role] = false;
+        }
+      });
+      return acc;
+    }, {});
     
-      const [selectedRoles, setSelectedRoles] = useState(
-        actions.reduce((acc, action) => {
-          acc[action] = {};
-          roles.forEach(role => {
-            acc[action][role] = false;
-          });
-          return acc;
-        }, {})
-      );
+    setSelectedRoles(newMapping);
+  }, [currentRoles]);
+   
+
+
+
+    
+      
+    
+      
+
+
     
       const handleCheckboxChange = (action, role) => {
         setSelectedRoles(prevRoles => ({
@@ -38,6 +104,55 @@ function PolicyTable() {
           }
         }));
       };
+
+      const updatePolicy = async () => {
+        // First Iterate through the list and then check if the value is true or false
+        for (const endpoint in selectedRoles){
+          var newPermission ={}
+          var roleList = [];
+          
+          const api = policyMapping[endpoint][0];
+          const method = policyMapping[endpoint][1];
+          newPermission["endpoint"] = api;
+          for (const role in selectedRoles[endpoint]){
+            if(selectedRoles[endpoint][role]){
+              roleList.push(role);
+            }
+
+
+          }
+
+        
+          newPermission[method] = roleList;
+          console.log(newPermission);
+
+
+
+          try {
+            const response = await axios.put("http://localhost:8000/policy", newPermission, { withCredentials: true });
+            console.log(response);
+           
+
+
+
+            
+          } catch (error) {
+            console.error("Error making PUT request:", error);
+          }
+
+         
+          
+
+
+
+        
+
+
+
+        }
+        alert('The permissions has been updated');
+
+      }
 
     const colStyle = {
         outline: '1px solid black', 
@@ -82,7 +197,7 @@ function PolicyTable() {
                 </tr>
             </thead>
             <tbody>
-                {actions.map(action => (
+                {Object.keys(selectedRoles).length && actions.map(action => (
                     <tr key={action} style={rowStyle}>
                         <td style={{ ...actionStyle, padding: '20px' }}>{action}</td>
                         {roles.map(role => (
@@ -97,7 +212,12 @@ function PolicyTable() {
                     </tr>
                 ))}
             </tbody>
+           
         </Table>
+        <div className='text-center w-full'>
+            
+            <button type="button"  onClick ={updatePolicy} class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-10 ">Submit Policy</button>
+            </div>
         
     </Container>
   );

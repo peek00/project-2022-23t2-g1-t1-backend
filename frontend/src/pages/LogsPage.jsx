@@ -4,7 +4,7 @@ import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
 import UserSearch from '../components/common_utils/UserSearch';
 
-import LogsTable from '../components/logging/LogsTable';
+import LogsTable from '../components/logging_utils/LogsTable';
 
 
 export default function LogsPage(){

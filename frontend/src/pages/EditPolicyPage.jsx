@@ -5,7 +5,7 @@ import TopBar from '../components/common_utils/TopBar';
 
 import EditPolicyTable from '../components/permission/EditPolicyTable';
 
-export default function AddAccountPage(props) {
+export default function EditPolicyPage(props) {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
