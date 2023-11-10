@@ -67,9 +67,6 @@ def create_table_on_first_load() -> None:
         generate_schema.create_approval_request_table(ddb)
         generate_schema.populate_request_db(ddb)
 
-        generate_schema.create_request_permission_table(ddb)
-        generate_schema.populate_permission_db(ddb)
-
         generate_schema.create_request_template_table(ddb)
         generate_schema.populate_template_db(ddb)
     else:

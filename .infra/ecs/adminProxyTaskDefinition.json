@@ -39,11 +39,11 @@
                 },
                 {
                     "name": "CLIENT_AUTH_REDIRECT_URL",
-                    "value": "http://itsa-frontend.s3-website-ap-southeast-1.amazonaws.com/user"
+                    "value": "https://dy4wjbjjwtjyj.cloudfront.net/users"
                 },
                 {
                     "name": "CLIENT_BASE_URL",
-                    "value": "http://itsa-frontend.s3-website-ap-southeast-1.amazonaws.com"
+                    "value": "https://dy4wjbjjwtjyj.cloudfront.net"
                 },
                 {
                     "name": "DNS",

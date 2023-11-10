@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { addPoint } from '../../apis/points';
 import { useUserContext } from '../../context/userContext';
+import {API_BASE_URL} from "@/config/config";
 
 export default function AddAccountForm() {
   const { userData, updateUserData } = useUserContext();
@@ -20,7 +21,7 @@ export default function AddAccountForm() {
 
   useEffect(() => {
     // Make an Axios GET request to the API endpoint
-    axios.get('http://localhost:8000/api/points/allcompanyids',{withCredentials: true})
+    axios.get(API_BASE_URL+ '/api/points/allcompanyids',{withCredentials: true})
       .then(response => {
         // Handle the successful response and set the data to the state
         setCompany(response.data.data);

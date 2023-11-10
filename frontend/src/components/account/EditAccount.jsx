@@ -7,6 +7,8 @@ import {
   Button,
 } from "@material-tailwind/react";
 
+import {API_BASE_URL} from "@/config/config";
+
 export default function EditAccount({companyId, pointsId, points}) {
   const [role, setRole] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -50,7 +52,7 @@ export default function EditAccount({companyId, pointsId, points}) {
               <Button
                   className="bg-[#1C2434]"
                   onClick={() => {
-                      axios.put("http://localhost:8000/api/points/updatebalance", 
+                      axios.put(API_BASE_URL+"/api/points/updatebalance", 
                       {
                           company_id: companyId,
                           balance: inputValue,

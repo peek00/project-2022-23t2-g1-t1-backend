@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import CompanyDropdown from "../account/CompanyDropdown";
-
 export default function SideBar() {
   const [activeLink, setActiveLink] = useState('');
   const location = useLocation();
@@ -12,11 +10,6 @@ export default function SideBar() {
     setActiveLink(location.pathname);
   }, [location]);
 
-  // Handle selected company.
-  const [selectedCompany, setSelectedCompany] = useState();
-  const handleCompanyChange = (newState) => {
-    setSelectedCompany(newState);
-  };
 
   return (
     <div className="bg-[#1C2434] h-screen  overflow-y-auto w-[20%] z-50 fixed">
@@ -25,11 +18,10 @@ export default function SideBar() {
           <img src="/footerLogo.svg" className="h-[100px] w-[100px]" />
         </Link>
         
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/>
-
+        {/* <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange}/> */}
         <NavLink
           to="/users"
-          activeClassName="active"
+          activeclassname="active"
           className={`text-white text-sm font-thin cursor-pointer ${
             activeLink === '/users' ? 'active opacity-100 font-bold' : 'opacity-60'
           }`}
@@ -39,7 +31,6 @@ export default function SideBar() {
 
         <NavLink
           to="/users/add"
-          activeClassName="active"
           className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/users/add' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
@@ -48,14 +39,35 @@ export default function SideBar() {
         </NavLink>
 
         <NavLink
+          to="/makerchecker"
+          className={`text-white text-sm font-thin hover:font-bold cursor-pointer ${
+            activeLink === '/makerchecker' ? 'opacity-100 font-bold' : 'opacity-60'
+          }`}
+        >
+          Maker Checker
+        </NavLink>
+        
+        <NavLink
+          to="/user/editPolicy"
+          activeclassname="active"
+          className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
+            activeLink === '/user/editPolicy' ? 'opacity-100 font-bold' : 'opacity-60'
+          }`}
+        >
+          Permissions
+        </NavLink>
+
+        <NavLink
           to="/logs"
-          activeClassName="active"
-          className={`text-white mt-20 text-sm font-thin hover:font-bold cursor-pointer ${
+          activeclassname="active"
+          className={`text-white mt-5 text-sm font-thin hover:font-bold cursor-pointer ${
             activeLink === '/logs' ? 'opacity-100 font-bold' : 'opacity-60'
           }`}
         >
           Logs
         </NavLink>
+
+    
       </div>
     </div>
   );

@@ -10,11 +10,12 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 // ... (other imports)
+import {API_BASE_URL} from "@/config/config";
 
 
 
 
-const ITEMS_PER_PAGE = 5; // Set the number of items per page
+const ITEMS_PER_PAGE = 20; // Set the number of items per page
 
 const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
@@ -25,7 +26,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
     // This code will run when the component mounts
 
     // Make a GET request using Axios
-    axios.get('http://localhost:8000/api/logging/logs', {
+    axios.get(API_BASE_URL+'/api/logging/logs', {
   withCredentials: true
 })
   .then((response) => {
@@ -54,7 +55,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const displayedRows = TABLE_ROWS.slice(startIndex, endIndex);
 
-  const totalPages = Math.ceil(TABLE_ROWS.length / ITEMS_PER_PAGE);
+ 
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -62,7 +63,8 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
 
   return (
     <div>
-      <Card className="w-full text-center absolute top-[20%]">
+      
+      <Card className="w-full text-center absolute top-[250%]">
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col justify between gap-8 md:flex-row md:items-center">
             <div>
@@ -178,7 +180,7 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
   >
     1
   </IconButton>
-  {Array.from({ length: totalPages - 1 }, (_, index) => (
+  {/* {Array.from({ length: totalPages - 1 }, (_, index) => (
     <IconButton
       key={index + 2}
       variant={currentPage === index + 2 ? "outlined" : "text"}
@@ -187,12 +189,12 @@ const TABLE_HEAD = ["Timestamp", "User", "User Agent Info", "Location", "Data"];
     >
       {index + 2}
     </IconButton>
-  ))}
+  ))} */}
 </div>
           <Button
             variant="outlined"
             size="sm"
-            disabled={currentPage === totalPages}
+           
             onClick={() => handlePageChange(currentPage + 1)}
           >
             Next

@@ -36,7 +36,7 @@ async function getAllAccounts(userId, companyId) {
             }, {
                 removeUndefinedValues: true
             }),
-            "IndexName": "user_id",
+            // "IndexName": "user_id",
             "KeyConditionExpression": "company_id = :companyVal AND user_id = :userVal",
             "TableName": config.aws_table_name
         };
@@ -44,23 +44,27 @@ async function getAllAccounts(userId, companyId) {
         const data = await ddbClient.send(new QueryCommand(input));
         const items = data.Items;
 
-        const result = [];
-        for (let item of items) {
-            let cleaneddata = unmarshall(item);
-            result.push(cleaneddata);
-        }
+
+        const result = items.map(item => unmarshall(item));
+        // const result = [];
+        // for (let item of items) {
+        //     let cleaneddata = unmarshall(item);
+        //     result.push(cleaneddata);
+        // }
         // Cache result in Redis for 10min
         await CacheProvider.write(redisKey, JSON.stringify(result), 300);
         console.log(result);
 
-        if (result.length > 0) {
-            return result;
-        } else {
-            return null;
-        }
+        return result.length > 0 ? result : null;
+
+        // if (result.length > 0) {
+        //     return result;
+        // } else {
+        //     return null;
+        // }
 
     } catch (err) {
-        console.log(err);
+        console.log("Error retrieving accounts:", err);
         throw err;
     }
 }
@@ -168,19 +172,19 @@ async function getAllIdsByCompanyId(companyId) {
             }),
             "KeyConditionExpression": "company_id = :companyVal",
             "TableName": config.aws_table_name,
-            "ProjectionExpression": "id" 
+            // "ProjectionExpression": "id" 
         };
 
         const data = await ddbClient.send(new QueryCommand(input));
         const items = data.Items;
 
-        const ids = items.map(item => unmarshall(item).id);
-
+        // const ids = items.map(item => unmarshall(item).id);
+        const result = items.map(item => unmarshall(item));
         // Cache result in Redis for 5min (300 seconds)
-        await CacheProvider.write(redisKey, JSON.stringify(ids), 300);
-        console.log(ids);
+        await CacheProvider.write(redisKey, JSON.stringify(result), 300);
+        // console.log(ids);
 
-        return ids.length > 0 ? ids : [];
+        return result.length > 0 ? result : [];
 
     } catch (err) {
         console.log(err);
@@ -218,10 +222,10 @@ async function getAllAccountsByUserId(userId) {
         const result = items.map(item => unmarshall(item));
 
         // Cache result in Redis for 10min
-        await CacheProvider.write(redisKey, JSON.stringify(result), 300);
+        // await CacheProvider.write(redisKey, JSON.stringify(result), 300);
         console.log(result);
 
-        return result.length > 0 ? result : null;
+        return result.length > 0 ? result : [];
 
     } catch (err) {
         console.log(err);
@@ -285,22 +289,24 @@ async function getPointsBalance(companyId, pointsId) {
 
         // if no cached data, query DynamoDB
         const params = {
-            "TableName": config.aws_table_name,
-            Key: marshall({
-                company_id: companyId,
-                id: pointsId 
-            }) 
+            TableName: config.aws_table_name,
+            IndexName: "points_id",
+            KeyConditionExpression: "company_id = :companyId AND id = :pointsId",
+            ExpressionAttributeValues: marshall({
+                ":companyId": companyId,
+                ":pointsId": pointsId
+            }),
+            Limit: 1 
         };
+
+        const data = await ddbClient.send(new QueryCommand(params));
         
-        const data = await ddbClient.send(new GetItemCommand(params));
-        
-        // Check if item exists in the DynamoDB response
-        if (!data.Item) {
+        if (data.Items.length === 0) {
             console.log("Item not found");
             return null;  // or handle this scenario as you deem appropriate
         }
         
-        const result = unmarshall(data.Item);
+        const result = unmarshall(data.Items[0]);
         
         // cache result in Redis for 10min
         await CacheProvider.write(redisKey, JSON.stringify(result), 300);
@@ -308,7 +314,7 @@ async function getPointsBalance(companyId, pointsId) {
         return result;
     }
     catch (err) {
-        console.log(err);
+        console.log("Error retrieving points balance:", err);
         throw err;
     }
 }
@@ -316,31 +322,72 @@ async function getPointsBalance(companyId, pointsId) {
 
 async function pointsAccExist(companyId, pointsId) {
     try{
-        const redisKey = `pointsExistence:${companyId}:${pointsId}`;
-        const cachedData = await CacheProvider.get(redisKey);
+        // const redisKey = `pointsExistence:${companyId}:${pointsId}`;
+        // const cachedData = await CacheProvider.get(redisKey);
         
-        if (cachedData !== null) {
-            console.log("Cache hit");
-            return cachedData === 'true';
-        }
+        // if (cachedData !== null) {
+        //     console.log("Cache hit");
+        //     return cachedData === 'true';
+        // }
 
         const params = {
-            "TableName": config.aws_table_name,
-            Key: marshall({
-                company_id: companyId,
-                id: pointsId 
-            }) 
+            TableName: config.aws_table_name,
+            IndexName: "points_id",
+            KeyConditionExpression: "company_id = :companyId AND id = :pointsId",
+            ExpressionAttributeValues: marshall({
+                ":companyId": companyId,
+                ":pointsId": pointsId
+            }),
+            Limit: 1 
         };
+
+        const data = await ddbClient.send(new QueryCommand(params));
         
-        const data = await ddbClient.send(new GetItemCommand(params));
-        
+        console.log(data);
         let exists = false;
-        if (data.Item){
+        if (data.Items.length != 0){
             exists = true;
         }
 
         // Cache the existence result in Redis for 10min
-        await CacheProvider.write(redisKey, exists.toString(), 300);
+        // await CacheProvider.write(redisKey, exists.toString(), 300);
+        
+        return exists;
+    }
+    catch (err) {
+        console.log(err);
+        throw err;
+    }
+}
+
+async function userAccExist(companyId, userId) {
+    try{
+        // const redisKey = `pointsExistence:${companyId}:${pointsId}`;
+        // const cachedData = await CacheProvider.get(redisKey);
+        
+        // if (cachedData !== null) {
+        //     console.log("Cache hit");
+        //     return cachedData === 'true';
+        // }
+
+        const params = {
+            TableName: config.aws_table_name,
+            KeyConditionExpression: "company_id = :companyId AND user_id = :userId",
+            ExpressionAttributeValues: marshall({
+                ":companyId": companyId,
+                ":userId": userId
+            }),
+            Limit: 1 
+        };
+
+        const data = await ddbClient.send(new QueryCommand(params));
+        
+        console.log(data);
+        const exists = data.Items.length > 0;
+
+
+        // Cache the existence result in Redis for 10min
+        // await CacheProvider.write(redisKey, exists.toString(), 300);
         
         return exists;
     }
@@ -389,7 +436,6 @@ async function getAllCompanyIds() {
 
 async function companyExists(companyId) {
     try {
-
 
         const params = {
             "TableName": config.aws_table_name,
@@ -447,33 +493,6 @@ async function getAllCompanyIds() {
         throw err;
     }
 }
-
-
-async function companyExists(companyId) {
-    try {
-
-
-        const params = {
-            "TableName": config.aws_table_name,
-            "KeyConditionExpression": "company_id = :companyId",
-            "ExpressionAttributeValues": marshall({
-                ":companyId": companyId
-            }),
-            "Limit": 1 // We only need to know if at least one exists
-        };
-
-        const data = await ddbClient.send(new QueryCommand(params));
-
-        const exists = data.Count > 0;
-        
-        return exists;
-    }
-    catch (err) {
-        console.log(err);
-        throw err;
-    }
-}
-
 
 async function createAccount(companyId, userId, new_pointsId, inputbalance) {
     try {
@@ -493,7 +512,9 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         
         // Invalidating cached data for this user (as their data might have changed with this new record)
         const redisKeyAccounts = `accounts:${userId}`;
+        const redisKey = `accountsByUserId:${userId}`;
         await CacheProvider.remove(redisKeyAccounts);
+        await CacheProvider.remove(redisKey);
 
         console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
         return data;
@@ -509,7 +530,7 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
 }
 
 
-async function updatePoints(companyId, pointsId, newbalance) {
+async function updatePoints(companyId, userId, newbalance) {
     try {
         const params = {
             "ExpressionAttributeValues": marshall({
@@ -517,7 +538,7 @@ async function updatePoints(companyId, pointsId, newbalance) {
             }),
             "Key": marshall({
                 "company_id": companyId,
-                "id": pointsId
+                "user_id": userId
             }),
             "TableName": config.aws_table_name,
             "UpdateExpression": "SET balance = :v1"
@@ -526,41 +547,41 @@ async function updatePoints(companyId, pointsId, newbalance) {
         const data = await ddbClient.send(new UpdateItemCommand(params));
 
         // Invalidate cache for this pointsId and companyId combination
-        const redisKey = `pointsBalance:${companyId}:${pointsId}`;
+        const redisKey = `pointsBalance:${companyId}:${userId}`;
         await CacheProvider.remove(redisKey);
 
         return data;
     }
     catch (err) {
-        console.log(err);
+        console.log("Error updating points: ", err);
         throw err;
     }
 }
 
 
-async function deleteAccount(companyId, pointsId) {
+async function deleteAccount(companyId, userId) {
     try {
         const params = {
-            "TableName": config.aws_table_name,
-            "Key": marshall({
-                "company_id": companyId,
-                "id": pointsId
+            TableName: config.aws_table_name,
+            Key: marshall({
+                company_id: companyId,
+                user_id: userId  
             })
         }
 
         const data = await ddbClient.send(new DeleteItemCommand(params));
 
-        // Invalidate cache for this pointsId and companyId combination
-        const redisKey = `pointsBalance:${companyId}:${pointsId}`;
+        // Invalidate cache for this userId and companyId combination
+        const redisKey = `pointsBalance:${companyId}:${userId}`;
         await CacheProvider.remove(redisKey);
         
         return data;
     }
     catch (err) {
-        console.log(err);
+        console.error("Error deleting account:", err);
         throw err;
     }
 }
 
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, userAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};

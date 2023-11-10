@@ -183,6 +183,7 @@ export class PolicyService {
     let pageMap:{[key:string]: any} = {};
     await Promise.all(pageLs.map(async ms => {
       const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
+      console.log(api_endpoint);
       let permissions:{[key:string]:boolean} = {
         GET: false,
         POST: false,
@@ -193,15 +194,15 @@ export class PolicyService {
       await Promise.all(methods.map(async (method: string) => {
         // Retrieve the policy for the endpoint
         const endpointPolicy = await this.getPolicy(api_endpoint, method);
-        console.log(endpointPolicy);
+        // console.log(endpointPolicy);
         // compare userRole and endpointPolicy
-        console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
+        // console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
         // Make sure that at least one role is included in the endpoint policy
         if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
-          console.log('true')
+          // console.log('true')
           permissions[method] = true;
         } else {
-          console.log('false')
+          // console.log('false')
           permissions[method] = false;
         }
       }));

@@ -20,7 +20,7 @@ class ApprovalRequestRepository:
 
         return items  # return data
 
-    def get_pending_approval_requests(self, companyid: str):
+    def get_pending_approval_requests(self, companyid: str, userid:str):
         try:
             table = self.__db.Table('approval_request')
 
@@ -28,6 +28,7 @@ class ApprovalRequestRepository:
 
             response = table.scan(
                 FilterExpression=Attr("status").eq('pending')
+                & Attr("requestor_id").ne(userid)
                 & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)
             )
@@ -195,12 +196,12 @@ class ApprovalRequestRepository:
         except ClientError as e:
             raise ValueError(e.response['Error']['Message'])
 
-    def get_non_pending_approval_requests_by_requestor_id(self, companyid: str, approver_id: str):
+    def get_resolved_requests_by_approver_id(self, companyid: str, approver_id: str):
         try:
             table = self.__db.Table('approval_request')
             current_time = str(datetime.now().isoformat())
             response = table.scan(
-                FilterExpression=Attr("requestor_id").eq(approver_id)
+                FilterExpression=Attr("approver_id").eq(approver_id)
                 & Attr("status").ne('pending')
                 & Attr("companyid").eq(companyid)
                 & Attr("request_expiry").gt(current_time)

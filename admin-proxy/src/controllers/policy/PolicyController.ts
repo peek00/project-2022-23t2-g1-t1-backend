@@ -9,8 +9,14 @@ export class PolicyController {
   public async listExistingPolicy(req:Request, res:Response, next:NextFunction): Promise<any> {
     try {
       console.log("listExistingPolicy");
+      let response: any = {}
       const policy = await PolicyService.getInstance().getAllPolicies();
-      res.status(200).json(policy);
+      policy.forEach((p: any) => {
+        let endpoint = p.endpoint;
+        delete p.endpoint;
+        response[endpoint] = p;
+      });
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
@@ -60,6 +66,7 @@ export class PolicyController {
     try {
       const { role } = req.user!;
       const { pageLs } = req.body;
+      console.log(`getUserPolicyMapping for ${pageLs} based on user role ${role}`)
       if (pageLs === undefined) {
         throw new Error("Invalid Request");
       }
