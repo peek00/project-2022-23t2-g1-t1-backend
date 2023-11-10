@@ -10,17 +10,11 @@ import { Link } from "react-router-dom";
 
 import { useUserContext } from "../../context/userContext";
 
-export default function MenuDefault({firstName,lastName,email,id}) {
-  const [role, setRole] = useState(null);
+export default function MenuDefault({firstName,lastName,email,id,role}) {
+
   const { userData, updateUserData } = useUserContext();
 
-  useEffect(() => {
-    // Fetch the role from localStorage or an API here
-    const storedRole = JSON.parse(localStorage.getItem("permissions"));
-    console.log(storedRole);
-    setRole(storedRole);
-    
-  }, []);
+ 
 
   return (
     <Menu>

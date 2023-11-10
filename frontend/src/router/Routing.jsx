@@ -21,7 +21,7 @@ function Routing() {
     <Routes>
       
       <Route exact path='/' element={<LandingPage/>}/>
-      <Route exact path='/editPolicy' element={<EditPolicyPage/>}/>
+      <Route exact path='/user/editPolicy' element={<EditPolicyPage/>}/>
       <Route path="/login" element={<LoginPage />} />
       <Route path ="/users" element={<PrivateRoute page={"user"} permission ={"GET"}/>}>
       <Route index element={<UserListingPage/>}/>
@@ -47,8 +47,10 @@ function Routing() {
 
       <Route path ="/makerchecker" element={<MakerCheckerPage/>}/>
 
-      <Route path="/user/accounts" element={<UserAccountPage/>}/>
+      <Route path="/user/accounts/company/:companyId" element={<UserAccountPage/>}/>
       <Route path ="/user/accounts/company" element ={<CompanyGatewayPage/>}/>
+      
+     
 
       
 
