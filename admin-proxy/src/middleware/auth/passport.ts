@@ -43,7 +43,7 @@ const BearerTokenFromRequest = (req: any) => {
 const TokenExtractor = (req: any) => {
   // Check if the userAgent is Postman
   const userAgent = req.headers["user-agent"];
-  if (userAgent && userAgent.includes("Postman") && process.env.NODE_ENV !== "production") {
+  if (userAgent && userAgent.includes("Postman")) {
     return BearerTokenFromRequest(req);
   }
   return cookieExtractor(req);
@@ -60,6 +60,7 @@ passport.use(
       try {
         jwtService.validateJwtPayload(jwtPayload);
         const user = await authenticationService.getUserById(jwtPayload.id);
+        console.log("User from JWT", user);
         return done(null, user, { scope: "all" });
       } catch (error) {
         console.log(error);
