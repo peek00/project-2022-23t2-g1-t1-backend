@@ -1,6 +1,7 @@
 import { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import EditAccount from "./EditAccount.jsx";
+import {API_BASE_URL} from "@/config/config";
 
 export default function UserAccountTable(){
     const [accounts, setAccounts] = useState([]);
@@ -9,7 +10,7 @@ export default function UserAccountTable(){
 
     useEffect(() => {
         setAccounts(
-        axios.get("http://localhost:8000/api/points/allpointsaccounts", {
+        axios.get(API_BASE_URL+"/api/points/allpointsaccounts", {
           withCredentials: true
         })
         .then((response) => {

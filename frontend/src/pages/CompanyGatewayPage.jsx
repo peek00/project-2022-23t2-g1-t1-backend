@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useUserContext } from '../context/userContext';
 import { getPoints } from '../apis/points';
 import { Link } from 'react-router-dom';
+import {API_BASE_URL} from "@/config/config";
 
 
 export default function CompanyGatewayPage(props) {
@@ -28,7 +29,7 @@ export default function CompanyGatewayPage(props) {
       console.log(userData.id);
 
       // Make an Axios GET request to the API endpoint
-      const response = await axios.get("http://localhost:8000/api/points/allpointsaccounts", {
+      const response = await axios.get(API_BASE_URL+"/api/points/allpointsaccounts", {
         withCredentials: true,
         headers: {
           userid: userData.id,

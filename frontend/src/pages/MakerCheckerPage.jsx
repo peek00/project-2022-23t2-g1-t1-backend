@@ -4,6 +4,7 @@ import axios from "axios"; // Import Axios
 // Default components
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
+import {API_BASE_URL} from "@/config/config";
 
 // Company Specific
 import MakerCheckerNav from "../components/MakerCheckerNav";
@@ -39,11 +40,11 @@ export default function UserListingPage() {
         try {
           let url = "";
           if (activeTab === "pending") {
-            url = `http://localhost:8000/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
+            url = API_BASE_URL+`/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
           } else if (activeTab === "requested") {
-            url = `http://localhost:8000/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
+            url = API_BASE_URL+`/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
           } else if (activeTab === "history") {
-            url = `http://localhost:8000/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
+            url = API_BASE_URL+`/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
           }
 
           const response = await axios.get(url, {
