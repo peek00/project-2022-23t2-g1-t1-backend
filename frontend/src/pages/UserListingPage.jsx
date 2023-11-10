@@ -23,6 +23,7 @@ export default function UserListingPage() {
           <div className='absolute  left-[25%] top-[50%] min-w-[80%]'>
  
             <UserTable />
+            
           </div>
         </div>
       </div>
