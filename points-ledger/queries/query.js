@@ -4,16 +4,26 @@ const {Redis} = require("../modules/CacheProvider/Redis");
 const config = require("../config/config.js");
 const { DynamoDBClient, GetItemCommand, QueryCommand, UpdateItemCommand, PutItemCommand, DeleteItemCommand, ScanCommand } = require("@aws-sdk/client-dynamodb");
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
-const AWSConfig = config.aws_local_config;
 const CacheProvider = Redis.getInstance();
-const ddbClient = new DynamoDBClient({ 
-    region: AWSConfig.region,
-    endpoint: AWSConfig.dynamoDBEndpoint,
-    credentials: {
-        accessKeyId: AWSConfig.accessKeyId,
-        secretAccessKey: AWSConfig.secretAccessKey
-    }
-});
+let ddbClient;
+if (process.env.NODE_ENV === "production") {
+    ddbClient = new DynamoDBClient({
+        region: process.env.AWS_REGION,
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        }
+    });
+} else {
+    ddbClient = new DynamoDBClient({
+        region: process.env.AWS_REGION || "local",
+        endpoint: process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000",
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID || "test",
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "test"
+        }
+    });
+}
 
 
 

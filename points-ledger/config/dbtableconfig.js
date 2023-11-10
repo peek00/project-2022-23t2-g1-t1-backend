@@ -41,45 +41,50 @@ class dbtableconfig {
     try {
       let count = users.length;
       do {
-        for (const user of users) {
-          console.log(user);
-          console.log(user["company_id"])
-          console.log(user["user_id"])
-          console.log(user["id"])
-          console.log(user["balance"])
-          // count--;
-          try {
-            // const item = {
-            //     company_id: { S : user["company_id"] },
-            //     user_id: { S : user["user_id"] },
-            //     id: { S : user["id"] },
-            //     balance: { N : user["balance"] },
-            // };
-
-            // console.log("Adding a new item...");
-            // await this.db.send(new PutItemCommand({
-            //   TableName: "new-points-ledger",
-            //   Item: marshall(item)
-            // }))
-            await this.db.send(new PutItemCommand({
-              TableName: "new-points-ledger",
-              Item: marshall({
-                company_id: user["company_id"],
-                user_id: user["user_id"],
-                id: user["id"],
-                balance: user["balance"]  // Assuming 'balance' is a numeric value
-              })
-            }));
-            
-            console.log("PutItem succeeded:", user["user_id"]);
-            count--;
-          } catch (e) {
-            console.error("Unable to add item:", user["user_id"]);
-            console.error(e.message);
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            break;
-          }
+        let user = users[count - 1];
+        try {
+          await this.db.send(new PutItemCommand({
+            TableName: "new-points-ledger",
+            Item: marshall({
+              company_id: user["company_id"],
+              user_id: user["user_id"],
+              id: user["id"],
+              balance: user["balance"]  // Assuming 'balance' is a numeric value
+            })
+          }));
+          console.log("PutItem succeeded:", user["user_id"]);
+          count--;
+        } catch (err) {
+          console.error("Unable to add item:", user["user_id"]);
+          console.error(err.message);
+          await this.delay(1000) // Wait for 1 second
         }
+        // for (const user of users) {
+        //   console.log(user);
+        //   console.log(user["company_id"])
+        //   console.log(user["user_id"])
+        //   console.log(user["id"])
+        //   console.log(user["balance"])
+        //   // count--;
+        //   try {
+        //     await this.db.send(new PutItemCommand({
+        //       TableName: "new-points-ledger",
+        //       Item: marshall({
+        //         company_id: user["company_id"],
+        //         user_id: user["user_id"],
+        //         id: user["id"],
+        //         balance: user["balance"]  // Assuming 'balance' is a numeric value
+        //       })
+        //     }));
+            
+        //     console.log("PutItem succeeded:", user["user_id"]);
+        //     count--;
+        //   } catch (e) {
+        //     console.error("Unable to add item:", user["user_id"]);
+        //     console.error(e.message);
+        //     await this.delay(1000) // Wait for 1 second
+        //     // break;
+        //   }
       } while (count > 0);
   
       console.log("Initialisation successful, added", users.length, "records");
