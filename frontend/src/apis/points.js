@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import {API_BASE_URL} from "@/config/config";
 export async function addPoint(requestBody,id){
@@ -20,6 +19,24 @@ export async function getPoints(id){
     }
   });
   return response;
+}
+
+export async function getAllCompanyIds(){
+  let api_url = 'http://localhost:3000/allcompanyids'; 
+  try { 
+      const response = await axios.get(api_url); 
+      return response.data; 
+  } catch(error) { 
+      return error; 
+  }
+  // let api_url = 'http://localhost:8000/api/points/allcompanyids'; 
+  // try { 
+  //     const response = await axios.get(api_url, {withCredentials: true}); 
+  //     return response.data; 
+  // } catch(error) { 
+  //     return error; 
+  // }
+  
 }
 
 
