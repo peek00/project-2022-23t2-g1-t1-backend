@@ -18,6 +18,9 @@ export interface IProfile {
 }
 
 const cookieExtractor = (req: any) => {
+  console.log("Retrieving from Cookie...");
+  console.log("Req.cookie", req.cookie);
+  console.log("Req.headers.cookie", req.headers.cookie);
   const cookies = req.headers.cookie?.split(";");
   let token = "";
   if (cookies && cookies.length) {
@@ -28,11 +31,12 @@ const cookieExtractor = (req: any) => {
       }
     });
   }
-  console.log(token);
+  console.log("Token: ", token);
   return token;
 };
 
 const BearerTokenFromRequest = (req: any) => {
+  console.log("Retrieving from Bearer Token...");
   const authHeader = req.headers.authorization;
   if (authHeader) {
     return authHeader.split(" ")[1];
@@ -43,6 +47,7 @@ const BearerTokenFromRequest = (req: any) => {
 const TokenExtractor = (req: any) => {
   // Check if the userAgent is Postman
   const userAgent = req.headers["user-agent"];
+  console.log("TokenExtractor Running: ")
   if (userAgent && userAgent.includes("Postman")) {
     return BearerTokenFromRequest(req);
   }
