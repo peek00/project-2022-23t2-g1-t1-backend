@@ -27,11 +27,11 @@ function DropdownMenu({ selectedCompany, onSelectCompany }) {
   const [companyList, setCompanyList] = useState([
     "ascenda", "fakecompany2"
   ]);
-  // // Fetch here
+  // TODO Fetch fropm brya endpoint
 
   return (
-    <div className="relative inline-block text-left bg-slate-600">
-      <button onClick={toggleDropdown} className="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+    <div className="relative inline-block mb-5 text-left bg-slate-600">
+      <button onClick={toggleDropdown} className="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm ms-3 hover:shadow-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
         {selectedCompany || 'Select Company'}
       </button>
       {isOpen && (

@@ -25,5 +25,5 @@ jobs:
         working-directory: frontend
         run: |
           npm install
-          npm run build
+          NODE_ENV=production npm run build
           aws s3 sync ./dist/ s3://itsa-frontend --delete

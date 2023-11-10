@@ -105,7 +105,7 @@ def get_pending_requests(
     """
     ### Description:
     This endpoint takes in a company ID and requestor ID from the header.
-    This returns all pending request originating from the requestor.
+    This returns all pending request that do not originate from the requestor.
 
     ### Parameters:
     `companyid`: Company ID, taken from header.<br /><br />
@@ -171,9 +171,7 @@ def get_pending_requests(
     try:
         if companyid == None:
             raise ValueError("Company ID is required.")
-        if userid:
-            return approval_request_repository.get_pending_approval_requests_by_requestor_id(companyid, userid)
-        return approval_request_repository.get_pending_approval_requests(companyid)
+        return approval_request_repository.get_pending_approval_requests(companyid, userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
@@ -182,7 +180,7 @@ def get_pending_requests(
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.get("/resolved")
-def get_not_pending_requests_by_userid(
+def get_resolved_by_userid(
     companyid: str = None, description="Company ID",
     userid: str =  Header(..., description="Requestor ID"),
 ):
@@ -191,9 +189,9 @@ def get_not_pending_requests_by_userid(
     This endpoint takes in a company ID and requestor ID from the header.
 
     Not pending requests are requests that have been approved, rejected, 
-    withdrawn or expired. Expired requests may have status PENDING.
+    Expired requests may have status PENDING.
 
-    This will return all not pending requests originating from the requestor.
+    This will return requests that the user has accepted or rejected.
 
     ### Parameters:
     `companyid`: Company ID, taken from header.<br /><br />
@@ -260,7 +258,7 @@ def get_not_pending_requests_by_userid(
         if companyid == None:
             raise ValueError("Company ID is required.")
         if userid:
-            return approval_request_repository.get_non_pending_approval_requests_by_requestor_id(companyid, userid)
+            return approval_request_repository.get_resolved_requests_by_approver_id(companyid, userid)
         return approval_request_repository.get_non_pending_approval_requests(userid)
     except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -749,7 +747,6 @@ def create_approval_requests(
     `500 Internal Server Error`: Generic server error that can occur for various reasons, such as unhandled exceptions in the endpoint, indicates that something went wrong with the server.<br /><br />
     """
     try:
-        print("We got here!")
         combined_data = {
             **data.model_dump(),
             "requestor_id": userid,
