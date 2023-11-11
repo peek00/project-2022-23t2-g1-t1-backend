@@ -281,6 +281,34 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @GetMapping(value = "/getAllUsersPaged", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            // Set Default role if not specified
+            Role[] allRoles = roleService.getRoles();
+            Set<String> validRoleNames = Arrays.stream(allRoles)
+                                    .map(Role::getRoleName)
+                                    .collect(Collectors.toSet());
+
+            if(!isAdmin){
+                // Keep only User Role
+                validRoleNames.retainAll(Arrays.asList("User"));
+            }
+            response.put("logInfo", "log message");
+            response.put("data", userService.getAllUsersPaged(validRoleNames, lastEvaluatedKey));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
+
 
 }
 

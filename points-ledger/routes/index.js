@@ -180,7 +180,8 @@ router.get('/alluseraccounts', async(req, res) => {
 // GET request that returns all points account by a particular company_id
 // returns all info of each user_id under the company_id
 router.get('/allidsbycompany', async(req, res) => {
-  const companyId = req.body.company_id;
+
+  const companyId = req.query.company_id; 
   // Check if the companyId is provided
   if (!companyId) {
     return res.status(400).json({
@@ -487,10 +488,8 @@ router.delete('/deleteAccount', function(req,res){
 // sample input = {"mainId": "2f5687c7-af51-4d79-9a38-9eef5a3c42b8","newbalance": 5000}
 router.put('/updatebalance', async (req,res) => {
   console.log(req.headers);
-  // const companyId = req.headers.companyid;
   const userId = req.headers.userid;
   const companyId = req.body.company_id;
-  // const pointsId = req.body.pointsid;
   const balance = req.body.newbalance;
   allquery.userAccExist(companyId, userId)
   .then((results) => {
@@ -521,6 +520,57 @@ router.put('/updatebalance', async (req,res) => {
       return res.status(400).json({
         "code" : 400,
         "logInfo": "Accessed '/updatebalance', no such points account balance to update, status: 400",
+        "data" : [],
+        "message" : "No record of points account found."
+      })
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({
+      "code" : 500,
+      "data" : [],
+      "message" : error.message
+    });
+  })
+})
+
+// POST Request to change balance of a user account
+router.post('/changeBalance', function(req,res,next) {
+  //console.log(req.headers);
+  console.log(req.body);
+  const change = req.body.change;
+  const companyId = req.body.company_id;
+  const userId = req.body.user_id;
+  allquery.userAccExist(companyId, userId)
+  .then((results) => {
+    if (results){
+      allquery.modifyPoints(companyId,userId,change)
+      .then((newresults) => {
+        const status = newresults.$metadata.httpStatusCode;
+        if (status == 200) {
+          return res.status(200).json({
+            "code" : 200,
+            "logInfo": "Accessed '/changeBalance', points account balance updated, status: 200",
+            "data" : newresults,
+            "message" : "Update Success"
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({
+          "code" : 500,
+          "logInfo": "Accessed '/changeBalance', points account balance failed to update, status: 500",
+          "data" : [],
+          "message" : err.message
+        });
+      })
+    }
+    else {
+      return res.status(400).json({
+        "code" : 400,
+        "logInfo": "Accessed '/changeBalance', no such points account balance to update, status: 400",
         "data" : [],
         "message" : "No record of points account found."
       })
