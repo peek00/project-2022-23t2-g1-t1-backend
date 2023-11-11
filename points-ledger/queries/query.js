@@ -453,7 +453,7 @@ async function companyExists(companyId) {
             "ExpressionAttributeValues": marshall({
                 ":companyId": companyId
             }),
-            "Limit": 1 // We only need to know if at least one exists
+            "Limit": 1 
         };
 
         const data = await ddbClient.send(new QueryCommand(params));
@@ -480,10 +480,9 @@ async function getAllCompanyIds() {
             return JSON.parse(cachedData);
         }
 
-        // As there is no direct way to get all the unique 'company_id' attributes,
         const input = {
             "TableName": config.aws_table_name,
-            "ProjectionExpression": "company_id" // Only fetch the 'company_id' attribute
+            "ProjectionExpression": "company_id"
         };
 
         const data = await ddbClient.send(new ScanCommand(input));
@@ -593,5 +592,53 @@ async function deleteAccount(companyId, userId) {
     }
 }
 
+async function modifyPoints(companyId, userId, change) {
+    try {
+        // find old results to know the old points balance
+        const input = {
+            "ExpressionAttributeValues": marshall({
+                ":companyVal": companyId,
+                ":userVal": userId
+            }, {
+                removeUndefinedValues: true
+            }),
+            // "IndexName": "user_id",
+            "KeyConditionExpression": "company_id = :companyVal AND user_id = :userVal",
+            "TableName": config.aws_table_name
+        };
+        
+        const oldResult = await ddbClient.send(new QueryCommand(input));
+        const items = oldResult.Items;
+        const result = items.map(item => unmarshall(item));
+        const searchResultBalance = result[0]["balance"];
 
-module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, userAccExist, updatePoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};
+        // update to the newbalance
+        const newbalance = parseInt(searchResultBalance) + parseInt(change);
+
+        const params = {
+            "ExpressionAttributeValues": marshall({
+                ":v1": newbalance
+            }),
+            "Key": marshall({
+                "company_id": companyId,
+                "user_id": userId
+            }),
+            "TableName": config.aws_table_name,
+            "UpdateExpression": "SET balance = :v1"
+        }
+
+        const data = await ddbClient.send(new UpdateItemCommand(params));
+
+        // Invalidate cache for this pointsId and companyId combination
+        const redisKey = `pointsBalance:${companyId}:${userId}`;
+        await CacheProvider.remove(redisKey);
+
+        return data;
+    }
+    catch (err) {
+        console.log("Error updating points: ", err);
+        throw err;
+    }
+}
+
+module.exports = { getPointsBalance, getAllAccounts, pointsAccExist, userAccExist, updatePoints, modifyPoints, createAccount, deleteAccount, getAllAccountsByUserId, companyExists, getAllUserIdsByCompanyId, getAllCompanyIds, getAllIdsByCompanyId};
