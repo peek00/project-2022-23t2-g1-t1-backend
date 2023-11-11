@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
+import { API_BASE_URL } from "@/config/config";
 
 import RequestDetailModal from "./RequestDetailModal";
-import { API_BASE_URL } from "@/config/config";
+import WithdrawButton from "./WithdrawButton";
 
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
@@ -85,16 +86,12 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             companyid: selectedCompany,
         };
 
-        const approveUrl = API_BASE_URL + "/api/maker-checker/approval/withdraw";
+        const withdrawUrl = API_BASE_URL + "/api/maker-checker/approval/withdraw";
 
         try {
-            const response = await axios.post(approveUrl, formObject, {
+            const response = await axios.post(withdrawUrl, formObject, {
                 withCredentials: true,
             });
-
-            // Handle the success response here
-            console.log("Approved:", response.data);
-
             // You may want to update your UI or perform other actions here
         } catch (error) {
             // Handle errors here
@@ -198,18 +195,13 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                 <div>
                                     {request.status === "pending" ? (
                                         <div>
-                                            <button
-                                                className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
-                                                onClick={() => handleEdit(request.uid)}
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
+                                            <WithdrawButton handleWithdraw={() => handleWithdraw(request.uid)} />
+                                            {/* <button
                                                 className="px-4 py-2 mr-2 text-white bg-gray-400 rounded"
                                                 onClick={() => handleWithdraw(request.uid)}
                                             >
                                                 Withdraw
-                                            </button>
+                                            </button> */}
                                         </div>
                                     ) : (
                                         <span className="text-gray-400 "> No Action </span>

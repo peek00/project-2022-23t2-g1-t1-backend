@@ -58,6 +58,10 @@ export default function UserListingPage() {
                 <div className="mb-5 text-4xl">
                     Edit Template Permissions
                 </div>
+                <div className="px-5 py-5">
+                    <li>Allowed approvers and requestors are stored as a Comma Separated String.</li>
+                    <li>Do not include spaces when editing the requestors.</li>
+                </div>
                 <table className="min-w-full">
                     <thead>
                         <tr>
