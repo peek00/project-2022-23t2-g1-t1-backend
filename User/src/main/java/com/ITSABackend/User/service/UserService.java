@@ -268,7 +268,7 @@ public class UserService {
                 // If validRoleName is only of length 1, User, include a filter expression to not include the role name
                 if (validRoleNames.size() == 1 && validRoleNames.contains("User")) {
                     String filterExpression = "contains (userRole, :roleName)";
-                    ValueMap valueMap = new ValueMap().withString(":roleName", "User");
+                    ValueMap valueMap = new ValueMap().withString(":roleName", "user");
                     spec.withFilterExpression(filterExpression)
                         .withValueMap(valueMap);
                 } 
