@@ -58,17 +58,17 @@ function CreateRequest() {
             });
     }
     return (
-        <div>
-            <div className="relative inline-block text-left bg-slate-600">
+        <div className="w-2/5 mx-auto bg-orange-50">
+            <div className="relative flex flex-col text-middle bg-slate-600">
                 {/* Button */}
                 <button
                     onClick={toggleDropdown}
-                    className="px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-                >
+                    className="items-center justify-center w-64 px-10 py-2 mx-auto text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                    >
                      {selectedTemplate == null ? "Select an action." : selectedTemplate.type}
                 </button>
                 {isOpen && (
-                    <div className="right-0 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div className="w-48 mx-auto origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
                         <div
                             className="py-1"
                             role="menu"
