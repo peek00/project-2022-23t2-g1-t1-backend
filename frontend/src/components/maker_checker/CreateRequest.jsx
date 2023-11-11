@@ -58,7 +58,7 @@ function CreateRequest() {
             });
     }
     return (
-        <div className="w-4/5 bg-orange-50">
+        <div className="w-2/5 mx-auto bg-orange-50">
             <div className="relative flex flex-col text-middle bg-slate-600">
                 {/* Button */}
                 <button

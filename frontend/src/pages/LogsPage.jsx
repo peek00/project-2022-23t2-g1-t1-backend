@@ -143,11 +143,9 @@ export default function LogsPage() {
 
   return (
     <div className="flex min-h-screen ">
-      <div className="w-[20%] min-h-screen">
         <SideBar />
-      </div>
-      <div className="w-4/5 ">
-        <TopBar />
+        {/* <TopBar /> */}
+      <div className="w-4/5 ms-[20%]">
         <div className="flex justify-start mt-24 mb-6 ms-10">
           <CustomDropdown
             label="Log Group"

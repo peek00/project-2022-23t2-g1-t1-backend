@@ -13,10 +13,9 @@ export default function UpdatePointsPage(){
 
     return(
 
-        <div className='min-h-screen min-w-full'>
+        <div className='min-w-full min-h-screen'>
     <div className='container relative min-w-full min-h-screen'>
       <div className='w-[80%] relative min-h-full'>
-        <TopBar/>
         <div className='absolute left-[25%] w-full'>
           <div className='min-h-screen'>
             <UserSearch user="Update Points"/>
@@ -26,9 +25,8 @@ export default function UpdatePointsPage(){
           </div>
         </div>
       </div>
-      <div className='min-h-screen w-[20%] bg-[#1C2434]'>
         <SideBar/>
-      </div>
+        {/* <TopBar/> */}
     </div>
   </div>
     )

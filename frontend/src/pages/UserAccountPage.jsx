@@ -7,18 +7,16 @@ import UserAccountTable from '../components/account/UserAccountTable';
 export default function UserAccountPage() {
   const { companyId } = useParams(); 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="w-[20%] bg-[#1C2434] min-h-screen ">
         <SideBar />
-      </div>
+        {/* <TopBar /> */}
 
       {/* Content Area */}
       <div className="w-4/5 min-h-screen overflow-y-auto">
-        <TopBar />
         <div className="min-h-screen overflow-y-auto">
         <div className='flex w-[100%] absolute top-[10%]'>  
-          <h1 className='text-2xl ms-11 font-bold'>Accounts</h1>
+          <h1 className='text-2xl font-bold ms-11'>Accounts</h1>
           </div>
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>

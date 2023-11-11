@@ -4,7 +4,7 @@ import axios from "axios"; // Import Axios
 // Default components
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
-import {API_BASE_URL} from "@/config/config";
+import { API_BASE_URL } from "@/config/config";
 
 // Company Specific
 import MakerCheckerNav from "../components/maker_checker/MakerCheckerNav";
@@ -40,11 +40,17 @@ export default function UserListingPage() {
         try {
           let url = "";
           if (activeTab === "pending") {
-            url = API_BASE_URL+`/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
+            url =
+              API_BASE_URL +
+              `/api/maker-checker/approval/pending?companyid=${selectedCompany}`;
           } else if (activeTab === "requested") {
-            url = API_BASE_URL+`/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
+            url =
+              API_BASE_URL +
+              `/api/maker-checker/approval/requestor?companyid=${selectedCompany}`;
           } else if (activeTab === "history") {
-            url = API_BASE_URL+`/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
+            url =
+              API_BASE_URL +
+              `/api/maker-checker/approval/resolved?companyid=${selectedCompany}`;
           }
 
           const response = await axios.get(url, {
@@ -66,22 +72,38 @@ export default function UserListingPage() {
   }, [activeTab, selectedCompany]);
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <div className="w-[20%]  min-h-screen ">
-        <SideBar />
-      </div>
-
-      {/* Content Area */}
-      <div className="w-4/5 min-h-screen overflow-y-auto ms-10 mt-28">
-        <TopBar />
+    <div className="flex h-screen min-w-full min-h-screen overflow-y-auto">
+      <SideBar />
+      {/* <TopBar /> */}
+      <div className="w-[80%] ms-[15%] relative min-h-full  overflow-y-auto mt-28 ">
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
-        <CompanyDropdown selectedCompany={selectedCompany} onSelectCompany={handleCompanyChange} />
+        <CompanyDropdown
+          selectedCompany={selectedCompany}
+          onSelectCompany={handleCompanyChange}
+        />
 
         {/* Switch tabs based on activeTab */}
-        {showTable && activeTab == "pending" && (<PendingApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
-        {showTable && activeTab == "requested" && (<RequestedApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
-        {showTable && activeTab == "history" && (<HistoryApprovalTable data={data} activeTab={activeTab} selectedCompany={selectedCompany} />)}
+        {showTable && activeTab == "pending" && (
+          <PendingApprovalTable
+            data={data}
+            activeTab={activeTab}
+            selectedCompany={selectedCompany}
+          />
+        )}
+        {showTable && activeTab == "requested" && (
+          <RequestedApprovalTable
+            data={data}
+            activeTab={activeTab}
+            selectedCompany={selectedCompany}
+          />
+        )}
+        {showTable && activeTab == "history" && (
+          <HistoryApprovalTable
+            data={data}
+            activeTab={activeTab}
+            selectedCompany={selectedCompany}
+          />
+        )}
 
         {/* Switch to custom form */}
         {activeTab === "create" && (

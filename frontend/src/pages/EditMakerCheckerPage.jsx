@@ -49,17 +49,16 @@ export default function UserListingPage() {
     return (
         <div className="flex min-h-screen">
             {/* Sidebar */}
-            <div className="w-[20%]  min-h-screen ">
-                <SideBar />
-            </div>
+            <SideBar />
+            {/* <TopBar /> */}
             {/* Content Area */}
             <div className="w-4/5 min-h-screen overflow-y-auto mt-28 ms-10">
-                <TopBar />
-                <div className="mb-5 text-4xl">
-                    Edit Template Permissions
-                </div>
+                <div className="mb-5 text-4xl">Edit Template Permissions</div>
                 <div className="px-5 py-5">
-                    <li>Allowed approvers and requestors are stored as a Comma Separated String.</li>
+                    <li>
+                        Allowed approvers and requestors are stored as a Comma Separated
+                        String.
+                    </li>
                     <li>Do not include spaces when editing the requestors.</li>
                 </div>
                 <table className="min-w-full">
