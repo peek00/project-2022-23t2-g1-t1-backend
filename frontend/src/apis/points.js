@@ -22,23 +22,41 @@ export async function getPoints(id){
 }
 
 export async function getAllCompanyIds(){
-  // let api_url = 'http://localhost:3000/allcompanyids'; 
+  let api_url = 'http://localhost:3000/allcompanyids'; 
+  try { 
+      const response = await axios.get(api_url); 
+      return response.data; 
+  } catch(error) { 
+      return error; 
+  }
+  // let api_url = API_BASE_URL + '/api/points/allcompanyids'; 
+  // try { 
+  //     const response = await axios.get(api_url, {withCredentials: true}); 
+  //     return response.data; 
+  // } catch(error) { 
+  //     return error; 
+  // }
+}
+
+export async function getAllUserAccountsByCompanyId(companyId) {
+  // let api_url = 'http://localhost:3000/allidsbycompany?company_id=' + companyId; 
+
   // try { 
   //     const response = await axios.get(api_url); 
   //     return response.data; 
   // } catch(error) { 
   //     return error; 
   // }
-  let api_url = API_BASE_URL + '/api/points/allcompanyids'; 
+  let api_url = API_BASE_URL + '/api/points/allidsbycompany?company_id?=' + companyId; 
   try { 
-      const response = await axios.get(api_url, {withCredentials: true}); 
-      return response.data; 
+      const response = await axios.get(api_url, {
+        withCredentials: true
+      }); 
+      return response.data;
   } catch(error) { 
       return error; 
   }
-  
 }
-
 
 
   

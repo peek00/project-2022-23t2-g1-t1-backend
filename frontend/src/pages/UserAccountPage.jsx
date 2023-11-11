@@ -1,9 +1,11 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
 import UserAccountTable from '../components/account/UserAccountTable';
 
 export default function UserAccountPage() {
+  const { companyId } = useParams(); 
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -21,7 +23,7 @@ export default function UserAccountPage() {
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
             
-            <UserAccountTable />
+            <UserAccountTable companyId={companyId}/>
           </div>
         </div>
       </div>
