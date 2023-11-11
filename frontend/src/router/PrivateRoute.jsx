@@ -9,11 +9,13 @@ const PrivateRoute = ({ page,permission }) => {
 
   useEffect(() => {
     const fetchRole = async () => {
-      const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging"] };
+      const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging","user/User/getAllUser?isAdmin=True"]};
       try {
         const response = await axios.post(API_BASE_URL+'/policy/permissions', body, {
           withCredentials: true
         });
+
+        console.log(response.data);
 
         const roleresponse = await axios.get(API_BASE_URL+"/auth/me", {
           withCredentials: true
@@ -22,7 +24,7 @@ const PrivateRoute = ({ page,permission }) => {
         const userDetailsResponse = await axios.get(API_BASE_URL+"/api/user/User/getUser?userID=" + roleresponse.data.id, {
           withCredentials: true
         });
-        console.log(userDetailsResponse.data)
+        
 
         localStorage.setItem("role", JSON.stringify(roleresponse.data.role));
         localStorage.setItem("id", JSON.stringify(roleresponse.data.id));

@@ -24,7 +24,7 @@ export default function MenuDefault({firstName,lastName,email,id,role}) {
       <MenuList className="">
         {role && role.user && role.user.PUT && (
           <MenuItem>
-          <Link to ="/user/accounts/company" onClick={() => {
+          <Link to ="/user/account/company" onClick={() => {
   updateUserData(firstName,lastName,email,id);
 }}>
           View Accounts
