@@ -1,103 +1,76 @@
-import React, { useState,useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  Typography,
-  Button,
-  CardBody,
-  CardFooter,
-  IconButton,
-} from "@material-tailwind/react";
+import React, { useMemo } from "react";
+import { Card, Typography, Button } from "@material-tailwind/react";
 
-function LogsTable({pageData, prevPage, nextPage, goBack, goForward}) {
+function LogsTable({ pageData, prevPage, nextPage, goBack, goForward, pageNumber, setPageNumber }) {
+  const columns = useMemo(
+    () =>
+      pageData.length > 0
+        ? Object.keys(pageData[0]).map((head) => head)
+        : [],
+    [pageData]
+  );
 
   return (
-    <div>
-      
-      <Card className="w-full text-center absolute top-[250%]">
-
-        <CardBody className="overflow-scroll px-0">
-          {
-            pageData.length > 0 ?
-            <table className="min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {
-                  Object.keys(pageData[0]).map((head) => (
-                    <th
-                      key={head}
-                      className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+    <div className="ms-10">
+      {pageData.length > 0 ? (
+        <table className="relative text-left table-auto min-w-max">
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={column}
+                  className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50"
+                >
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                  >
+                    {column}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pageData.map((row, rowIndex) => (
+              <tr className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"} key={rowIndex}>
+                {columns.map((column) => (
+                  <td key={column} className="p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
                     >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))
-                }
+                      {row[column]}
+                    </Typography>
+                  </td>
+                ))}
               </tr>
-            </thead>
-            <tbody>
-              {
-                pageData.map((row,index) => (
-                  <tr key={index}>
-                    {
-                      Object.values(row).map((value) => (
-                        <td
-                          key={value}
-                          className="p-4"
-                        >
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {value}
-                          </Typography>
-                        </td>
-                      ))
-                    }
-                  </tr>
-                ))
-              }
-            </tbody>
-            </table>
-            : 
-            <Typography className="text-center mt-5" color="gray">
-              No logs found
-            </Typography>
-          }
-        </CardBody>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <Typography className="mt-5 text-center" color="gray">
+          No logs found
+        </Typography>
+      )}
+      <div className="flex items-center justify-between p-4 border-t border-blue-gray-50">
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={() => goBack()}
+          className={pageNumber === 1 ? 'opacity-50 cursor-not-allowed' : ''}
+          disabled={pageNumber === 1}
+        >
+          Previous
+        </Button>
+        {pageNumber}
+        <Button variant="outlined" size="sm" onClick={() => goForward()}>
+          Next
+        </Button>
 
-        <CardFooter className="items-center border-t border-blue-gray-50 p-4">
-          {
-            prevPage !== null ?
-            (<Button
-              variant="outlined"
-              size="sm"
-              onClick={() => goBack()}
-            >
-              Previous
-            </Button>) :
-            null
-          }
-          {
-            nextPage !== null ?
-            (<Button
-              variant="outlined"
-              size="sm"
-              onClick={() => goForward()}
-            >
-              Next
-            </Button>) :
-            null
-          }
-        </CardFooter>
-        
-      </Card>
+      </div>
     </div>
   );
 }
