@@ -632,6 +632,7 @@ async function modifyPoints(companyId, userId, change) {
         // Invalidate cache for this pointsId and companyId combination
         const redisKey = `pointsBalance:${companyId}:${userId}`;
         await CacheProvider.remove(redisKey);
+        await CacheProvider.remove(`account:${companyId}:${userId}`)
 
         return data;
     }
