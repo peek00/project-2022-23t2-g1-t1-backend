@@ -26,7 +26,7 @@ export default function ListWithIcon(props) {
   return (
     <Card className="w-96 absolute top-[150%]">
       <List>
-        {company_id.length > 0 ? (
+        {company_id && company_id.length > 0 ? (
           company_id.map((item, index) => (
             <ListItem key={index} ripple={false} className="py-1 pr-1 pl-4">
             <b>{item.toUpperCase()}</b>
