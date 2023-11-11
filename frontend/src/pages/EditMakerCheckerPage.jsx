@@ -7,7 +7,7 @@ import TopBar from "../components/common_utils/TopBar";
 
 // Specific imports
 import Template from "../components/maker_checker/Template";
-import {API_BASE_URL} from "@/config/config";
+import { API_BASE_URL } from "@/config/config";
 
 export default function UserListingPage() {
     const [templateData, setTemplateData] = useState([]);
@@ -16,7 +16,7 @@ export default function UserListingPage() {
         try {
             // Make an HTTP request to update the data on the server
             const updatedTemplate = await axios.put(
-                API_BASE_URL+"/api/maker-checker/templates/",
+                API_BASE_URL + "/api/maker-checker/templates/",
                 updatedData,
                 {
                     withCredentials: true,
@@ -33,7 +33,7 @@ export default function UserListingPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let templateUrl = API_BASE_URL+"/api/maker-checker/templates/";
+                let templateUrl = API_BASE_URL + "/api/maker-checker/templates/";
                 // Fetching template data
                 const templateResponse = await axios.get(templateUrl, {
                     withCredentials: true,
@@ -53,27 +53,27 @@ export default function UserListingPage() {
                 <SideBar />
             </div>
             {/* Content Area */}
-            <div className="w-4/5 min-h-screen mt-20 overflow-y-auto ms-20">
+            <div className="w-4/5 min-h-screen overflow-y-auto mt-28 ms-10">
                 <TopBar />
                 <div className="mb-5 text-4xl">
-                    Edit Maker Checker Permissions
+                    Edit Template Permissions
                 </div>
                 <table className="min-w-full">
                     <thead>
                         <tr>
-                            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                Request Type
+                            <th className="w-1/6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                Type
                             </th>
-                            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                Request Details
+                            <th className="w-1/6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                Details
                             </th>
-                            <th className="w-6 px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
+                            <th className="w-1/6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase truncate">
                                 Allowed Approvers
                             </th>
-                            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase ">
+                            <th className="w-1/6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase ">
                                 Allowed Requestors
                             </th>
-                            <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th className="w-1/6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Action
                             </th>
                         </tr>

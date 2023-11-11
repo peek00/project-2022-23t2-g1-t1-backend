@@ -7,7 +7,7 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
     const formData = { request_details: {} }; // Initialize formData object
 
     Object.entries(formDetails).forEach(([fieldName, fieldType]) => {
-      const inputElement = document.querySelector(`[name=${fieldName}]`);
+      const inputElement = document.querySelector(`[name="${fieldName}"]`);
       formData.request_details[fieldName] =
         fieldType === "bool" ? inputElement.checked : inputElement.value;
     });
