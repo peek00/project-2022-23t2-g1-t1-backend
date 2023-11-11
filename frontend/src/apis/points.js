@@ -47,7 +47,7 @@ export async function getAllUserAccountsByCompanyId(companyId) {
   // } catch(error) { 
   //     return error; 
   // }
-  let api_url = API_BASE_URL + '/api/points/allidsbycompany?company_id?=' + companyId; 
+  let api_url = API_BASE_URL + '/api/points/allidsbycompany?company_id=' + companyId; 
   try { 
       const response = await axios.get(api_url, {
         withCredentials: true
