@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect,useState } from 'react';
 import 'flowbite';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
@@ -9,7 +9,23 @@ export default function TopBar(){
 
   
 
-  const[settings,setSettings]=React.useState(false);
+  const[settings,setSettings]=useState(false);
+  const [role,setRole] =  useState(null);
+  const [userName, setName] = useState("");
+
+  useEffect(() => {
+
+
+    setRole(localStorage.getItem("role").replace(/[\[\]"\s]/g, ''));
+    setName(localStorage.getItem("UserName").replace(/"/g, ''));
+
+
+
+
+  },[]);
+    
+
+
 
 
 
@@ -46,8 +62,8 @@ export default function TopBar(){
           <div className="absolute right-[30%] flex justify-between items-center">
             <img className="mx-2" src="/profile.png" alt="Profile" />
             <div>
-            <h1 className="text-xs font-thin">Yi Peng</h1>
-            <h1 className="block text-xs font-thin opacity-50 ">Admin</h1>
+            <h1 className="text-xs font-thin">{userName}</h1>
+            <h1 className="block text-xs font-thin opacity-50 ">{role}</h1>
             </div>
             <br></br>
               

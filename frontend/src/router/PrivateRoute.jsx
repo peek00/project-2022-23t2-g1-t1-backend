@@ -22,11 +22,12 @@ const PrivateRoute = ({ page,permission }) => {
         const userDetailsResponse = await axios.get(API_BASE_URL+"/api/user/User/getUser?userID=" + roleresponse.data.id, {
           withCredentials: true
         });
+        console.log(userDetailsResponse.data)
 
         localStorage.setItem("role", JSON.stringify(roleresponse.data.role));
         localStorage.setItem("id", JSON.stringify(roleresponse.data.id));
         //Set the user name 
-        localStorage.setItem("UserName",JSON.stringify(userDetailsResponse.data.fullName))
+        localStorage.setItem("UserName",JSON.stringify(userDetailsResponse.data.data.fullName))
         // Assuming the response contains the user's role
         localStorage.setItem("permissions", JSON.stringify(response.data));
         console.log(localStorage.getItem("permissions"));
