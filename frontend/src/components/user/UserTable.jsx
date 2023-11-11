@@ -81,8 +81,9 @@ export default function UserTable() {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
+      setUsers(previousPage.current);
     }
-    setUsers(previousPage.current);
+    
   };
 
   const handleNextPage = () => {
