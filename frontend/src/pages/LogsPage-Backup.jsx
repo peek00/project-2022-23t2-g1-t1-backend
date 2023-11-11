@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 import CustomDropdown from "../components/common_utils/CustomDropdown";
-import { Button } from "@material-tailwind/react";
 
 import LogsTable from "../components/logging_utils/LogsTable";
 import FilterButton from "../components/common_utils/FilterButton";
@@ -11,28 +10,23 @@ import { queryLog, getAllLogGroups } from "@/apis/logging";
 import DateTimeSelector from "../components/common_utils/DateTimeSelector";
 
 export default function LogsPage() {
-  const pageLimit = 100;
-  const preFetchLimit = 5;
+  const pageLimit = 10;
   const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState({
+    prevPage: null,
+    currentPage: 1,
+    nextPage: null,
+  });
+  const [pageKeyLs, setPageKeyLs] = useState([]);
   const [offsetId, setOffsetId] = useState(null);
   const [logGroups, setLogGroups] = useState([]);
   const [selectedLogGroup, setSelectedLogGroup] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [userId, setUserId] = useState("");
+  const [pageNumber, setPageNumber] = useState(1); // New state for page number
   const [isLoading, setIsLoading] = useState(true);
   const [looped, setLooped] = useState(false);
-  
-  const [yourDictionary, setYourDictionary] = useState({});
-  const updateDictionaryValue = (key, value) => {
-    // console.log("Saving data to page number " + key + " " + value.length)
-    setYourDictionary((prevDictionary) => ({
-      ...prevDictionary,
-      [key]: value,
-    }));
-  };
-  const [pageNumber, setPageNumber] = useState(0); // New state for page number
-  const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
 
   useEffect(() => {
     // Retrieve all loggroups
@@ -48,90 +42,104 @@ export default function LogsPage() {
   useEffect(() => {
     // Retrieve logs
     if (selectedLogGroup !== null) {
-      makeQuery(lastRetrievedPage, preFetchLimit, null);
+      makeQuery();
       setIsLoading(false);
     }
-  }, [selectedLogGroup]);
+  }, [selectedLogGroup, startTime, endTime, userId, offsetId]);
 
   useEffect(() => {
-    console.log("Checking prefetch of " + pageNumber + " " + preFetchLimit)
-    console.log(yourDictionary)
-  },[yourDictionary]);
+    // Reset Pagination
+    setPageKeyLs([]);
+    setOffsetId(null);
+    setPagination({
+      prevPage: null,
+      currentPage: 1,
+      nextPage: null,
+    });
+  }, [startTime, endTime, userId]);
 
-  // useEffect(() => {
-  //     console.log("Set data to " + pageNumber + " " + yourDictionary[pageNumber])
-  //     setData(yourDictionary[pageNumber]);
-  // }, [pageNumber]);
-  
-  // Below expects first load to be 0, 5
-  const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
+  const makeQuery = async () => {
     setIsLoading(true);
-    if (remainingPages === 0) {
-      setIsLoading(false);
-      setOffsetId(offsetId);
-      return;
-    }
     let reqParams = {
       logGroup: selectedLogGroup,
       limit: pageLimit,
-      offsetId: offsetId,
     };
-  
-    try {
-      const response = await queryLog(reqParams);
-      const data = response.data;
-      // console.log("Should start at 0 " + pageNumberToSave)
-      if  (response.nextPageKey == null) {
-        // console.log(" End of the line bud")
-        updateDictionaryValue(pageNumberToSave, data);
-        setLastRetrievedPage((prevPage) => prevPage + 1);
-      } else {
-        // Update the dictionary with the current page number
-        const offsetId = response.nextPageKey;
-        updateDictionaryValue(pageNumberToSave, data);
-        setLastRetrievedPage((prevPage) => prevPage + 1);
-        // Make a recursive call for the next page
-        await makeQuery(pageNumberToSave + 1, remainingPages - 1, offsetId);
-      }
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+    if (startTime !== "") {
+      reqParams.startTime = startTime;
     }
+    if (endTime !== "") {
+      reqParams.endTime = endTime;
+    }
+    if (userId !== "") {
+      reqParams.userId = userId;
+    }
+    if (offsetId !== null) {
+      reqParams.offsetId = offsetId;
+    }
+    queryLog(reqParams)
+      .then((d) => {
+        const data = d.data;
+        const nextKey = d.nextPageKey;
+        setData(data);
+        setPagination((prev) => ({
+          prevPage: prev.currentPage === 1 ? null : prev.currentPage - 1,
+          currentPage: prev.currentPage,
+          nextPage: nextKey,
+        }));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
 
   const goBack = () => {
-    if (pageNumber > 0) {
-      setPageNumber((prevPageNumber) => prevPageNumber - 1);
-      setData(yourDictionary[pageNumber]);
-      console.log("Set data to " + pageNumber + " " + yourDictionary[pageNumber])
-
+    if (pagination.prevPage !== null) {
+      setPageKeyLs([...pageKeyLs, offsetId]);
+      setOffsetId(pagination.prevPage);
+      setPagination((prev) => ({
+        prevPage: prev.prevPage === 1 ? null : prev.prevPage - 1,
+        currentPage: prev.prevPage,
+        nextPage: prev.currentPage,
+      }));
+      setPageNumber(pageNumber - 1); // Update the page number
+    } else {
+      setOffsetId(null);
+      setPagination({
+        prevPage: null,
+        currentPage: 1,
+        nextPage: pagination.currentPage + 1,
+      });
+      setPageNumber(1); // Reset the page number to 1
     }
   };
 
-  const goForward = async () => {
-    const nextPage = pageNumber + 1;
-    setPageNumber(nextPage);
-    
-    try {
-      
-      if (lastRetrievedPage - pageNumber <= 2) {
-        await makeQuery(nextPage + 1, preFetchLimit, offsetId)
-      }
-      console.log("Start1")
-      setData(yourDictionary[nextPage]);
-      console.log("Set to " + nextPage + " " + yourDictionary[nextPage])
-      console.log("End1")
-    } catch (error) {
-      console.error("Error in goForward:", error);
+  const goForward = () => {
+    if (pagination.nextPage !== null) {
+      setPageKeyLs([...pageKeyLs, offsetId]);
+      setOffsetId(pagination.nextPage);
+      setPagination((prev) => ({
+        prevPage: prev.currentPage,
+        currentPage: prev.nextPage,
+        nextPage: null,
+      }));
+      setPageNumber(pageNumber + 1); // Update the page number
+      setLooped(false);
+    } else {
+      setOffsetId(null);
+      setPagination({
+        prevPage: pagination.currentPage,
+        currentPage: pagination.nextPage || 1,
+        nextPage: null,
+      });
+      setPageNumber(pagination.nextPage || 1); // Update the page number
+      setLooped(true);
     }
   };
-  
-
 
   const resetUserId = () => {
     setUserId("");
   };
+
 
   return (
     <div className="flex min-h-screen ">
@@ -166,7 +174,6 @@ export default function LogsPage() {
             setSearch={setUserId}
             resetDefaultInput={resetUserId}
           />
-          {pageNumber}
         </div>
         {isLoading ? (
           <div className="flex justify-center">
@@ -182,22 +189,13 @@ export default function LogsPage() {
           )}
           
           <LogsTable
-            pageData={yourDictionary[pageNumber]}
+            pageData={data}
+            prevPage={pagination.prevPage}
+            nextPage={pagination.nextPage}
+            goBack={goBack}
+            goForward={goForward}
             pageNumber={pageNumber}
             />
-        <Button
-          variant="outlined"
-          size="sm"
-          onClick={() => goBack()}
-          className={pageNumber === 1 ? 'opacity-50 cursor-not-allowed' : ''}
-          disabled={pageNumber === 1}
-        >
-          Previous
-        </Button>
-        {pageNumber}
-        <Button variant="outlined" size="sm" onClick={() => goForward()}>
-          Next
-        </Button>
           </>
         )}
       </div>
