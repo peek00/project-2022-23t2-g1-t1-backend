@@ -52,14 +52,11 @@ function Routing() {
       >
         <Route path="" element={<LogsPage />} />
       </Route>
-      <Route
-        path="/points"
-        element={<PrivateRoute page={"points"} permission={"PUT"} />}
-      >
+  
         <Route path="updateAccount" element={<UpdatePointsPage />} />
      
         <Route path="addAccount" element={<AddAccountPage />} />
-      </Route>
+
 
       <Route
         path="/makerchecker"
@@ -72,10 +69,14 @@ function Routing() {
       </Route>
       <Route
         path="/user/account/company"
-        element={<PrivateRoute page={"points"} permission={"GET"} />}
+        // element={<PrivateRoute page={"points"} permission={"GET"} />}
       >
         <Route index element={<CompanyGatewayPage />} />
         <Route path=":companyId" element={<UserAccountPage />} />
+        
+        <Route path=":companyId/:userId/editPoints" element={<UpdatePointsPage />} />
+     
+        <Route path=":companyId/:userId/addPoints" element={<AddAccountPage />} />
       </Route>
     </Routes>
   );
