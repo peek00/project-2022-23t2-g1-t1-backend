@@ -196,12 +196,6 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                     {request.status === "pending" ? (
                                         <div>
                                             <WithdrawButton handleWithdraw={() => handleWithdraw(request.uid)} />
-                                            {/* <button
-                                                className="px-4 py-2 mr-2 text-white bg-gray-400 rounded"
-                                                onClick={() => handleWithdraw(request.uid)}
-                                            >
-                                                Withdraw
-                                            </button> */}
                                         </div>
                                     ) : (
                                         <span className="text-gray-400 "> No Action </span>
