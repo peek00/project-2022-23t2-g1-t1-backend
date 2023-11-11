@@ -273,7 +273,7 @@ public class UserService {
                         .withValueMap(valueMap);
                 } 
 
-                spec.withMaxResultSize(10); 
+                spec.withMaxResultSize(25); 
                 if(lastEvaluatedKey.length() > 0){
                     spec.withExclusiveStartKey("userID", lastEvaluatedKey);
                 }
