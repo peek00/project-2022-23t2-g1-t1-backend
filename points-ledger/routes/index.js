@@ -180,7 +180,8 @@ router.get('/alluseraccounts', async(req, res) => {
 // GET request that returns all points account by a particular company_id
 // returns all info of each user_id under the company_id
 router.get('/allidsbycompany', async(req, res) => {
-  const companyId = req.body.company_id;
+
+  const companyId = req.query.company_id; 
   // Check if the companyId is provided
   if (!companyId) {
     return res.status(400).json({
