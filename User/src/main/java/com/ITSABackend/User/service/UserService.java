@@ -258,7 +258,7 @@ public class UserService {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         ArrayList<User> users = new ArrayList<>();
         ItemCollection<ScanOutcome> items = null;
-        String newLastEvaluatedKey ;
+        String newLastEvaluatedKey = null;
         Map<String, Object> result = new HashMap<>();
         ScanSpec spec = new ScanSpec();
 
@@ -273,18 +273,16 @@ public class UserService {
                         .withValueMap(valueMap);
                 } 
 
-                spec.withMaxResultSize(50); 
+                spec.withMaxResultSize(10); 
                 if(lastEvaluatedKey.length() > 0){
-                    System.out.println("Hello");
                     spec.withExclusiveStartKey("userID", lastEvaluatedKey);
-                }else{
-                    spec.withExclusiveStartKey("userID", null);
                 }
 
                 items = table.scan(spec);
 
                 System.out.println(items);
                 System.out.println("line287");
+
                 items.forEach(item -> {
                     System.out.println(item);
                     User user = new User();
@@ -299,12 +297,16 @@ public class UserService {
                 System.out.println("line299");
 
                 Map<String, AttributeValue> lastEvaluatedKeyMap = items.getLastLowLevelResult().getScanResult().getLastEvaluatedKey();
+                
 
 
                 if (lastEvaluatedKeyMap != null) {
                     newLastEvaluatedKey = lastEvaluatedKeyMap.get("userID").getS();
                 }
-                 System.out.println("line307");
+
+
+                // System.out.println(newLastEvaluatedKey);
+                System.out.println("line307");
             } catch (Exception e) {
                 result.put("error", e.getMessage());
                 System.err.println("Unable to read user");
