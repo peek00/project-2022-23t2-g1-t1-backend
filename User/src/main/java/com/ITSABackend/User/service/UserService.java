@@ -16,14 +16,17 @@ import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
+import software.amazon.awssdk.utils.ImmutableMap;
 
 
 @Service
@@ -247,6 +251,73 @@ public class UserService {
             }
         }
         return users.toArray(new User[users.size()]);
+    }
+
+
+    public Map<String, Object> getAllUsersPaged(Set<String> validRoleNames, String lastEvaluatedKey) {
+        Table table = dynamoDBRepo.getTable(AppConstant.USER);
+        ArrayList<User> users = new ArrayList<>();
+        ItemCollection<ScanOutcome> items = null;
+        String newLastEvaluatedKey = null;
+        Map<String, Object> result = new HashMap<>();
+        ScanSpec spec = new ScanSpec();
+
+        if (table != null) {
+            try {
+                System.out.println("Reading user....");
+                // If validRoleName is only of length 1, User, include a filter expression to not include the role name
+                if (validRoleNames.size() == 1 && validRoleNames.contains("User")) {
+                    String filterExpression = "contains (userRole, :roleName)";
+                    ValueMap valueMap = new ValueMap().withString(":roleName", "User");
+                    spec.withFilterExpression(filterExpression)
+                        .withValueMap(valueMap);
+                } 
+
+                spec.withMaxResultSize(25); 
+                if(lastEvaluatedKey.length() > 0){
+                    spec.withExclusiveStartKey("userID", lastEvaluatedKey);
+                }
+
+                items = table.scan(spec);
+
+                System.out.println(items);
+                System.out.println("line287");
+
+                items.forEach(item -> {
+                    System.out.println(item);
+                    User user = new User();
+                    user.setUserId(item.getString("userID"));
+                    user.setEmail(item.getString("email"));
+                    user.setfirstName(item.getString("firstName"));
+                    user.setlastName(item.getString("lastName"));
+                    user.setRole(item.getStringSet("userRole"));
+
+                    users.add(user);
+                });
+                System.out.println("line299");
+
+                Map<String, AttributeValue> lastEvaluatedKeyMap = items.getLastLowLevelResult().getScanResult().getLastEvaluatedKey();
+                
+
+
+                if (lastEvaluatedKeyMap != null) {
+                    newLastEvaluatedKey = lastEvaluatedKeyMap.get("userID").getS();
+                }
+
+
+                // System.out.println(newLastEvaluatedKey);
+                System.out.println("line307");
+            } catch (Exception e) {
+                result.put("error", e.getMessage());
+                System.err.println("Unable to read user");
+                System.err.println(e.getMessage());
+            }
+        }
+  
+        result.put("users", users.toArray(new User[users.size()]));
+        result.put("newLastEvaluatedKey", newLastEvaluatedKey);
+        result.put("next", users.size() < 50);
+        return result;
     }
 
     public List<String> getUserEmailsFromCompany(List<String> userIds){
