@@ -123,11 +123,11 @@ export default function UserTable() {
 
 
   return (
-    <div className="relative overflow-x-auto w-[85%] mb-[100px]">
+    <div className="relative overflow-x-auto mb-[100px]">
       <table className="w-full text-sm text-left bg-[#F5F5F5]">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">
-          <th scope="col" class="px-6 py-3">
+          <th scope="col" className="px-6 py-3">
             Avatar
                           
                           </th>
@@ -140,7 +140,7 @@ export default function UserTable() {
             <th scope="col" className="px-6 py-3">
               Email
             </th>
-            <th scope="col" className="px-6 py-3 flex">
+            <th scope="col" className="flex px-6 py-3">
               Roles
             </th>
           </tr>
@@ -172,14 +172,14 @@ export default function UserTable() {
       </table>
       <div className="flex justify-end p-4">
         <button
-          className="bg-blue-500 text-white px-4 py-2 mx-4"
+          className="px-4 py-2 mx-4 text-white bg-blue-500"
           onClick={handlePreviousPage}
         >
           Previous
         </button>
         Current Page : {currentPage}
         <button
-          className="bg-blue-500 text-white px-4 py-2 mx-4"
+          className="px-4 py-2 mx-4 text-white bg-blue-500"
           onClick={handleNextPage}
         >
           Next

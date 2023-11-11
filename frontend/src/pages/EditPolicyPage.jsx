@@ -18,10 +18,9 @@ export default function EditPolicyPage(props) {
 
     return(
 
-        <div className='min-h-screen h-screen min-w-full overflow-y-auto'>
+        <div className='h-screen min-w-full min-h-screen overflow-y-auto'>
     <div className='container relative min-w-full min-h-screen overflow-y-auto'>
       <div className="w-[80%] relative min-h-full ">
-      <TopBar/>
       <img
       src="/arrow.png" // Replace with the actual image URL
       alt="Go Back"
@@ -51,9 +50,9 @@ export default function EditPolicyPage(props) {
 
 
         </div>
-      <div className='min-h-screen overflow-y-auto flex w-[20%] '>
         <SideBar/>
-      </div>
+        {/* <TopBar/> */}
+
     </div>
   </div>
   

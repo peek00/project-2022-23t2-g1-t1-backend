@@ -19,15 +19,8 @@ export default function CompanyGatewayPage(props) {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
-
-
-
-
-
   const fetchData = async () => {
     try {
-      console.log(userData.id);
-
       // Make an Axios GET request to the API endpoint
       const response = await axios.get(API_BASE_URL+"/api/points/allpointsaccounts", {
         withCredentials: true,
@@ -68,15 +61,13 @@ export default function CompanyGatewayPage(props) {
 
   return (
 
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="w-[20%] bg-[#1C2434] min-h-screen ">
         <SideBar />
-      </div>
+        {/* <TopBar /> */}
 
       {/* Content Area */}
       <div className="w-4/5 min-h-screen overflow-y-auto">
-        <TopBar />
         <img
           src="/arrow.png" // Replace with the actual image URL
           alt="Go Back"
@@ -86,7 +77,7 @@ export default function CompanyGatewayPage(props) {
       
         <div className="min-h-screen overflow-y-auto">
           <div className='flex w-[100%] absolute top-[10%]'>  
-            <h1 className='text-2xl ms-11 font-bold'>Point Accounts</h1>
+            <h1 className='text-2xl font-bold ms-11'>Point Accounts</h1>
           </div>
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
             <Link to="/addAccount"><button type="button" class=" fixed right-[10%] text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>

@@ -5,23 +5,15 @@ import UserTable from '../components/user/UserTable';
 
 export default function UserListingPage() {
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <div className="w-[20%] bg-[#1C2434] min-h-screen ">
-        <SideBar />
-      </div>
-
+    <div className="flex min-h-screen">
+      <SideBar />
+        {/* <TopBar /> */}
       {/* Content Area */}
       <div className="w-4/5 min-h-screen overflow-y-auto">
-        <TopBar />
-        <div className="min-h-screen overflow-y-auto">
 
-          <div className='absolute  left-[25%] top-[50%] min-w-[80%]'>
- 
+          <div className='ms-[30%]  mt-[10%]  '>
             <UserTable />
-            
           </div>
-        </div>
       </div>
     </div>
   );
