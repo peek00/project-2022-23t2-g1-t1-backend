@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/Company")
-@CrossOrigin
+@CrossOrigin(originPatterns = "*")
 @EnableCaching
 public class CompanyController {
     

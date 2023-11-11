@@ -30,6 +30,7 @@ services:
       - db
     volumes:
       - efs:/tmp
+    restart: always
   logging:
     build: ./logging
     volumes:
