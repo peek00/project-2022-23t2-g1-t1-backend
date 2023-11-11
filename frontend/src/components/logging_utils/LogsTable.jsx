@@ -2,13 +2,13 @@ import React, { useMemo } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 
 function LogsTable({ pageData}) {
-
   if (pageData == null) {
     return (
       "Fuck you"
-    )
-  }
-  
+      )
+    }
+    
+  console.log("Received " + pageData.length)
   return (
     <div className="ms-10">
     {pageData.length > 0 ? (
