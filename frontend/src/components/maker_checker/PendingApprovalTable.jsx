@@ -3,6 +3,7 @@ import axios from "axios"; // Import Axios
 import {API_BASE_URL} from "@/config/config";
 
 import RequestDetailModal from "./RequestDetailModal";
+import ApprovalButton from "./ApprovalButton";
 
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
@@ -188,20 +189,10 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                             </button>
                                         </div>
                                     ) : (
-                                        <div>
-                                            <button
-                                                className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
-                                                onClick={() => handleApprove(request.uid)}
-                                            >
-                                                Approve
-                                            </button>
-                                            <button
-                                                className="px-4 py-2 text-white bg-red-500 rounded"
-                                                onClick={() => handleReject(request.uid)}
-                                            >
-                                                Reject
-                                            </button>
-                                        </div>
+                                        <ApprovalButton
+                                            handleApprove={() => handleApprove(request.uid)}
+                                            handleReject={() => handleReject(request.uid)}
+                                        />
                                     )}
                                 </div>
                             </td>
