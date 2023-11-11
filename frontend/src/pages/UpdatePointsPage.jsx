@@ -19,7 +19,7 @@ export default function UpdatePointsPage(){
         <TopBar/>
         <div className='absolute left-[25%] w-full'>
           <div className='min-h-screen'>
-            <UserSearch user="Update Points"/>
+       
           </div>
           <div className='min-w-full'>
             <UpdatePointsTable/>
