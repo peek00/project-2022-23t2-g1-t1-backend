@@ -14,9 +14,7 @@ export default function HistoryApprovalTable({ data, activeTab, selectedCompany 
         }
     }, [data, activeTab]);
 
-    if (!shownData || shownData.length === 0) {
-        return <div className="ms-[40px]">No data available.</div>;
-    }
+
     // @ChatGPT 
     function getElapsedRelativeTime(timestamp) {
         const now = new Date();
@@ -45,8 +43,42 @@ export default function HistoryApprovalTable({ data, activeTab, selectedCompany 
             return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
         }
     }
+    // Show if there is no data
+    if (!shownData || shownData.length === 0) {
+        return (
+            <div>
+                <table className="min-w-full">
+                    <thead>
+                        <tr>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
+                                Request Type
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500 ">
+                                Request Details
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
+                                Comments
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase truncate text-black-500">
+                                Requested By
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500 ">
+                                Expiry
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left uppercase text-black-500">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <div className="grid text-2xl text-center text-gray-300 place-items-center" style={{ height: "500px" }}>
+                    No requests resolved by you yet.
+                </div>
+            </div>
+        );
+    }
 
-
+    // Show if there is requests
     return (
         <div >
             <table className="min-w-full">

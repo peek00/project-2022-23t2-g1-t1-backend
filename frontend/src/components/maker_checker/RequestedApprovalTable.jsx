@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 
 import RequestDetailModal from "./RequestDetailModal";
-import {API_BASE_URL} from "@/config/config";
+import { API_BASE_URL } from "@/config/config";
 
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
@@ -15,9 +15,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
         }
     }, [data, activeTab]);
 
-    if (!shownData || shownData.length === 0) {
-        return <div className="ms-[40px]">No data available.</div>;
-    }
+
     // @ChatGPT
     function getRelativeTimeOrExpired(timestamp) {
         const now = new Date();
@@ -87,7 +85,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             companyid: selectedCompany,
         };
 
-        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/withdraw";
+        const approveUrl = API_BASE_URL + "/api/maker-checker/approval/withdraw";
 
         try {
             const response = await axios.post(approveUrl, formObject, {
@@ -107,28 +105,29 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
         return (
             <div className="">
                 <table className="min-w-full">
-                <thead>
-                    <tr>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Request Type
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Request Details
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase truncate">
-                            Requested On
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Expiry
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Status
-                        </th>
-                        <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
+                    <thead>
+                        <tr>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                                Request Type
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                                Request Details
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase truncate">
+                                Requested On
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                                Expiry
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                                Status
+                            </th>
+                            <th className="w-1/6 py-3 text-xs font-bold tracking-wider text-left text-black uppercase">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    
                 </table>
                 <div
                     className="grid text-2xl text-center text-gray-300 place-items-center"
@@ -185,10 +184,10 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                             <td className="py-4 whitespace-nowrap">
                                 <span
                                     className={`font-bold ${request.status === "pending"
-                                            ? "text-green-500"
-                                            : request.status === "withdrawn"
-                                                ? "text-pink-500"
-                                                : ""
+                                        ? "text-green-500"
+                                        : request.status === "withdrawn"
+                                            ? "text-pink-500"
+                                            : ""
                                         }`}
                                 >
                                     {request.status.charAt(0).toUpperCase() +
