@@ -19,7 +19,7 @@ export default function UserAccountTable({ companyId }){
             const accountsWithAdditionalData = await Promise.all(
               accountsData.map(async (account) => {
                 try {
-                  const response = await axios.get(API_BASE_URL + `User/getUser?userID=` + account["user_id"], {
+                  const response = await axios.get(API_BASE_URL + `/api/User/getUser?userID=` + account["user_id"], {
                     withCredentials: true
                   });
                   // const response = await axios.get("http://localhost:8080/User/getUser?userID=" + account["user_id"]);
