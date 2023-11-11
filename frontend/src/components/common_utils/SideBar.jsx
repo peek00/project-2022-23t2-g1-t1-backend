@@ -22,6 +22,8 @@ export default function SideBar() {
       const response = await axios.get(API_BASE_URL + "/auth/logout", {
         withCredentials: true
       });
+      // Clear Local Storage
+      localStorage.clear();
       window.location.href = "/";
       console.log(response);
     } catch (error) {

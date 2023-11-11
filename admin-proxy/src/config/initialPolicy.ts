@@ -129,7 +129,7 @@ export const initialPolicy = [
   {
     "endpoint": "/api/user/User/getAllUsers?isAdmin=True",
     "DELETE": [
-      "None",
+      "None"
     ],
     "POST": [
       "None"
@@ -143,4 +143,57 @@ export const initialPolicy = [
       "Manager"
     ]
   },
+  {
+    "endpoint": "/api/user/User/getAllUsers?isAdmin=False",
+    "DELETE": [
+      "None"
+    ],
+    "POST": [
+      "None"
+    ],
+    "PUT": [
+      "None"
+    ],
+    "GET": [
+      "Product Manager",
+      "Owner",
+      "Engineer",
+      "Manager"
+    ]
+  },
+  {
+    "endpoint": "/api/user/User/getAllUsersPaged?isAdmin=True",
+    "DELETE": [
+      "None"
+    ],
+    "POST": [
+      "None"
+    ],
+    "PUT": [
+      "None"
+    ],
+    "GET": [
+      "Owner",
+      "Engineer",
+      "Manager"
+    ]
+  },
+  {
+    "endpoint": "/api/user/User/getAllUsersPaged?isAdmin=False",
+    "DELETE": [
+      "None"
+    ],
+    "POST": [
+      "None"
+    ],
+    "PUT": [
+      "None"
+    ],
+    "GET": [
+      "Product Manager",
+      "Owner",
+      "Engineer",
+      "Manager"
+    ]
+  }
 ]

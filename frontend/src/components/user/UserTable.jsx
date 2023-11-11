@@ -35,14 +35,19 @@ export default function UserTable() {
       const viewUserPermissions = await axios.post(
         API_BASE_URL + '/policy/permissions',
         {
-          pageLs: ['user/User/getAllUsers?isAdmin=True'],
+          pageLs: ['user/User/getAllUsersPaged?isAdmin=True','user/User/getAllUsersPaged?isAdmin=False'],
         },
         {
           withCredentials: true,
         }
       );
-      const canViewAdmin =
-        viewUserPermissions.data['user/User/getAllUsers?isAdmin=True'].GET;
+
+      const canViewAdmin = viewUserPermissions.data['user/User/getAllUsersPaged?isAdmin=True'].GET;
+      const canViewNonAdmin = viewUserPermissions.data['user/User/getAllUsersPaged?isAdmin=False'].GET;
+      if (!canViewNonAdmin && !canViewAdmin) {
+        alert('You do not have permission to view users');
+        return;
+      }
       viewAdmin.current = canViewAdmin;
 
       console.log(lastEvaluatedKey.current);
@@ -50,13 +55,11 @@ export default function UserTable() {
       let response;
       if (lastEvaluatedKey.current === null) {
         response = await axios.get(
-        
           API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}` ,
           {
             withCredentials: true,
           }
         );
-        console.log(response)
         setUsers(response.data.data.users);
       lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
 
