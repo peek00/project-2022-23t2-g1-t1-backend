@@ -11,9 +11,8 @@ import { queryLog, getAllLogGroups } from "@/apis/logging";
 import DateTimeSelector from "../components/common_utils/DateTimeSelector";
 
 export default function LogsPage() {
-  const pageLimit = 100;
+  const pageLimit = 5;
   const preFetchLimit = 5;
-  const [data, setData] = useState([]);
   const [offsetId, setOffsetId] = useState(null);
   const [logGroups, setLogGroups] = useState([]);
   const [selectedLogGroup, setSelectedLogGroup] = useState(null);
@@ -22,6 +21,8 @@ export default function LogsPage() {
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [looped, setLooped] = useState(false);
+  const [data, setData] = useState([]);
+  const [endData, setEndData] = useState(false);
   
   const [yourDictionary, setYourDictionary] = useState({});
   const updateDictionaryValue = (key, value) => {
@@ -33,6 +34,12 @@ export default function LogsPage() {
   };
   const [pageNumber, setPageNumber] = useState(0); // New state for page number
   const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
+  
+  useEffect(() => {
+    console.log(yourDictionary)
+    setData(yourDictionary[pageNumber]);
+    console.log("Data set for page " + pageNumber + " " + yourDictionary[pageNumber])
+  }, [pageNumber, yourDictionary]);
 
   useEffect(() => {
     // Retrieve all loggroups
@@ -65,7 +72,11 @@ export default function LogsPage() {
   
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
-    setIsLoading(true);
+    if (endData) {
+      return
+    }
+    // setIsLoading(true);
+    console.log(pageNumberToSave)
     if (remainingPages === 0) {
       setIsLoading(false);
       setOffsetId(offsetId);
@@ -85,6 +96,7 @@ export default function LogsPage() {
         // console.log(" End of the line bud")
         updateDictionaryValue(pageNumberToSave, data);
         setLastRetrievedPage((prevPage) => prevPage + 1);
+        setEndData(true);
       } else {
         // Update the dictionary with the current page number
         const offsetId = response.nextPageKey;
@@ -101,27 +113,20 @@ export default function LogsPage() {
 
 
   const goBack = () => {
-    if (pageNumber > 0) {
+    if (pageNumber != 0) {
       setPageNumber((prevPageNumber) => prevPageNumber - 1);
-      setData(yourDictionary[pageNumber]);
-      console.log("Set data to " + pageNumber + " " + yourDictionary[pageNumber])
-
     }
   };
 
   const goForward = async () => {
+    // Stop from going
     const nextPage = pageNumber + 1;
     setPageNumber(nextPage);
-    
     try {
       
       if (lastRetrievedPage - pageNumber <= 2) {
         await makeQuery(nextPage + 1, preFetchLimit, offsetId)
       }
-      console.log("Start1")
-      setData(yourDictionary[nextPage]);
-      console.log("Set to " + nextPage + " " + yourDictionary[nextPage])
-      console.log("End1")
     } catch (error) {
       console.error("Error in goForward:", error);
     }
@@ -185,21 +190,21 @@ export default function LogsPage() {
             pageData={yourDictionary[pageNumber]}
             pageNumber={pageNumber}
             />
+          </>
+        )}
         <Button
           variant="outlined"
           size="sm"
-          onClick={() => goBack()}
-          className={pageNumber === 1 ? 'opacity-50 cursor-not-allowed' : ''}
-          disabled={pageNumber === 1}
+          onClick={goBack}
+          className={pageNumber === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+          disabled={pageNumber === 0}
         >
           Previous
         </Button>
         {pageNumber}
-        <Button variant="outlined" size="sm" onClick={() => goForward()}>
+        <Button variant="outlined" size="sm" onClick={goForward}>
           Next
         </Button>
-          </>
-        )}
       </div>
     </div>
   );
