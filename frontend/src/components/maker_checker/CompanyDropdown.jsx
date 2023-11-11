@@ -1,4 +1,6 @@
 import React, { useState, useEffect} from 'react';
+import {API_BASE_URL} from "@/config/config";
+import axios from 'axios';
 
 function DropdownMenu({ selectedCompany, onSelectCompany }) {
   // Handling company dropdown
@@ -13,21 +15,27 @@ function DropdownMenu({ selectedCompany, onSelectCompany }) {
     localStorage.setItem('selectedCompany', state);
     window.dispatchEvent(new Event("storage"));
   };
+  const [companyList, setCompanyList] = useState([ ]);
 
   // Read the selectedCompany from local storage during initialization
+  // Read the selectedCompany from local storage and fetch company list from the API during initialization
   useEffect(() => {
     const storedCompany = localStorage.getItem('selectedCompany');
     if (storedCompany) {
       onSelectCompany(storedCompany);
     }
-  }, [onSelectCompany]);
 
-  // // Getting the list of companies 
-  // // Hard coded now
-  const [companyList, setCompanyList] = useState([
-    "ascenda", "fakecompany2"
-  ]);
-  // TODO Fetch fropm brya endpoint
+    // Fetch company list from the API
+    axios.get(
+      API_BASE_URL + '/api/points/allcompanyids',
+      {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setCompanyList(response.data.data);
+      })
+  }, [onSelectCompany]); // Adding onSelectCompany as a dependency
+
 
   return (
     <div className="relative inline-block mb-5 text-left bg-slate-600">
