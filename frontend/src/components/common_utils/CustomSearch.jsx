@@ -12,7 +12,7 @@ export default function CustomSearch({label, placeholder,defaultInput, setSearch
                     onChange={(e) => setInput(e.target.value)}
                     className="w-full px-3 py-2 mt-1 mr-5 text-sm border border-gray-300 rounded-md"
                 />
-                <button
+                {/* <button
                     className="px-3 py-2 mx-5 ml-0 text-white bg-blue-500 rounded-md"
                     onClick={() => setSearch(input)}
                 >
@@ -23,11 +23,10 @@ export default function CustomSearch({label, placeholder,defaultInput, setSearch
                     onClick={() => {
                         resetDefaultInput();
                         setSearch(null);
-                        
                     }}
                 >
                     Clear
-                </button>
+                </button> */}
             </div>
         </div>
     )
