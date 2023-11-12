@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import AlertIcon from '../components/common_utils/AlertIcon';
+
 import axios from 'axios';
 import { API_BASE_URL } from '@/config/config';
 import ErrorPage from '../pages/ErrorPage';
