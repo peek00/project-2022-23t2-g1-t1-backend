@@ -9,10 +9,11 @@ import LogsPage from '../pages/LogsPage';
 import UpdatePointsPage from '../pages/UpdatePointsPage';
 import AddAccountPage from '../pages/AddAccountPage';
 import MakerCheckerPage from '../pages/MakerCheckerPage';
-import UserAccountPage from '../pages/UserAccountPage';
+import CompanyAccountPage from '../pages/CompanyAccountPage';
 import CompanyGatewayPage from '../pages/CompanyGatewayPage';
 import EditPolicyPage from '../pages/EditPolicyPage';
 import EditMakerCheckerPage from '../pages/EditMakerCheckerPage';
+import UserAccountPage from '../pages/UserAccountPage';
 
 function Routing() {
   return (
@@ -68,15 +69,19 @@ function Routing() {
         <Route path="edit" element={<EditMakerCheckerPage />} />
       </Route>
       <Route
-        path="/user/account/company"
+        path="/user/account"
         // element={<PrivateRoute page={"points"} permission={"GET"} />}
       >
-        <Route index element={<CompanyGatewayPage />} />
-        <Route path=":companyId" element={<UserAccountPage />} />
+        <Route path ="company" element={<CompanyGatewayPage />} >
+        <Route path=":companyId" element={<CompanyAccountPage />} />
         
         <Route path=":companyId/:userId/editPoints" element={<UpdatePointsPage />} />
+        </Route>
+
      
         <Route path=":userId/addPoints" element={<AddAccountPage />} />
+        <Route path=":userId" element={<UserAccountPage/>} />
+        <Route path=":userId/editPoints" element={<UpdatePointsPage/>} />
       </Route>
     </Routes>
   );
