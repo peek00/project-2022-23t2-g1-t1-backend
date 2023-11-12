@@ -9,20 +9,20 @@ export  default function AvatarInfo(props) {
     const [userInfo, setUserInfo] = useState([]);
 
      useEffect(() => {
-        axios.get("http://localhost:8080/User/getUser?userID=" + userId)
-            .then(response => {
-                setUserInfo(response.data.data);
-            })
-            .catch(error => {
-                console.error("Error fetching data: ", error);
-            })
-        // axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + userId, {withCredentials: true })
+        // axios.get("http://localhost:8080/User/getUser?userID=" + userId)
         //     .then(response => {
         //         setUserInfo(response.data.data);
         //     })
         //     .catch(error => {
         //         console.error("Error fetching data: ", error);
         //     })
+        axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + userId, {withCredentials: true })
+            .then(response => {
+                setUserInfo(response.data.data);
+            })
+            .catch(error => {
+                console.error("Error fetching data: ", error);
+            })
       }, []);
 
   return (

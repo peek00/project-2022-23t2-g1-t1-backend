@@ -1,10 +1,15 @@
 
 import axios from "axios";
 import EditAccount from "./EditAccount.jsx";
-
+import { Button } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
+import { useUserContext } from "../../context/userContext";
+import { useParams } from "react-router-dom";
 
 export default function UserAccountTable(props){
     const { accounts, companyId } = props;
+    const { userData, updateUserData } = useUserContext();
+    const { companyid } = useParams();
     console.log("Table rendering")
 
     return (
@@ -37,6 +42,7 @@ export default function UserAccountTable(props){
                   <td className="px-6 py-4">{account.userData.lastName}</td>
                   <td className="px-6 py-4">{account.userData.email}</td>
                   <td className="px-6 py-4">{account.balance}</td>
+                  <Link to={`/user/account/company/${companyId}/${userData.id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
                 </tr>
               ))}
             </tbody>
