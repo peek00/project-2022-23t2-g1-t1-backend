@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import AlertIcon from '../components/common_utils/AlertIcon';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config/config';
-import ErrorPage from '../pages/errorpage';
+import ErrorPage from '../pages/ErrorPage';
 
 import { Spinner } from "@material-tailwind/react";
 
