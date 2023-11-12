@@ -115,8 +115,9 @@ public class UserController {
             User user = userService.getUserByEmail(email);
             // Map reponse to return id and role
             HashMap<String, Object> response = new HashMap<>();
-            response.put("id", user.getUserId());
-            response.put("role", user.getRoles());
+            response.put("data", user);
+            response.put("logs", "retrieved user by email");
+  
             System.out.println(response);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
