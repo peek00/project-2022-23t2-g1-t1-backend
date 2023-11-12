@@ -780,15 +780,26 @@ def create_approval_requests(
         roles = combined_data['approval_role']
         # TODO: get url to view requests for particular user from env
         url = "test url"
+        print(USER_MS + "/User/getUserEmailsByRole")
+        print(roles)
+        
         # request for the emails that need to be sent to
-        recipients = requests.get(USER_MS + "/api/User/getUserEmailsByRole", 
+        recipients = requests.get(USER_MS + "/User/getUserEmailsByRole",
             headers = {
                 "userid": userid
-            }, 
-            json={
-            [combined_data['approval_role']]
+            },
+            params={
+                "roleNames": roles
             }
         )
+        print(recipients)
+        # Get data
+        recipients = recipients.json()["data"]
+        # Get email from the recipients.data
+        print(recipients)
+        
+        if len(recipients) == 0:
+            raise ValidationError("No recipients found.")
         # Japheth send email notifications here
         email = sqs.send_message(
             QueueUrl=queue_url,
@@ -796,19 +807,20 @@ def create_approval_requests(
             MessageAttributes={
                 'fromName': {
                     'DataType': 'String',
-                    'stringValue': combined_data['requestor_id']
+                    'StringValue': combined_data['requestor_id']
                 },
                 'subject': {
                     'DataType': 'String',
-                    'stringValue': f"Request Approval for {combined_data['request_type']}"
+                    'StringValue': f"Request Approval for {combined_data['request_type']}"
                 },
                 'toEmail': {
                     'DataType': 'String',
-                    'stringListValues': recipients.join(",")
+                    # 'StringValue': ",".join(recipients)
+                    'StringListValue': recipients
                 },
                 'url': {
                     'DataType': 'String',
-                    'stringValue': url
+                    'StringValue': url
                 }
             },
             MessageBody=(
@@ -826,6 +838,7 @@ def create_approval_requests(
     except ClientError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.post("/")

@@ -371,7 +371,7 @@ public class UserService {
 
 
 
-    public List<String> getUsersByRole(List<String> roleNames) {
+    public List<String> getUsersByRole(ArrayList<String> roleNames) {
         Set<String> validRoleNames = new HashSet<>();
         validRoleNames.add("Owner");
         validRoleNames.add("Engineer");

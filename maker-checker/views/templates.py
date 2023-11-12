@@ -105,12 +105,13 @@ async def get_allowed_requestors(
     """
     try:
         roles = json.loads(role)
-        if type(roles) != list:
-            raise ValueError("Role must be a list of roles.")
         role=[]
-        for r in roles:
-            # Remove starting and trailing spaces if any
-            role.append(r.strip())
+        if type(roles) != list:
+            role.append(roles.strip())
+        else:
+            for r in roles:
+                # Remove starting and trailing spaces if any
+                role.append(r.strip())
             
         print(role)
         response = template_repository.get_allowed_requestors(role)
