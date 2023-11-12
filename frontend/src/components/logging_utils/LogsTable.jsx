@@ -4,11 +4,10 @@ import { Card, Typography, Button } from "@material-tailwind/react";
 function LogsTable({ pageData}) {
   if (pageData == null) {
     return (
-      "Fuck you"
+      "Penidng"
       )
     }
     
-  console.log("Received " + pageData.length)
   return (
     <div className="ms-10">
     {pageData.length > 0 ? (
