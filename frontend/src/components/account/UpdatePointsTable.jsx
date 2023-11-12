@@ -62,7 +62,7 @@ export default function UpdatePointsTable(props) {
 
             <form className='flex bg-[#F5F5F5] ms-[20%] mt-10 rounded-2xl '>
                 <div>
-                    {/* <AvatarInfo userId={userId}/> */}
+                    <AvatarInfo userId={userId}/>
                 </div>
                 <div className='flex flex-col mt-[162px] ms-10 text-center'>
                     <div className='flex gap-4 text-center'>
