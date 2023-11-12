@@ -98,7 +98,6 @@ export default function LogsPage() {
   // useEffect(() => {
   //   console.log(prefetchData);
   // }, [prefetchData]);
-
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
     if (endData) {
