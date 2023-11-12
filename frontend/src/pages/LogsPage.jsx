@@ -2,31 +2,85 @@ import React, { useState, useEffect } from "react";
 import SideBar from "../components/common_utils/SideBar";
 import TopBar from "../components/common_utils/TopBar";
 import CustomDropdown from "../components/common_utils/CustomDropdown";
+import { Button } from "@material-tailwind/react";
 
 import LogsTable from "../components/logging_utils/LogsTable";
 import FilterButton from "../components/common_utils/FilterButton";
 import CustomSearch from "../components/common_utils/CustomSearch";
 import { queryLog, getAllLogGroups } from "@/apis/logging";
 import DateTimeSelector from "../components/common_utils/DateTimeSelector";
+import { setRef } from "@mui/material";
 
 export default function LogsPage() {
-  const pageLimit = 10;
-  const [data, setData] = useState([]);
-  const [pagination, setPagination] = useState({
-    prevPage: null,
-    currentPage: 1,
-    nextPage: null,
-  });
-  const [pageKeyLs, setPageKeyLs] = useState([]);
+  const pageLimit = 10; // Item Limit
+  const preFetchLimit = 5; // Prefetch paegs
   const [offsetId, setOffsetId] = useState(null);
   const [logGroups, setLogGroups] = useState([]);
   const [selectedLogGroup, setSelectedLogGroup] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [userId, setUserId] = useState("");
-  const [pageNumber, setPageNumber] = useState(1); // New state for page number
-  const [isLoading, setIsLoading] = useState(true);
-  const [looped, setLooped] = useState(false);
+  // const [userId, setUserId] = useState("");
+  const [data, setData] = useState([]);
+  const [endData, setEndData] = useState(false);
+  const [lastPage, setLastPage] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0); // New state for page number
+  const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
+  const [refreshSearch, setRefreshSearch] = useState(false); // New state for page number
+  const [alert, setAlert] = useState(false);
+  const [prefetchData, setPrefetchData] = useState({});
+  const updatePrefetchData = (key, value) => {
+    setPrefetchData((prevDictionary) => ({
+      ...prevDictionary,
+      [key]: value,
+    }));
+  };
+
+  const [userId, setUserId] = useState('');
+  const [defaultInput, setDefaultInput] = useState('');
+
+  const handleSearchChange = (value) => {
+    setUserId(value);
+  };
+
+  const handleResetDefaultInput = () => {
+    setDefaultInput('');
+  };
+
+  useEffect(() => {
+    makeQuery(0, preFetchLimit, null);
+    setRefreshSearch(false);
+  }, [refreshSearch]);
+
+  const onSearch = async () => {
+    // Reset
+    setLastRetrievedPage(0);
+    setLastPage(false);
+    setEndData(false);
+    setPageNumber(0);
+    setPrefetchData({});
+
+
+    if (!selectedLogGroup) {
+      setAlert(true);
+    }
+    else {
+      setAlert(false);
+      setRefreshSearch(true);
+    }
+  }
+
+  const onClear = async () => {
+    // Reset
+    setSelectedLogGroup(null);
+    setStartTime("");
+    setEndTime("");
+    // resetUserId();  
+    handleResetDefaultInput();
+  }
+
+  useEffect(() => {
+    setData(prefetchData[pageNumber]);
+  }, [pageNumber]);
 
   useEffect(() => {
     // Retrieve all loggroups
@@ -39,114 +93,88 @@ export default function LogsPage() {
       });
   }, []);
 
-  useEffect(() => {
-    // Retrieve logs
-    if (selectedLogGroup !== null) {
-      makeQuery();
-      setIsLoading(false);
+
+  // Uncomment this to check prefetch
+  // useEffect(() => {
+  //   console.log(prefetchData);
+  // }, [prefetchData]);
+
+  // Below expects first load to be 0, 5
+  const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
+    if (endData) {
+      return;
     }
-  }, [selectedLogGroup, startTime, endTime, userId, offsetId]);
-
-  useEffect(() => {
-    // Reset Pagination
-    setPageKeyLs([]);
-    setOffsetId(null);
-    setPagination({
-      prevPage: null,
-      currentPage: 1,
-      nextPage: null,
-    });
-  }, [startTime, endTime, userId]);
-
-  const makeQuery = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
+    if (remainingPages === 0) {
+      // setIsLoading(false);
+      setOffsetId(offsetId);
+      return;
+    }
     let reqParams = {
       logGroup: selectedLogGroup,
       limit: pageLimit,
+      offsetId: offsetId,
+      ...(startTime !== null && startTime !== undefined && { startTime }),
+      ...(endTime !== null && endTime !== undefined && { endTime }),
+      ...(userId !== null && userId !== undefined && { userId }),
     };
-    if (startTime !== "") {
-      reqParams.startTime = startTime;
+    try {
+      const response = await queryLog(reqParams);
+      const data = response.data;
+      if (response.nextPageKey == null) {
+        updatePrefetchData(pageNumberToSave, data); // Idk why man
+        setLastRetrievedPage(lastRetrievedPage + 1);
+        setEndData(true);
+      } else {
+        // Update the dictionary with the current page number
+        const offsetId = response.nextPageKey;
+        updatePrefetchData(pageNumberToSave, data);
+        setLastRetrievedPage(lastRetrievedPage + 1);
+        // Make a recursive call for the next page
+        await makeQuery(pageNumberToSave + 1, remainingPages - 1, offsetId);
+      }
+    } catch (error) {
+      console.log(error);
     }
-    if (endTime !== "") {
-      reqParams.endTime = endTime;
-    }
-    if (userId !== "") {
-      reqParams.userId = userId;
-    }
-    if (offsetId !== null) {
-      reqParams.offsetId = offsetId;
-    }
-    queryLog(reqParams)
-      .then((d) => {
-        const data = d.data;
-        const nextKey = d.nextPageKey;
-        setData(data);
-        setPagination((prev) => ({
-          prevPage: prev.currentPage === 1 ? null : prev.currentPage - 1,
-          currentPage: prev.currentPage,
-          nextPage: nextKey,
-        }));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const goBack = () => {
-    if (pagination.prevPage !== null) {
-      setPageKeyLs([...pageKeyLs, offsetId]);
-      setOffsetId(pagination.prevPage);
-      setPagination((prev) => ({
-        prevPage: prev.prevPage === 1 ? null : prev.prevPage - 1,
-        currentPage: prev.prevPage,
-        nextPage: prev.currentPage,
-      }));
-      setPageNumber(pageNumber - 1); // Update the page number
-    } else {
-      setOffsetId(null);
-      setPagination({
-        prevPage: null,
-        currentPage: 1,
-        nextPage: pagination.currentPage + 1,
-      });
-      setPageNumber(1); // Reset the page number to 1
+    if (pageNumber != 0) {
+      setPageNumber((prevPageNumber) => prevPageNumber - 1);
+      setLastPage(false);
     }
   };
 
-  const goForward = () => {
-    if (pagination.nextPage !== null) {
-      setPageKeyLs([...pageKeyLs, offsetId]);
-      setOffsetId(pagination.nextPage);
-      setPagination((prev) => ({
-        prevPage: prev.currentPage,
-        currentPage: prev.nextPage,
-        nextPage: null,
-      }));
-      setPageNumber(pageNumber + 1); // Update the page number
-      setLooped(false);
+  const goForward = async () => {
+    // Stop from going
+    if (
+      !(pageNumber + 1 in prefetchData) ||
+      prefetchData[pageNumber].length < pageLimit
+    ) {
+      setLastPage(true);
     } else {
-      setOffsetId(null);
-      setPagination({
-        prevPage: pagination.currentPage,
-        currentPage: pagination.nextPage || 1,
-        nextPage: null,
-      });
-      setPageNumber(pagination.nextPage || 1); // Update the page number
-      setLooped(true);
+      const nextPage = pageNumber + 1;
+      setPageNumber(nextPage);
+      try {
+        if (lastRetrievedPage - pageNumber <= 2) {
+          await makeQuery(lastRetrievedPage + 1, preFetchLimit, offsetId);
+        }
+      } catch (error) {
+        console.error("Error in goForward:", error);
+      }
     }
   };
 
-  const resetUserId = () => {
-    setUserId("");
-  };
-
+  // const resetUserId = () => {
+  //   setUserId("");
+  // };
 
   return (
     <div className="flex min-h-screen ">
-        <SideBar />
-        {/* <TopBar /> */}
-      <div className="w-4/5 ms-[20%]">
-        <div className="flex justify-start mt-24 mb-6 ms-10">
+      <SideBar />
+      {/* <TopBar /> */}
+      <div className="w-4/5 ms-[10%] ">
+        <div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12">
           <CustomDropdown
             label="Log Group"
             id="log-group"
@@ -167,37 +195,65 @@ export default function LogsPage() {
             minDateTime={startTime ? startTime : null}
           />
           <CustomSearch
-            label="User ID"
-            id="user-id"
-            placeholder="Search By UserID"
-            defaultInput={userId}
-            setSearch={setUserId}
-            resetDefaultInput={resetUserId}
+            label="Search"
+            placeholder="Type your search here"
+            defaultInput={defaultInput}
+            setSearch={handleSearchChange}
+            resetDefaultInput={handleResetDefaultInput}
+          />
+
+          <button
+            className="px-5 ms-4 ml-0  text-white bg-[#1C2434] rounded-md small-button h-9 mt-6"
+            onClick={onSearch}
+          >
+            Search
+          </button>
+          <button
+            className="px-5 mt-6 ml-0 text-white bg-red-800 rounded-md ms-4 small-button h-9"
+            onClick={onClear}
+          >
+            Clear
+          </button>
+        </div>
+        <div className="mt-28 ms-10">
+          {alert && (
+            <div className="inline-block px-5 py-5 mb-5 text-red-800 bg-red-200 border border-red-800">
+              Log group must be specified!
+            </div>
+          )}
+          <p className="text-2xl font-thin">Showing logs for: <span className="font-bold blue-gray-500">{selectedLogGroup}</span>  </p>
+        </div>
+        <div className="mt-12">
+          <LogsTable
+            pageData={prefetchData[pageNumber]}
+            pageNumber={pageNumber}
           />
         </div>
-        {isLoading ? (
-          <div className="flex justify-center">
-            <div className="loader"></div>
-          </div>
-        ) : (
-          <>
-          {looped && (
-            <div className="inline-block px-5 py-5 mb-5 text-green-800 bg-green-200 border border-green-800 ms-10">
-              You&apos;ve looped back to the first page!
-            </div>
+        {/* <div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12"> */}
 
-          )}
-          
-          <LogsTable
-            pageData={data}
-            prevPage={pagination.prevPage}
-            nextPage={pagination.nextPage}
-            goBack={goBack}
-            goForward={goForward}
-            pageNumber={pageNumber}
-            />
-          </>
-        )}
+        <div className="z-50 fixed mt-5 text-center left-[45%] ">
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={goBack}
+            className={`me-5 ${pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            disabled={pageNumber === 0}
+          >
+            Previous
+          </Button>
+          {pageNumber + 1}
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={goForward}
+            className={`mx-5 ${lastPage ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            disabled={lastPage}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
