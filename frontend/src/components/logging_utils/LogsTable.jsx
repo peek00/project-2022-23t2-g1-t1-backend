@@ -4,7 +4,9 @@ import { Card, Typography, Button } from "@material-tailwind/react";
 function LogsTable({ pageData}) {
   if (pageData == null) {
     return (
-      "Penidng"
+      <div className="grid text-2xl text-center text-gray-300 place-items-center" style={{ height: "500px" }}>
+        No logs available.
+      </div>
       )
     }
     

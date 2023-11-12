@@ -51,10 +51,9 @@ export default function LogsPage() {
   }, []);
 
 
-  
+
   useEffect(() => {
     // Retrieve logs
-    console.log("Why u running bro")
     if (selectedLogGroup !== null) {
       makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
       // setIsLoading(false);
@@ -86,9 +85,7 @@ export default function LogsPage() {
     try {
       const response = await queryLog(reqParams);
       const data = response.data;
-      // console.log("Should start at 0 " + pageNumberToSave)
       if (response.nextPageKey == null) {
-        console.log(" End of the line bud")
         updatePrefetchData(pageNumberToSave, data); // Idk why man
         setLastRetrievedPage(lastRetrievedPage + 1);
         setEndData(true);
@@ -102,7 +99,6 @@ export default function LogsPage() {
       }
     } catch (error) {
       console.log(error);
-      // setIsLoading(false);
     }
   };
 
@@ -142,8 +138,8 @@ export default function LogsPage() {
     <div className="flex min-h-screen ">
       <SideBar />
       {/* <TopBar /> */}
-      <div className="w-4/5 ms-[20%]">
-        <div className="flex justify-start mt-24 mb-6 ms-10">
+      <div className="w-4/5 ms-[10%] ">
+<div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12">
           <CustomDropdown
             label="Log Group"
             id="log-group"
@@ -171,39 +167,37 @@ export default function LogsPage() {
             setSearch={setUserId}
             resetDefaultInput={resetUserId}
           />
-          {pageNumber}
         </div>
-        {isLoading ? (
-          <div className="flex justify-center">
-            <div className="loader"></div>
-          </div>
-        ) : (
-          <>
-            <LogsTable
-              pageData={prefetchData[pageNumber]}
-              pageNumber={pageNumber}
-            />
-          </>
-        )}
-        <Button
-          variant="outlined"
-          size="sm"
-          onClick={goBack}
-          className={pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""}
-          disabled={pageNumber === 0}
-        >
-          Previous
-        </Button>
-        {pageNumber + 1}
-        <Button
-          variant="outlined"
-          size="sm"
-          onClick={goForward}
-          className={lastPage ? "opacity-50 cursor-not-allowed" : ""}
-          disabled={lastPage}
-        >
-          Next
-        </Button>
+        <div className="mt-48">
+          <LogsTable
+            pageData={prefetchData[pageNumber]}
+            pageNumber={pageNumber}
+          />
+        </div>
+        {/* <div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12"> */}
+
+        <div className="z-50 fixed mt-5 text-center left-[45%] ">
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={goBack}
+            className={`me-5 ${pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={pageNumber === 0}
+          >
+            Previous
+          </Button>
+          {pageNumber + 1}
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={goForward}
+            className={`mx-5 ${lastPage? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={lastPage}
+          >
+            Next
+          </Button>
+
+        </div>
       </div>
     </div>
   );
