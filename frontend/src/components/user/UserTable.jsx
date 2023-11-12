@@ -6,6 +6,8 @@ import MenuDefault from '../common_utils/MenuDefault';
 export default function UserTable() {
   const [users, setUsers] = useState([]);
   const [role, setRole] = useState(null);
+  const [email,setEmail] = useState('');
+  const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const nextPage = useRef(null);
   const previousPage = useRef([]);
@@ -24,15 +26,37 @@ export default function UserTable() {
       console.log('Stack is empty');
       return;
     }
-
     previousPage.current = previousPage.current.slice(0, -1);
   };
 
-  
+  const resetPage = () => {
+    setCurrentPage(1);
+    previousPage.current = [];
+    nextPage.current = null;
+    lastEvaluatedKey.current = null;
+    viewAdmin.current = null;
+    setViewUserFinished(false);
+    hasNext.current = true;
+    viewUser();
+  };
+
+  const startSearch = () => {
+    setSearch(email);
+  };
+
+  const resetSearch = () => {
+    setSearch('');
+    setEmail('');
+  };
+
+  useEffect(() => {
+    resetPage();
+  }, [search]);
+
+
 
   useEffect(() => {
     viewUser();
-    
     // Fetch the role from localStorage or an API here
     const storedRole = JSON.parse(localStorage.getItem('permissions'));
     console.log(storedRole);
@@ -71,7 +95,7 @@ export default function UserTable() {
       let response;
       if (lastEvaluatedKey.current === null) {
         response = await axios.get(
-          API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}` ,
+          API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}&email=${email}` ,
           {
             withCredentials: true,
           }
@@ -145,6 +169,16 @@ export default function UserTable() {
 
   return (
     <div className="relative overflow-x-auto mb-[100px]">
+      
+      <div className="flex justify-between p-4">
+        <div className="flex items-center justify-center w-full">
+          <label className="mr-4 text-gray-700">Search by email</label>
+          <input type="text" className="w-1/2 px-4 py-2 mr-4 text-gray-700 bg-gray-200 rounded-lg focus:outline-none focus:bg-white focus:shadow-outline" placeholder="Search" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <button className="px-4 py-2 text-white bg-blue-500 rounded-lg" onClick={(e)=> {startSearch()}}>Search</button>
+          <button className="px-4 py-2 text-white bg-red-500 rounded-lg" onClick={(e)=> {resetSearch()}}>Clear</button>
+        </div>
+      </div>
+
       <table className="w-full text-sm text-left bg-[#F5F5F5]">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">

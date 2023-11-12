@@ -254,13 +254,22 @@ public class UserService {
     }
 
 
-    public Map<String, Object> getAllUsersPaged(Set<String> validRoleNames, String lastEvaluatedKey) {
+    public Map<String, Object> getAllUsersPaged(Set<String> validRoleNames, String lastEvaluatedKey, String email) {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         ArrayList<User> users = new ArrayList<>();
         ItemCollection<ScanOutcome> items = null;
         String newLastEvaluatedKey = null;
         Map<String, Object> result = new HashMap<>();
         ScanSpec spec = new ScanSpec();
+
+        if (email.contains("@")) {
+            User user = getUserByEmail(email);
+            users.add(user);
+            result.put("users", users.toArray(new User[users.size()]));
+            result.put("newLastEvaluatedKey", newLastEvaluatedKey);
+            result.put("next", users.size() < 50);
+            return result;
+        }
 
         if (table != null) {
             try {
