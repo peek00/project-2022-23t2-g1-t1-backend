@@ -2,67 +2,29 @@ import {
   Link,
   IconButton,
 } from "@material-tailwind/react";
-import { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import EditAccount from "./EditAccount.jsx";
-import {API_BASE_URL} from "@/config/config";
-import { getAllUserAccountsByCompanyId } from '../../apis/points';
 
+function NextIcon() {
+  return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M10 20A10 10 0 1 0 0 10a10 10 0 0 0 10 10zM8.711 4.3l5.7 5.766L8.7 15.711l-1.4-1.422 4.289-4.242-4.3-4.347z"/></svg>
+  );
+}
 
-export default function UserAccountTable({ companyId }){
-    const [accounts, setAccounts] = useState([]);
-    // console.log(companyId);
-    // company and points
+export default function UserAccountTable(props){
+    const { accounts, companyId } = props;
+    console.log("Table rendering")
 
-    useEffect(() => {
-        getAllUserAccountsByCompanyId(companyId)
-          .then(async (results) => {
-            const accountsData = results.data;
-            // console.log(accountsData);
-            // Fetch additional data for each account
-            const accountsWithAdditionalData = await Promise.all(
-              accountsData.map(async (account) => {
-                try {
-                  const response = await axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + account["user_id"], {
-                    withCredentials: true
-                  });
-                  // const response = await axios.get("http://localhost:8080/User/getUser?userID=" + account["user_id"]);
-                  // Merge the additional data with the account data
-                  return {...account, userData: response.data.data };
-                } catch (error) {
-                  console.error('Error fetching user data:', error);
-                  return account; // Return the original account if the request fails
-                }
-              })
-            );
-            const newdata = accountsWithAdditionalData;
-            console.log(newdata);
-            setAccounts(newdata);
-            // console.log(accountsData)
-            // setAccounts(accountsData)
-          })
-          .catch((error) => {
-            console.error('Error fetching accounts:', error);
-          });
-        // .then((results) => {
-        //   console.log(results.data);
-        //   setAccounts(results.data);
-        // })
-        // .catch((err) => {
-        //   return err;
-        // })
-        // console.log(accounts);
-      }, []);
-      useEffect(() => {
-        console.log('Accounts updated:', accounts);
-      }, [accounts]);
     return (
       <div className="relative overflow-x-auto w-[85%] mb-[100px]">
         <table className="w-full text-sm text-left bg-[#F5F5F5]">
           <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
             <tr className="border-b-2 border-[#A4A4A4]">
                 <th scope="col" className="px-6 py-3">
-                    User Name
+                    First Name
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    Last Name
                 </th>
                 <th scope="col" className="px-6 py-3">
                     Email
@@ -72,26 +34,27 @@ export default function UserAccountTable({ companyId }){
                 </th>
             </tr>
           </thead>
-          <tbody>
-            {accounts.length && Array.isArray(accounts) && accounts.map((account) => (
-              <tr
-                key={account.id}
-                className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
-              >
-                <td className="px-20 py-4">{account.userData.fullName}</td>
-                <td className="px-20 py-4">{account.userData.email}</td>
-                <td className="px-6 py-4">{account.balance}</td>               
-                <td>
-                  <Link to={`/user/account/company/${companyId}/${account['user_id']}/editPoints`}>
-                    <IconButton variant="text" color="blue-gray">
-                      <NextIcon />
-                    </IconButton>
-                  </Link>
-                {/* <EditAccount companyId={account.company_id} pointsId ={account.user_id} points={account.balance} /> */}
-                </td>
+          {accounts.length > 0 ? (
+            <tbody>
+              {accounts.map((account) => (
+                <tr
+                  key={account.id}
+                  className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <td className="px-6 py-4">{account.userData.firstName}</td>
+                  <td className="px-6 py-4">{account.userData.lastName}</td>
+                  <td className="px-6 py-4">{account.userData.email}</td>
+                  <td className="px-6 py-4">{account.balance}</td>
+                  
+                </tr>
+              ))}
+            </tbody>
+          ) : (
+            <tbody>
+              <tr>
+                <td colSpan="4">No accounts available</td>
               </tr>
-            ))}
-          </tbody>
+            </tbody>)}
         </table>
       </div>
     );

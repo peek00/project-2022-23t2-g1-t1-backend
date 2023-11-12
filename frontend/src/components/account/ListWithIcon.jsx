@@ -31,9 +31,10 @@ export default function ListWithIcon(props) {
             <ListItem key={index} ripple={false} className="py-1 pr-1 pl-4">
             <b>{item.toUpperCase()}</b>
               <ListItemSuffix>
-                <Link to={`/user/account/company/${item}`}><IconButton variant="text" color="blue-gray">
-                  <NextIcon />
-                </IconButton>
+                <Link to={`/user/account/company/${item}`}>
+                  <IconButton variant="text" color="blue-gray">
+                    <NextIcon />
+                  </IconButton>
                 </Link>
               </ListItemSuffix>
             </ListItem>
