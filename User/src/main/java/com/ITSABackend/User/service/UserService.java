@@ -233,7 +233,7 @@ public class UserService {
                 }
 
                 items.forEach(item -> {
-                    System.out.println(item);
+                    // System.out.println(item);
                     User user = new User();
                     user.setUserId(item.getString("userID"));
                     user.setEmail(item.getString("email"));
@@ -387,13 +387,19 @@ public class UserService {
         User[] usersArray = getAllUsers(validRoleNames);
         List<User> users = Arrays.asList(usersArray);
 
+        System.out.println(roleNames.get(0));
+        System.out.println(usersArray);
+        System.out.println(users.get(0).getEmail());
+
         // Filter users by roleName in userRole array
         List<String> filteredEmails = users.stream()
             .filter(user -> user.getRoles().stream().anyMatch(roleNames::contains))
             .map(User::getEmail)
             .collect(Collectors.toList());
-
+        
+        System.out.println("Hi");
         return filteredEmails;
+        
     }
 
     // public List<String> getUserEmailsByUserIDsFromCompany(String companyID, List<String> userIDs) {
