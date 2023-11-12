@@ -67,13 +67,13 @@ export default function CompanyGatewayPage(props) {
         {/* <TopBar /> */}
 
       {/* Content Area */}
-      <div className="w-4/5 min-h-screen overflow-y-auto">
-        <img
+      <div className="w-4/5 ms-[10%] min-h-screen overflow-y-auto">
+        {/* <img
           src="/arrow.png" // Replace with the actual image URL
           alt="Go Back"
           onClick={goBack}
           style={{ cursor: 'pointer' }} className='absolute mt-[10%] left-[30%] w-[2%]'
-        />
+        /> */}
       
         <div className="min-h-screen overflow-y-auto">
           <div className='flex w-[100%] absolute top-[10%]'>  
