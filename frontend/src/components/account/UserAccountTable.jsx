@@ -1,3 +1,7 @@
+import {
+  Link,
+  IconButton,
+} from "@material-tailwind/react";
 import { useEffect, useState,useContext } from "react";
 import axios from "axios";
 import EditAccount from "./EditAccount.jsx";
@@ -19,7 +23,7 @@ export default function UserAccountTable({ companyId }){
             const accountsWithAdditionalData = await Promise.all(
               accountsData.map(async (account) => {
                 try {
-                  const response = await axios.get(API_BASE_URL + `/api/User/getUser?userID=` + account["user_id"], {
+                  const response = await axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + account["user_id"], {
                     withCredentials: true
                   });
                   // const response = await axios.get("http://localhost:8080/User/getUser?userID=" + account["user_id"]);
@@ -78,13 +82,11 @@ export default function UserAccountTable({ companyId }){
                 <td className="px-20 py-4">{account.userData.email}</td>
                 <td className="px-6 py-4">{account.balance}</td>               
                 <td>
-                <ListItemSuffix>
                   <Link to={`/user/account/company/${companyId}/${account['user_id']}/editPoints`}>
                     <IconButton variant="text" color="blue-gray">
                       <NextIcon />
                     </IconButton>
                   </Link>
-                </ListItemSuffix>
                 {/* <EditAccount companyId={account.company_id} pointsId ={account.user_id} points={account.balance} /> */}
                 </td>
               </tr>

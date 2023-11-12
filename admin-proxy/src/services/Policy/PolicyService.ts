@@ -30,7 +30,7 @@ export class PolicyService {
     return PolicyService.instance;
   }
 
-  public static async initialize(restart:boolean = false): Promise<void> {
+  public static async initialize(restart:boolean = true): Promise<void> {
     const policyService = PolicyService.getInstance();
     if (restart) {
       await PolicyService.tearDown();
@@ -209,6 +209,13 @@ export class PolicyService {
       pageMap[ms] = permissions;
     }));
     return pageMap;
+  }
+
+  public userOnlyPolicyValidation(userId: string, userIdClaim:string): boolean {
+    if (userId === userIdClaim) {
+      return true;
+    }
+    return false;
   }
 
 }
