@@ -8,11 +8,27 @@ export default function UserTable() {
   const [role, setRole] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const nextPage = useRef(null);
-  const previousPage = useRef(null);
+  const previousPage = useRef([]);
   const lastEvaluatedKey = useRef(null);
   const viewAdmin = useRef(null);
   const [viewUserFinished, setViewUserFinished] = useState(false);
   const hasNext = useRef(true);
+
+  const pushToStack = (item) => {
+    previousPage.current = [...previousPage.current, item];
+  };
+
+  // Function to pop the top item from the stack
+  const popFromStack = () => {
+    if (previousPage.current.length === 0) {
+      console.log('Stack is empty');
+      return;
+    }
+
+    previousPage.current = previousPage.current.slice(0, -1);
+  };
+
+  
 
   useEffect(() => {
     viewUser();
@@ -81,14 +97,15 @@ export default function UserTable() {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
-      setUsers(previousPage.current);
+      setUsers(previousPage.current.pop());
     }
     
   };
 
   const handleNextPage = () => {
-    previousPage.current = users;
+    
     if(lastEvaluatedKey.current != null){
+      pushToStack(users);
     setCurrentPage((prevPage) => prevPage + 1);
     setUsers(nextPage.current);
   }
