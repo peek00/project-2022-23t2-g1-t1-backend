@@ -19,21 +19,31 @@ export default function LogsPage() {
   const [selectedLogGroup, setSelectedLogGroup] = useState(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [userId, setUserId] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  // const [userId, setUserId] = useState("");
   const [data, setData] = useState([]);
   const [endData, setEndData] = useState(false);
   const [lastPage, setLastPage] = useState(false);
   const [pageNumber, setPageNumber] = useState(0); // New state for page number
   const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
   const [refreshSearch, setRefreshSearch] = useState(false); // New state for page number
-
+  const [alert, setAlert] = useState(false);
   const [prefetchData, setPrefetchData] = useState({});
   const updatePrefetchData = (key, value) => {
     setPrefetchData((prevDictionary) => ({
       ...prevDictionary,
       [key]: value,
     }));
+  };
+
+  const [userId, setUserId] = useState('');
+  const [defaultInput, setDefaultInput] = useState('');
+
+  const handleSearchChange = (value) => {
+    setUserId(value);
+  };
+
+  const handleResetDefaultInput = () => {
+    setDefaultInput('');
   };
 
   useEffect(() => {
@@ -48,13 +58,28 @@ export default function LogsPage() {
     setEndData(false);
     setPageNumber(0);
     setPrefetchData({});
-    // console.log(selectedLogGroup, lastPage, lastRetrievedPage, pageNumber, prefetchData)
-    // makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
-    setRefreshSearch(true);
+
+
+    if (!selectedLogGroup) {
+      setAlert(true);
+      console.log("Log Group not specified. Please specify a log group.");
+    }
+    else {
+      setAlert(false);
+      setRefreshSearch(true);
+    }
+  }
+
+  const onClear = async () => {
+    // Reset
+    setSelectedLogGroup(null);
+    setStartTime("");
+    setEndTime("");
+    // resetUserId();  
+    handleResetDefaultInput();
   }
 
   useEffect(() => {
-    // console.log(prefetchData)
     setData(prefetchData[pageNumber]);
   }, [pageNumber]);
 
@@ -69,24 +94,14 @@ export default function LogsPage() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Refresh sohuld happens!");
-  //   // console.log(selectedLogGroup, lastPage, lastRetrievedPage, pageNumber, prefetchData)
-  //   // Retrieve logs
-  //   if (selectedLogGroup !== null) {
-  //     makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
-  //     // setIsLoading(false);
-  //   }
-  // }, [selectedLogGroup, startTime, endTime, userId]);
 
   // Uncomment this to check prefetch
-  useEffect(() => {
-    console.log(prefetchData);
-  }, [prefetchData]);
+  // useEffect(() => {
+  //   console.log(prefetchData);
+  // }, [prefetchData]);
 
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
-    console.log("Making query");
     if (endData) {
       return;
     }
@@ -100,8 +115,10 @@ export default function LogsPage() {
       logGroup: selectedLogGroup,
       limit: pageLimit,
       offsetId: offsetId,
+      ...(startTime !== null && startTime !== undefined && { startTime }),
+      ...(endTime !== null && endTime !== undefined && { endTime }),
+      ...(userId !== null && userId !== undefined && { userId }),
     };
-
     try {
       const response = await queryLog(reqParams);
       const data = response.data;
@@ -131,11 +148,6 @@ export default function LogsPage() {
 
   const goForward = async () => {
     // Stop from going
-    console.log(
-      lastRetrievedPage,
-      pageNumber,
-      lastRetrievedPage - pageNumber <= 2
-    );
     if (
       !(pageNumber + 1 in prefetchData) ||
       prefetchData[pageNumber].length < pageLimit
@@ -154,9 +166,9 @@ export default function LogsPage() {
     }
   };
 
-  const resetUserId = () => {
-    setUserId("");
-  };
+  // const resetUserId = () => {
+  //   setUserId("");
+  // };
 
   return (
     <div className="flex min-h-screen ">
@@ -184,30 +196,35 @@ export default function LogsPage() {
             minDateTime={startTime ? startTime : null}
           />
           <CustomSearch
-            label="User ID"
-            id="user-id"
-            placeholder="Search By UserID"
-            defaultInput={userId}
-            setSearch={setUserId}
-            resetDefaultInput={resetUserId}
+            label="Search"
+            placeholder="Type your search here"
+            defaultInput={defaultInput}
+            setSearch={handleSearchChange}
+            resetDefaultInput={handleResetDefaultInput}
           />
+
           <button
-            className="px-3 py-2 mx-5 ml-0 text-white bg-blue-500 rounded-md"
+            className="px-5 ms-4 ml-0  text-white bg-[#1C2434] rounded-md small-button h-9 mt-6"
             onClick={onSearch}
           >
             Search
           </button>
-          {/* <button
-            className="px-3 py-2 mx-5 ml-0 text-white bg-red-500 rounded-md"
-            onClick={() => {
-              resetDefaultInput();
-              setSearch(null);
-            }}
+          <button
+            className="px-5 mt-6 ml-0 text-white bg-red-800 rounded-md ms-4 small-button h-9"
+            onClick={onClear}
           >
             Clear
-          </button> */}
+          </button>
         </div>
-        <div className="mt-48">
+        <div className="mt-28 ms-10">
+          {alert && (
+            <div className="inline-block px-5 py-5 mb-5 text-red-800 bg-red-200 border border-red-800">
+              Log group must be specified!
+            </div>
+          )}
+          <p className="text-2xl font-thin">Showing logs for: <span className="font-bold blue-gray-500">{selectedLogGroup}</span>  </p>
+        </div>
+        <div className="mt-12">
           <LogsTable
             pageData={prefetchData[pageNumber]}
             pageNumber={pageNumber}
@@ -220,9 +237,8 @@ export default function LogsPage() {
             variant="outlined"
             size="sm"
             onClick={goBack}
-            className={`me-5 ${
-              pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`me-5 ${pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             disabled={pageNumber === 0}
           >
             Previous
@@ -232,9 +248,8 @@ export default function LogsPage() {
             variant="outlined"
             size="sm"
             onClick={goForward}
-            className={`mx-5 ${
-              lastPage ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`mx-5 ${lastPage ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             disabled={lastPage}
           >
             Next
