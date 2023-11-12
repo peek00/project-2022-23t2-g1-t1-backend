@@ -42,7 +42,7 @@ export default function UserAccountTable(props){
                   <td className="px-6 py-4">{account.userData.lastName}</td>
                   <td className="px-6 py-4">{account.userData.email}</td>
                   <td className="px-6 py-4">{account.balance}</td>
-                  <Link to={`/user/account/company/${companyId}/${userData.id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
+                  <Link to={`/user/account/company/${companyId}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
                 </tr>
               ))}
             </tbody>
