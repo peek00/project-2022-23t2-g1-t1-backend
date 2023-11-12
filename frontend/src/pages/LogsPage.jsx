@@ -11,8 +11,8 @@ import { queryLog, getAllLogGroups } from "@/apis/logging";
 import DateTimeSelector from "../components/common_utils/DateTimeSelector";
 
 export default function LogsPage() {
-  const pageLimit = 5;
-  const preFetchLimit = 5;
+  const pageLimit = 10; // Item Limit
+  const preFetchLimit = 5; // Prefetch paegs
   const [offsetId, setOffsetId] = useState(null);
   const [logGroups, setLogGroups] = useState([]);
   const [selectedLogGroup, setSelectedLogGroup] = useState(null);
@@ -20,27 +20,28 @@ export default function LogsPage() {
   const [endTime, setEndTime] = useState("");
   const [userId, setUserId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [looped, setLooped] = useState(false);
   const [data, setData] = useState([]);
   const [endData, setEndData] = useState(false);
   const [lastPage, setLastPage] = useState(false);
-  
+  const [pageNumber, setPageNumber] = useState(0); // New state for page number
+  const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
+
   const [prefetchData, setPrefetchData] = useState({});
   const updatePrefetchData = (key, value) => {
-    // console.log("Saving data to page number " + key + " " + value.length)
     setPrefetchData((prevDictionary) => ({
       ...prevDictionary,
       [key]: value,
     }));
   };
-  const [pageNumber, setPageNumber] = useState(0); // New state for page number
-  const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
-  
+
   useEffect(() => {
-    console.log(prefetchData)
+    // console.log(prefetchData)
     setData(prefetchData[pageNumber]);
-    console.log("Data set for page " + pageNumber + " " + prefetchData[pageNumber])
-  }, [pageNumber, prefetchData]);
+
+    console.log(
+      "Data set for page " + pageNumber + " " + prefetchData[pageNumber]
+    );
+  }, [pageNumber]);
 
   useEffect(() => {
     // Retrieve all loggroups
@@ -53,27 +54,28 @@ export default function LogsPage() {
       });
   }, []);
 
+
+  
   useEffect(() => {
     // Retrieve logs
+    console.log("Why u running bro")
     if (selectedLogGroup !== null) {
-      makeQuery(lastRetrievedPage, preFetchLimit, null);
+      makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
       setIsLoading(false);
     }
-  }, [selectedLogGroup]);
+  }, [selectedLogGroup, startTime, endTime, userId]);
 
   // Uncomment this to check prefetch
-  // useEffect(() => {
-  //   console.log("Checking prefetch of " + pageNumber + " " + preFetchLimit)
-  //   console.log(prefetchData)
-  // },[prefetchData]);
+  useEffect(() => {
+    console.log(prefetchData)
+  }, [prefetchData]);
 
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
     if (endData) {
-      return
+      return;
     }
     // setIsLoading(true);
-    console.log(pageNumberToSave)
     if (remainingPages === 0) {
       setIsLoading(false);
       setOffsetId(offsetId);
@@ -84,21 +86,21 @@ export default function LogsPage() {
       limit: pageLimit,
       offsetId: offsetId,
     };
-  
+
     try {
       const response = await queryLog(reqParams);
       const data = response.data;
       // console.log("Should start at 0 " + pageNumberToSave)
-      if  (response.nextPageKey == null) {
-        // console.log(" End of the line bud")
+      if (response.nextPageKey == null) {
+        console.log(" End of the line bud")
         updatePrefetchData(pageNumberToSave, data);
-        setLastRetrievedPage((prevPage) => prevPage + 1);
+        setLastRetrievedPage(lastRetrievedPage + 1);
         setEndData(true);
       } else {
         // Update the dictionary with the current page number
         const offsetId = response.nextPageKey;
         updatePrefetchData(pageNumberToSave, data);
-        setLastRetrievedPage((prevPage) => prevPage + 1);
+        setLastRetrievedPage(lastRetrievedPage + 1);
         // Make a recursive call for the next page
         await makeQuery(pageNumberToSave + 1, remainingPages - 1, offsetId);
       }
@@ -107,7 +109,6 @@ export default function LogsPage() {
       setIsLoading(false);
     }
   };
-
 
   const goBack = () => {
     if (pageNumber != 0) {
@@ -118,24 +119,24 @@ export default function LogsPage() {
 
   const goForward = async () => {
     // Stop from going
-    if (!(pageNumber+1 in prefetchData) || prefetchData[pageNumber+1].length < pageLimit) {
+    console.log(lastRetrievedPage, pageNumber, lastRetrievedPage - pageNumber <= 2)
+    if (
+      !(pageNumber + 1 in prefetchData) ||
+      prefetchData[pageNumber].length < pageLimit
+    ) {
       setLastPage(true);
     } else {
-
       const nextPage = pageNumber + 1;
       setPageNumber(nextPage);
       try {
-        
         if (lastRetrievedPage - pageNumber <= 2) {
-          await makeQuery(nextPage + 1, preFetchLimit, offsetId)
+          await makeQuery(lastRetrievedPage + 1, preFetchLimit, offsetId);
         }
       } catch (error) {
         console.error("Error in goForward:", error);
       }
     }
   };
-  
-
 
   const resetUserId = () => {
     setUserId("");
@@ -143,8 +144,8 @@ export default function LogsPage() {
 
   return (
     <div className="flex min-h-screen ">
-        <SideBar />
-        {/* <TopBar /> */}
+      <SideBar />
+      {/* <TopBar /> */}
       <div className="w-4/5 ms-[20%]">
         <div className="flex justify-start mt-24 mb-6 ms-10">
           <CustomDropdown
@@ -182,16 +183,9 @@ export default function LogsPage() {
           </div>
         ) : (
           <>
-          {looped && (
-            <div className="inline-block px-5 py-5 mb-5 text-green-800 bg-green-200 border border-green-800 ms-10">
-              You&apos;ve looped back to the first page!
-            </div>
-
-          )}
-          
-          <LogsTable
-            pageData={prefetchData[pageNumber]}
-            pageNumber={pageNumber}
+            <LogsTable
+              pageData={prefetchData[pageNumber]}
+              pageNumber={pageNumber}
             />
           </>
         )}
@@ -199,19 +193,19 @@ export default function LogsPage() {
           variant="outlined"
           size="sm"
           onClick={goBack}
-          className={pageNumber === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+          className={pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""}
           disabled={pageNumber === 0}
         >
           Previous
         </Button>
-        {pageNumber+1}
-        <Button 
-          variant="outlined" 
-          size="sm" 
+        {pageNumber + 1}
+        <Button
+          variant="outlined"
+          size="sm"
           onClick={goForward}
-          className={lastPage ? 'opacity-50 cursor-not-allowed' : ''}
+          className={lastPage ? "opacity-50 cursor-not-allowed" : ""}
           disabled={lastPage}
-          >
+        >
           Next
         </Button>
       </div>
