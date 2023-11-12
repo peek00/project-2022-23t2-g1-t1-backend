@@ -1,15 +1,16 @@
 
 import axios from "axios";
-import EditAccount from "./EditAccount.jsx";
+
 import { Button } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../context/userContext.jsx";
 import { useParams } from "react-router-dom";
 
 export default function UserAccountTable(props){
-    const { accounts, companyId } = props;
+    const { accounts } = props;
     const { userData, updateUserData } = useUserContext();
-    const { companyid } = useParams();
+    console.log(userData);
+   
     console.log("Table rendering")
 
     return (
@@ -29,20 +30,28 @@ export default function UserAccountTable(props){
                 <th scope="col" className="px-6 py-3">
                     Points
                 </th>
+                <th scope="col" className="px-6 py-3">
+                    Company Name
+                </th>
             </tr>
           </thead>
           {accounts.length > 0 ? (
             <tbody>
               {accounts.map((account) => (
+                console.log(account),
                 <tr
                   key={account.id}
                   className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <td className="px-6 py-4">{account.userData.firstName}</td>
-                  <td className="px-6 py-4">{account.userData.lastName}</td>
-                  <td className="px-6 py-4">{account.userData.email}</td>
+                  <td className="px-6 py-4">{userData.firstName}</td>
+                  <td className="px-6 py-4">{userData.lastName}</td>
+                  <td className="px-6 py-4">{userData.email}</td>
                   <td className="px-6 py-4">{account.balance}</td>
-                  <Link to={`/user/account/company/${companyId}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
+
+                  <td className="px-6 py-4">{account.company_id}</td>
+
+                  <Link to={`/user/account/${account.company_id}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
+
                 </tr>
               ))}
             </tbody>

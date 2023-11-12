@@ -92,42 +92,6 @@ class dbtableconfig {
       console.error("Error occurred while populating points table from JSON file:", e.message);
     }
   
-    // const chunks = [];
-    // for (let i = 0; i < this.baseData.length; i += 25) {
-    //   chunks.push(this.baseData.slice(i, i + 25));
-    // }
-    // console.log(chunks);
-    // Process each chunk
-    // for (const chunk of chunks) {
-    //   const putRequests = chunk.map(item => ({
-    //     PutRequest: {
-    //       Item: marshall(item)
-    //     }
-    //   }));
-
-    //   const params = {
-    //     RequestItems: {
-    //       "new-points-ledger": putRequests
-    //     }
-    //   };
-
-    //   let unprocessedItems = null;
-    //   do {
-    //     try {
-    //       const result = await this.db.send(new BatchWriteItemCommand(params));
-    //       // Check if there are unprocessed items
-    //       unprocessedItems = result.UnprocessedItems;
-    //       if (unprocessedItems && unprocessedItems["new-points-ledger"]) {
-    //         // Retry the unprocessed items in the next request
-    //         params.RequestItems = unprocessedItems;
-    //       }
-    //     } catch (error) {
-    //       console.error("Batch write failed:", error);
-    //       throw error;
-    //     }
-    //   } while (unprocessedItems && unprocessedItems["new-points-ledger"]); // Continue until all are processed
-    // }
-    // console.log("Batch write completed");
   }
 
   async waitForTableToBecomeActive(tableName) {
@@ -236,7 +200,7 @@ class dbtableconfig {
         await this.loadBaseData();
         if (data.TableNames.includes("new-points-ledger")) {
             console.log("Table exists");
-            if (tearDown) {
+            // if (tearDown) {
               // Delete table if it exists
               await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
               console.log("Table is deleted");
@@ -245,7 +209,7 @@ class dbtableconfig {
               console.log("Table is created");
               await this.delay(5000);
               this.batchWrite();
-            }
+            // }
         } else {
           await this.db.send(new CreateTableCommand(params));
           console.log("Table is created");

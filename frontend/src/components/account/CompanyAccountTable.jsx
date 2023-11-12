@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useUserContext } from "../../context/userContext.jsx";
 import { useParams } from "react-router-dom";
 
-export default function UserAccountTable(props){
+export default function CompanyAccountTable(props){
     const { accounts, companyId } = props;
     const { userData, updateUserData } = useUserContext();
     const { companyid } = useParams();
