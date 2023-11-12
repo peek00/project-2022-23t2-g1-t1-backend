@@ -1109,11 +1109,11 @@ def approve_or_reject_approval_request(
             details['withCredentials'] = True
             if combined_data['request_type'] == "Points Update":
                 # make call to endpoint to change amount
-                requests.post(POINTS_MS+"/api/points/changeBalance", headers = headers, json=details)
+                requests.post(POINTS_MS+"/changeBalance", headers = headers, json=details)
 
             elif combined_data['request_type'] == "Update User Details":
                 # make call to endpoint to change user
-                requests.put(USER_MS+"/api/user/updateUser", headers = headers, json=details)
+                requests.put(USER_MS+"User/updateUser", headers = headers, json=details)
 
         elif combined_data["status"] == "rejected":
             action = "rejected"
