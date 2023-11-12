@@ -3,13 +3,14 @@ import { Outlet } from 'react-router-dom';
 import AlertIcon from '../components/common_utils/AlertIcon';
 import axios from 'axios';
 import {API_BASE_URL} from "@/config/config";
+import ErrorPage from '../pages/errorpage';
 
 const PrivateRoute = ({ page,permission }) => {
   const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
     const fetchRole = async () => {
-      const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging","user/User/getAllUser?isAdmin=True"]};
+      const body = { "pageLs": ["user", "points", "maker-checker", "policy", "logging","user/User/getAllUsersPaged?isAdmin=True","user/User/getAllUsersPaged?isAdmin=False"]};
       try {
         const response = await axios.post(API_BASE_URL+'/policy/permissions', body, {
           withCredentials: true
@@ -45,7 +46,24 @@ const PrivateRoute = ({ page,permission }) => {
       .then((role) => {
         // Check if the user is authorized to access the page
         console.log(role);
-        if (role[page][permission]) {
+        
+        if(page =='user'&& permission == 'GET'){
+          const isAdmin = role["user/User/getAllUsersPaged?isAdmin=True"]['GET'];
+          console.log(isAdmin);
+          const isUser = role["user/User/getAllUsersPaged?isAdmin=False"]['GET'];
+          console.log(isUser);
+
+          if(isAdmin || isUser){
+            setAuthorized(true);
+          }
+          else{
+            setAuthorized(false);
+          }
+
+
+
+        }
+        else if (role[page][permission]) {
           setAuthorized(true);
         } else {
           setAuthorized(false);
@@ -63,7 +81,7 @@ const PrivateRoute = ({ page,permission }) => {
   } else if (authorized) {
     return <Outlet />;
   } else {
-    return <AlertIcon message="You are not authorized to access this page." />;
+    return <ErrorPage />;
   }
 };
 
