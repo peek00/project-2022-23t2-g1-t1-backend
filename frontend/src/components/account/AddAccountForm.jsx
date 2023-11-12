@@ -4,7 +4,9 @@ import { addPoint } from '../../apis/points';
 import { useUserContext } from '../../context/userContext';
 import {API_BASE_URL} from "@/config/config";
 
-export default function AddAccountForm() {
+export default function AddAccountForm(props) {
+  const {userId} = props;
+
   const { userData, updateUserData } = useUserContext();
 
   
@@ -57,35 +59,28 @@ export default function AddAccountForm() {
     e.preventDefault();
     console.log(formData);
   
-    try {
-      // Create a request body, if needed
-      const requestBody = {
+    const requestBody = {
+      company_id: formData.companyID,
+      balance: formData.startingPoints,
+    };      
 
-        company_id: formData.companyID,
-        balance: formData.startingPoints,
-      
-        
-       
-      };
-      // May have to change this to user context
-      console.log(requestBody);
-      console.log(localStorage.getItem("id"));
-
-
-
-      const response = addPoint(requestBody,localStorage.getItem("id"));
-  
-      // Assuming the response contains the user's role
-
-      window.location.href = "/users";
-  
-    
+    // axios.post("http://localhost:3000/createAccount", requestBody,{
+    axios.post(API_BASE_URL+"/api/points/createAccount", requestBody,{
+      headers: {
+        'Content-Type': 'application/json',
+        'userid': userId, 
+      }})
+    .then((response) => {
       console.log(response);
-    } catch (error) {
-      // Handle errors here
-      console.error("Cannot log out of auth:", error);
-      throw error; // Optionally re-throw the error to propagate it to the caller
-    }
+      window.alert("Points Account Successfully created!");
+    })
+    .catch((err) => {
+      console.log(err);
+      alert("Failed to create Points account");
+
+    // Assuming the response contains the user's role
+    window.location.href = "/users";
+    })
   };
 
 
@@ -109,29 +104,28 @@ export default function AddAccountForm() {
             />
           </div>
           <div className="mb-6">
-          <div className="mb-6 ml-12">
-            <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900">
-              Company
-            </label>
-            <select
-  id="companyID"
-  name="companyID"
-  value={formData.companyID}
-  onChange={handleChange}
-  className="bg-gray-50 border px-12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
->
-  {companyData && companyData.length > 0 ? (
-    companyData.map((company) => (
-      <option key={company} value={company}>
-        {company}
-      </option>
-    ))
-  ) : (
-    <option value="">No companies available</option>
-  )}
-</select>
-
-          </div>
+            <div className="mb-6 ml-12">
+              <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900">
+                Company
+              </label>
+              <select
+                id="companyID"
+                name="companyID"
+                value={formData.companyID}
+                onChange={handleChange}
+                className="bg-gray-50 border px-12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                {companyData && companyData.length > 0 ? (
+                  companyData.map((company) => (
+                    <option key={company} value={company}>
+                      {company}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">No companies available</option>
+                )}
+              </select>
+            </div>
           </div>
         </div>
         
