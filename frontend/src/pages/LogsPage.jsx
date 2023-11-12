@@ -9,6 +9,7 @@ import FilterButton from "../components/common_utils/FilterButton";
 import CustomSearch from "../components/common_utils/CustomSearch";
 import { queryLog, getAllLogGroups } from "@/apis/logging";
 import DateTimeSelector from "../components/common_utils/DateTimeSelector";
+import { setRef } from "@mui/material";
 
 export default function LogsPage() {
   const pageLimit = 10; // Item Limit
@@ -25,6 +26,7 @@ export default function LogsPage() {
   const [lastPage, setLastPage] = useState(false);
   const [pageNumber, setPageNumber] = useState(0); // New state for page number
   const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
+  const [refreshSearch, setRefreshSearch] = useState(false); // New state for page number
 
   const [prefetchData, setPrefetchData] = useState({});
   const updatePrefetchData = (key, value) => {
@@ -33,6 +35,23 @@ export default function LogsPage() {
       [key]: value,
     }));
   };
+
+  useEffect(() => {
+    makeQuery(0, preFetchLimit, null);
+    setRefreshSearch(false);
+  }, [refreshSearch]);
+
+  const onSearch = async () => {
+    // Reset
+    setLastRetrievedPage(0);
+    setLastPage(false);
+    setEndData(false);
+    setPageNumber(0);
+    setPrefetchData({});
+    // console.log(selectedLogGroup, lastPage, lastRetrievedPage, pageNumber, prefetchData)
+    // makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
+    setRefreshSearch(true);
+  }
 
   useEffect(() => {
     // console.log(prefetchData)
@@ -50,23 +69,24 @@ export default function LogsPage() {
       });
   }, []);
 
-
-
-  useEffect(() => {
-    // Retrieve logs
-    if (selectedLogGroup !== null) {
-      makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
-      // setIsLoading(false);
-    }
-  }, [selectedLogGroup, startTime, endTime, userId]);
+  // useEffect(() => {
+  //   console.log("Refresh sohuld happens!");
+  //   // console.log(selectedLogGroup, lastPage, lastRetrievedPage, pageNumber, prefetchData)
+  //   // Retrieve logs
+  //   if (selectedLogGroup !== null) {
+  //     makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
+  //     // setIsLoading(false);
+  //   }
+  // }, [selectedLogGroup, startTime, endTime, userId]);
 
   // Uncomment this to check prefetch
   useEffect(() => {
-    console.log(prefetchData)
+    console.log(prefetchData);
   }, [prefetchData]);
 
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
+    console.log("Making query");
     if (endData) {
       return;
     }
@@ -111,7 +131,11 @@ export default function LogsPage() {
 
   const goForward = async () => {
     // Stop from going
-    console.log(lastRetrievedPage, pageNumber, lastRetrievedPage - pageNumber <= 2)
+    console.log(
+      lastRetrievedPage,
+      pageNumber,
+      lastRetrievedPage - pageNumber <= 2
+    );
     if (
       !(pageNumber + 1 in prefetchData) ||
       prefetchData[pageNumber].length < pageLimit
@@ -139,7 +163,7 @@ export default function LogsPage() {
       <SideBar />
       {/* <TopBar /> */}
       <div className="w-4/5 ms-[10%] ">
-<div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12">
+        <div className="fixed top-0 z-10 flex w-full p-4 bg-gray-200 ps-12">
           <CustomDropdown
             label="Log Group"
             id="log-group"
@@ -167,6 +191,21 @@ export default function LogsPage() {
             setSearch={setUserId}
             resetDefaultInput={resetUserId}
           />
+          <button
+            className="px-3 py-2 mx-5 ml-0 text-white bg-blue-500 rounded-md"
+            onClick={onSearch}
+          >
+            Search
+          </button>
+          {/* <button
+            className="px-3 py-2 mx-5 ml-0 text-white bg-red-500 rounded-md"
+            onClick={() => {
+              resetDefaultInput();
+              setSearch(null);
+            }}
+          >
+            Clear
+          </button> */}
         </div>
         <div className="mt-48">
           <LogsTable
@@ -181,7 +220,9 @@ export default function LogsPage() {
             variant="outlined"
             size="sm"
             onClick={goBack}
-            className={`me-5 ${pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`me-5 ${
+              pageNumber === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={pageNumber === 0}
           >
             Previous
@@ -191,12 +232,13 @@ export default function LogsPage() {
             variant="outlined"
             size="sm"
             onClick={goForward}
-            className={`mx-5 ${lastPage? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`mx-5 ${
+              lastPage ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={lastPage}
           >
             Next
           </Button>
-
         </div>
       </div>
     </div>
