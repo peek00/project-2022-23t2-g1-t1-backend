@@ -1,20 +1,11 @@
 
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
-
 import AlertIcon from '../components/common_utils/AlertIcon';
-
-export default function ErrorPage(props) {
+export default function ErrorPage() {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
-
-
-  
-
-  
-
-
     return(
 
         <div className='h-screen min-w-full min-h-screen overflow-y-auto'>
