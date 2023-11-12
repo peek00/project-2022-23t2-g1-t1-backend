@@ -23,11 +23,12 @@ export default function LogsPage() {
   const [looped, setLooped] = useState(false);
   const [data, setData] = useState([]);
   const [endData, setEndData] = useState(false);
+  const [lastPage, setLastPage] = useState(false);
   
-  const [yourDictionary, setYourDictionary] = useState({});
-  const updateDictionaryValue = (key, value) => {
+  const [prefetchData, setPrefetchData] = useState({});
+  const updatePrefetchData = (key, value) => {
     // console.log("Saving data to page number " + key + " " + value.length)
-    setYourDictionary((prevDictionary) => ({
+    setPrefetchData((prevDictionary) => ({
       ...prevDictionary,
       [key]: value,
     }));
@@ -36,10 +37,10 @@ export default function LogsPage() {
   const [lastRetrievedPage, setLastRetrievedPage] = useState(0);
   
   useEffect(() => {
-    console.log(yourDictionary)
-    setData(yourDictionary[pageNumber]);
-    console.log("Data set for page " + pageNumber + " " + yourDictionary[pageNumber])
-  }, [pageNumber, yourDictionary]);
+    console.log(prefetchData)
+    setData(prefetchData[pageNumber]);
+    console.log("Data set for page " + pageNumber + " " + prefetchData[pageNumber])
+  }, [pageNumber, prefetchData]);
 
   useEffect(() => {
     // Retrieve all loggroups
@@ -60,16 +61,12 @@ export default function LogsPage() {
     }
   }, [selectedLogGroup]);
 
-  useEffect(() => {
-    console.log("Checking prefetch of " + pageNumber + " " + preFetchLimit)
-    console.log(yourDictionary)
-  },[yourDictionary]);
-
+  // Uncomment this to check prefetch
   // useEffect(() => {
-  //     console.log("Set data to " + pageNumber + " " + yourDictionary[pageNumber])
-  //     setData(yourDictionary[pageNumber]);
-  // }, [pageNumber]);
-  
+  //   console.log("Checking prefetch of " + pageNumber + " " + preFetchLimit)
+  //   console.log(prefetchData)
+  // },[prefetchData]);
+
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
     if (endData) {
@@ -94,13 +91,13 @@ export default function LogsPage() {
       // console.log("Should start at 0 " + pageNumberToSave)
       if  (response.nextPageKey == null) {
         // console.log(" End of the line bud")
-        updateDictionaryValue(pageNumberToSave, data);
+        updatePrefetchData(pageNumberToSave, data);
         setLastRetrievedPage((prevPage) => prevPage + 1);
         setEndData(true);
       } else {
         // Update the dictionary with the current page number
         const offsetId = response.nextPageKey;
-        updateDictionaryValue(pageNumberToSave, data);
+        updatePrefetchData(pageNumberToSave, data);
         setLastRetrievedPage((prevPage) => prevPage + 1);
         // Make a recursive call for the next page
         await makeQuery(pageNumberToSave + 1, remainingPages - 1, offsetId);
@@ -115,20 +112,26 @@ export default function LogsPage() {
   const goBack = () => {
     if (pageNumber != 0) {
       setPageNumber((prevPageNumber) => prevPageNumber - 1);
+      setLastPage(false);
     }
   };
 
   const goForward = async () => {
     // Stop from going
-    const nextPage = pageNumber + 1;
-    setPageNumber(nextPage);
-    try {
-      
-      if (lastRetrievedPage - pageNumber <= 2) {
-        await makeQuery(nextPage + 1, preFetchLimit, offsetId)
+    if (!(pageNumber+1 in prefetchData) || prefetchData[pageNumber+1].length < pageLimit) {
+      setLastPage(true);
+    } else {
+
+      const nextPage = pageNumber + 1;
+      setPageNumber(nextPage);
+      try {
+        
+        if (lastRetrievedPage - pageNumber <= 2) {
+          await makeQuery(nextPage + 1, preFetchLimit, offsetId)
+        }
+      } catch (error) {
+        console.error("Error in goForward:", error);
       }
-    } catch (error) {
-      console.error("Error in goForward:", error);
     }
   };
   
@@ -187,7 +190,7 @@ export default function LogsPage() {
           )}
           
           <LogsTable
-            pageData={yourDictionary[pageNumber]}
+            pageData={prefetchData[pageNumber]}
             pageNumber={pageNumber}
             />
           </>
@@ -201,8 +204,14 @@ export default function LogsPage() {
         >
           Previous
         </Button>
-        {pageNumber}
-        <Button variant="outlined" size="sm" onClick={goForward}>
+        {pageNumber+1}
+        <Button 
+          variant="outlined" 
+          size="sm" 
+          onClick={goForward}
+          className={lastPage ? 'opacity-50 cursor-not-allowed' : ''}
+          disabled={lastPage}
+          >
           Next
         </Button>
       </div>
