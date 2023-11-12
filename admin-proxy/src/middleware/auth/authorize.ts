@@ -26,6 +26,7 @@ function authorize() {
           console.log("authorisationService.authorize", req.user);
           next();
         }).catch((error) => {
+          console.log(error.message);
           return next(error);
         });
       },

@@ -9,6 +9,7 @@ import { config } from "../../config/config";
 const GoogleOauth2Config = config.GoogleOauth2Config;
 import { JwtPayload } from "jsonwebtoken";
 import { authenticationService, jwtService } from "../../services/Auth";
+import { InvalidSessionError } from "../error/customError";
 
 export interface IProfile {
   id: string;
@@ -32,6 +33,9 @@ const cookieExtractor = (req: any) => {
     });
   }
   console.log("Token: ", token);
+  if (token === "") {
+    throw new InvalidSessionError("JWT Token is required in cookie, please login again");
+  }
   return token;
 };
 
@@ -41,7 +45,7 @@ const BearerTokenFromRequest = (req: any) => {
   if (authHeader) {
     return authHeader.split(" ")[1];
   }
-  return null;
+  throw new InvalidSessionError("JWT Token is required in Bearer Token, please login again");
 }
 
 const TokenExtractor = (req: any) => {
@@ -69,7 +73,7 @@ passport.use(
         return done(null, user, { scope: "all" });
       } catch (error) {
         console.log(error);
-        return done(new Error(`Invalid token: ${(error as Error).message}`));
+        return done(error, false);
       }
     },
   ),

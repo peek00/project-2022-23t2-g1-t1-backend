@@ -1,4 +1,5 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { InvalidSessionError } from "../../middleware/error/customError";
 
 export class JwtService {
   private static instance: JwtService;
@@ -31,12 +32,12 @@ export class JwtService {
     console.log(payload.id);
     console.log(payload.exp);
     if (typeof payload === "string" || !payload.id || !payload.exp) {
-      throw new Error("Invalid token");
+      throw new InvalidSessionError("Invalid token");
     }
     // Verify Expiry
     const now = Date.now().valueOf() / 1000;
     if (typeof payload.exp !== "undefined" && payload.exp < now) {
-      throw new Error("Token expired");
+      throw new InvalidSessionError("Token expired");
     }
     return true;
   }

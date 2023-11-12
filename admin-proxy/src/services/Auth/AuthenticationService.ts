@@ -3,6 +3,7 @@ import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface"
 import axios from "axios";
 import { Redis } from "../../modules/CacheProvider/Redis";
 import { config } from "../../config/config";
+import { InvalidSessionError } from "../../middleware/error/customError";
 const { ProxyPaths } = config;
 
 export interface UserWithToken {
@@ -68,7 +69,7 @@ export class AuthenticationService {
       const { id, role, companyId, token } = JSON.parse(userData);
       return { id, role, companyId, token };
     } else {
-      throw new Error("User Session not found");
+      throw new InvalidSessionError("User Session not found");
     }
   }
   public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {

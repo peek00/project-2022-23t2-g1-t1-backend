@@ -6,7 +6,6 @@ import { errorHandler } from "./middleware/error/error";
 import router from "./routes";
 import { PolicyService } from "./services/Policy/PolicyService";
 import { Logger } from "./services/Logger/Logger";
-import authorize from "./middleware/auth/authorize";
 import cron from "node-cron";
 
 //For env File
@@ -33,7 +32,7 @@ PolicyService.initialize().then(() => {
   app.use("/health",(req, res) => {
     res.send('health check');
   })
-  app.use("/",authorize(), router);
+  app.use("/", router);
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(errorHandler);

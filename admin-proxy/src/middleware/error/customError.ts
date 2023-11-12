@@ -25,3 +25,9 @@ export class BadRequestError extends CustomError {
     super("BadRequestError", message, 400);
   }
 }
+
+export class InvalidSessionError extends CustomError {
+  constructor(message: string) {
+    super("InvalidSessionError", message, 401);
+  }
+}
