@@ -282,7 +282,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/getAllUsersPaged", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey){
+    public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey, @RequestParam(name="email", defaultValue = "") String email){
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
@@ -298,7 +298,7 @@ public class UserController {
                 validRoleNames.retainAll(Arrays.asList("User"));
             }
             response.put("logInfo", "log message");
-            response.put("data", userService.getAllUsersPaged(validRoleNames, lastEvaluatedKey));
+            response.put("data", userService.getAllUsersPaged(validRoleNames, lastEvaluatedKey, email));
         } catch (Exception e) {
             System.err.println(e.getMessage());
             response.put("logInfo", "error occurred");
