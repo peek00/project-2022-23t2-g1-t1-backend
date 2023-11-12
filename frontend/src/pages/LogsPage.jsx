@@ -19,7 +19,7 @@ export default function LogsPage() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [userId, setUserId] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [endData, setEndData] = useState(false);
   const [lastPage, setLastPage] = useState(false);
@@ -37,10 +37,6 @@ export default function LogsPage() {
   useEffect(() => {
     // console.log(prefetchData)
     setData(prefetchData[pageNumber]);
-
-    console.log(
-      "Data set for page " + pageNumber + " " + prefetchData[pageNumber]
-    );
   }, [pageNumber]);
 
   useEffect(() => {
@@ -61,7 +57,7 @@ export default function LogsPage() {
     console.log("Why u running bro")
     if (selectedLogGroup !== null) {
       makeQuery(lastRetrievedPage, preFetchLimit, null); // REsetting it
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   }, [selectedLogGroup, startTime, endTime, userId]);
 
@@ -77,7 +73,7 @@ export default function LogsPage() {
     }
     // setIsLoading(true);
     if (remainingPages === 0) {
-      setIsLoading(false);
+      // setIsLoading(false);
       setOffsetId(offsetId);
       return;
     }
@@ -93,7 +89,7 @@ export default function LogsPage() {
       // console.log("Should start at 0 " + pageNumberToSave)
       if (response.nextPageKey == null) {
         console.log(" End of the line bud")
-        updatePrefetchData(pageNumberToSave, data);
+        updatePrefetchData(pageNumberToSave, data); // Idk why man
         setLastRetrievedPage(lastRetrievedPage + 1);
         setEndData(true);
       } else {
@@ -106,7 +102,7 @@ export default function LogsPage() {
       }
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
