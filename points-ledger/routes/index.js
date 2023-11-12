@@ -271,9 +271,11 @@ router.get('/allpointsaccounts', async(req,res) => {
 // WHEN USER_ID IS IN REQ.BODY - ADMIN USE
 // GET request that returns all points account by a particular user_id through req.body
 router.get('/allpointsaccountsAdmin', async(req,res) => {
-  console.log(req.body);
-  const adminUserId = req.headers.userid;
-  const userId = req.body.user_id;
+  // console.log(req.body);
+  // const adminUserId = req.headers.userid;
+  // const userId = req.body.user_id;
+  const userId = req.query.user_id; 
+
   if (!userId) {
     return res.status(400).json({
       "code": 400,
@@ -287,7 +289,7 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
       if (results.length==0) {
         return res.status(404).json({
           "code" : 404,
-          "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
+          "logs_info": "accessed '/allpointsaccounts', status: 500",
           "data": results,
           "message": "No records found."
         })
@@ -305,7 +307,7 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
       }
       return res.status(200).json({
         "code" : 200,
-        "logs_info": "admin-user_id: " + adminUserId + " accessed '/allpointsaccounts' for user:" + userId + ", status: 200",
+        "logs_info": " accessed '/allpointsaccounts' for user:" + userId + ", status: 200",
         "data": filteredResults,
         "message": "Success"
       });
@@ -314,7 +316,7 @@ router.get('/allpointsaccountsAdmin', async(req,res) => {
       console.log(error);
       return res.status(500).json({
         "code" : 500,
-        "logs_info": adminUserId + " accessed '/allpointsaccounts', status: 500",
+        "logs_info": " accessed '/allpointsaccounts', status: 500",
         "data": [],
         "message": error.message
       });
