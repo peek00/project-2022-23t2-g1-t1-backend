@@ -76,7 +76,7 @@ function Routing() {
         
         <Route path=":companyId/:userId/editPoints" element={<UpdatePointsPage />} />
      
-        <Route path=":companyId/:userId/addPoints" element={<AddAccountPage />} />
+        <Route path=":userId/addPoints" element={<AddAccountPage />} />
       </Route>
     </Routes>
   );

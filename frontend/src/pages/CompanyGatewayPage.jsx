@@ -77,10 +77,10 @@ export default function CompanyGatewayPage(props) {
       
         <div className="min-h-screen overflow-y-auto">
           <div className='flex w-[100%] absolute top-[10%]'>  
-            <h1 className='text-2xl font-bold ms-11'>Point Accounts</h1>
+            <h1 className='text-2xl font-bold ml-[175px]'>Point Accounts</h1>
           </div>
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
-            <Link to="/addAccount"><button type="button" class=" fixed right-[10%] text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>
+            <Link to={`/user/account/company/${userData.id}/addPoints`}><button type="button" class=" fixed right-[10%] text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>
             <ListWithIcon company_id = {uniqueCompanyIdsArray}/>
           </div>
         </div>
