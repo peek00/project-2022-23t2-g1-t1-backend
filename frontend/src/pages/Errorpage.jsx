@@ -1,9 +1,7 @@
 
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
-import TopBar from '../components/common_utils/TopBar';
 
-import EditPolicyTable from '../components/permission/EditPolicyTable';
 import AlertIcon from '../components/common_utils/AlertIcon';
 
 export default function ErrorPage(props) {
