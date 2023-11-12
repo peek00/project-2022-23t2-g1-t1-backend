@@ -2,24 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import SideBar from '../components/common_utils/SideBar';
 import TopBar from '../components/common_utils/TopBar';
-import UserAccountTable from '../components/account/CompanyAccountTable';
+import CompanyAccountTable from '../components/account/CompanyAccountTable';
 import axios from "axios";
 import {API_BASE_URL} from "@/config/config";
 import { getAllUserAccountsByCompanyId } from '../apis/points';
-import { Link } from 'react-router-dom';
-import { useUserContext } from '../context/userContext';
 
 
-export default function UserAccountPage() {
+export default function CompanyAccountPage() {
   const { companyId } = useParams(); 
   const [accounts, setAccounts] = useState([]);
-    
-    const { userid } = useParams();
   // console.log(companyId);
   // company and points
 
   useEffect(() => {
-    // Have to change the data
     const fetchData = async () => {
       try {
         const results = await getAllUserAccountsByCompanyId(companyId);
@@ -70,13 +65,12 @@ export default function UserAccountPage() {
       <div className="w-4/5 min-h-screen overflow-y-auto">
         <div className="min-h-screen overflow-y-auto">
         <div className='flex w-[100%] absolute top-[10%]'>  
-          <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>User Accounts</h1>
+          <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>Company Accounts</h1>
           </div>
-          <Link to={`/user/account/${userid}/addPoints`}><button type="button" class=" fixed  top-[10%] right-[10%] text-white  bg-[#1C2434]  hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
             
-            <UserAccountTable accounts={accounts} companyId={companyId}/>
+            <CompanyAccountTable accounts={accounts} companyId={companyId}/>
           </div>
         </div>
       </div>
