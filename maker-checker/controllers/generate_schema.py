@@ -284,9 +284,9 @@ def populate_template_db(ddb):
             "uid": "cdf7f49f",
             "type": "Points Update",
             "details": {
-                "increment": "bool",
                 "amount": "int",
-                "account_id": "str"
+                "account_id": "str",
+                "company_id": "str"
                 },
             "allowed_approvers": [
                 "Owner",

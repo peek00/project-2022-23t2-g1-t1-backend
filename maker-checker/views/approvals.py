@@ -1,19 +1,35 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import ValidationError
 
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
 from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db, create_table_on_first_load, get_db_connection
+from controllers.queue import initialize_queue, test_queue
 from botocore.exceptions import ClientError
 from datetime import datetime
+import requests
 
 router = APIRouter(
   prefix = "/approval",
   tags = ["Approvals"],
 )
 
+sqs = initialize_queue()
+
+# Get the queue URL from the environment variables if not found, use the local endpoint
+queue_url = os.getenv('SQS_URL')
+
 db = get_db_connection()
 approval_request_repository = ApprovalRequestRepository(db)
+
+# Get user_ms and point_ms from environment variables
+USER_MS = os.getenv('USER_MS')
+POINTS_MS = os.getenv('POINTS_MS')
+
+# Print to see if user_ms and point_ms are loaded
+print("USER_MS:", USER_MS)
+print("POINTS_MS:", POINTS_MS)
 
 def isExpired(expiry_date:str):
     """
@@ -21,6 +37,12 @@ def isExpired(expiry_date:str):
     to determine if it is expired.
     """
     return datetime.now() > datetime.fromisoformat(expiry_date)
+
+@router.get('/testQueue')
+def test():
+    test_queue(sqs, queue_url)
+    return f"Published test message to queue at: {queue_url}"
+
 
 # =================== START: GET requests =======================
 @router.get("/", response_model=None)
@@ -752,10 +774,47 @@ def create_approval_requests(
             "requestor_id": userid,
         }
         validate_create_request_body(combined_data)
-        # TODO : Put in validation  that combined_data has request details
+        # Put in validation  that combined_data has request details
         approval_request_repository.create_approval_request(combined_data)
         print("And we got here")
-        # TODO: Japheth send email notifications here
+        roles = combined_data['approval_role']
+        # TODO: get url to view requests for particular user from env
+        url = "test url"
+        # request for the emails that need to be sent to
+        recipients = requests.get(USER_MS + "/api/User/getUserEmailsByRole", 
+            headers = {
+                "userid": userid
+            }, 
+            json={
+            [combined_data['approval_role']]
+            }
+        )
+        # Japheth send email notifications here
+        email = sqs.send_message(
+            QueueUrl=queue_url,
+            DelaySeconds=10,
+            MessageAttributes={
+                'fromName': {
+                    'DataType': 'String',
+                    'stringValue': combined_data['requestor_id']
+                },
+                'subject': {
+                    'DataType': 'String',
+                    'stringValue': f"Request Approval for {combined_data['request_type']}"
+                },
+                'toEmail': {
+                    'DataType': 'String',
+                    'stringListValues': recipients.join(",")
+                },
+                'url': {
+                    'DataType': 'String',
+                    'stringValue': url
+                }
+            },
+            MessageBody=(
+                'placeholder'
+            )
+        )
         response = {
             "logInfo" : f"ID {combined_data['requestor_id']} created a request with ID {combined_data['uid']} for {combined_data['approval_role']} approval.",
             "request_id" : combined_data['uid'],
@@ -1032,7 +1091,17 @@ def approve_or_reject_approval_request(
         if combined_data["status"] == "approved":
             action = "approved"
             # TODO: Japheth do things here
-            # Make a call to points storage to update transaction
+            headers = { "userid": userid }
+            details = original_request['request_details']
+            details['withCredentials'] = True
+            if combined_data['request_type'] == "Points Update":
+                # make call to endpoint to change amount
+                requests.post(POINTS_MS+"/api/points/changeBalance", headers = headers, json=details)
+
+            elif combined_data['request_type'] == "Update User Details":
+                # make call to endpoint to change user
+                requests.put(USER_MS+"/api/user/updateUser", headers = headers, json=details)
+
         elif combined_data["status"] == "rejected":
             action = "rejected"
 

@@ -20,6 +20,18 @@
                 {
                     "name": "AWS_REGION",
                     "value": "ap-southeast-1"
+                },
+                {
+                    "name": "POINTS_MS",
+                    "value": "http://points.ecs-be-cluster:3000"
+                },
+                {
+                    "name": "USER_MS",
+                    "value": "http://user.ecs-be-cluster:8080"
+                },
+                {
+                    "name": "SQS_URL",
+                    "value": "https://sqs.ap-southeast-1.amazonaws.com/717942231127/OutgoingEmailQueue"
                 }
             ],
             "environmentFiles": [],
