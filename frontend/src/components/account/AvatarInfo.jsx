@@ -2,6 +2,7 @@ import { Avatar, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import {API_BASE_URL} from "@/config/config";
 
  
 export  default function AvatarInfo(props) {
