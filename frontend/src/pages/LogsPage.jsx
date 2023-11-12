@@ -62,7 +62,6 @@ export default function LogsPage() {
 
     if (!selectedLogGroup) {
       setAlert(true);
-      console.log("Log Group not specified. Please specify a log group.");
     }
     else {
       setAlert(false);
