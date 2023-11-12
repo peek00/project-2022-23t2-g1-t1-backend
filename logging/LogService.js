@@ -1,13 +1,16 @@
 import { createDynamoDBClient } from "./db.js";
+import { createCacheClient } from "./cache.js";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { CreateTableCommand, DeleteTableCommand, ScanCommand, QueryCommand, PutItemCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
 import { v4 as uuid } from "uuid";
 export class LogService {
   static instance;
   db;
+  cache;
 
   constructor() {
     this.db = createDynamoDBClient();
+    this.cache = createCacheClient();
   }
 
   static getInstance() {
@@ -68,6 +71,7 @@ export class LogService {
         await this.db.send(new CreateTableCommand(params));
         console.log("Table is created");
       }
+      await this.cache.flushAllMatchingLogPattern();
     } catch (err) {
       console.log("Error", err);
     }
@@ -75,27 +79,25 @@ export class LogService {
 
   async queryLog(queryParams) {
     try {
-      let response = {
-        data: [],
-        nextPageKey: null,
-      }
-      // let ExclusiveStartKey = queryParams.ExclusiveStartKey || null;
+      let records = [];
+      let nextPageKey = null;
       const params = {
         TableName: "logs",
         ...queryParams
       };
       const data = await this.db.send(new QueryCommand(params));
       if (data.LastEvaluatedKey) {
-        response.nextPageKey = unmarshall(data.LastEvaluatedKey).id;
+        nextPageKey = unmarshall(data.LastEvaluatedKey).id;
       }
       
-      if (data.Items.length === 0) {
-        return response
+      if (data.Items && data.Items.length > 0) {
+        console.log("Total Number of Logs Retrieved: ", data.Items.length);
+        records = data.Items.map((item) => unmarshall(item))
       }
-      console.log("Total Number of Logs Retrieved: ", data.Items.length);
-      response.data = data.Items.map((item) => unmarshall(item));
-      console.log(response);
-      return response;
+      return {
+        data: records,
+        nextPageKey: nextPageKey,
+      };
     } catch (err) {
       console.log("Error", err);
     }
@@ -156,7 +158,6 @@ export class LogService {
       queryParams.IndexName = "UserId-Index";
       queryParams.KeyConditionExpression = "userId = :userId";
       queryParams.ExpressionAttributeValues = marshall({ ":userId": userId });
-  
     }
 
     if (FilterExpressionLs.length > 0) {
@@ -174,9 +175,28 @@ export class LogService {
       ...queryParams,
     };
     console.log(params)
-    return this.queryLog(params);
+    const cachedLogs = await this.cache.get(this.getCacheKey(params));
+    if (cachedLogs) {
+      console.log('cache hit')
+      return JSON.parse(cachedLogs);
+    } else {
+      console.log('cache miss')
+      const logResponse = await this.queryLog(params);
+      // If logResponse is not empty, write to cache
+      if (logResponse.data && logResponse.data.length > 0) {
+        this.cache.write(this.getCacheKey(params), JSON.stringify(logResponse), 60 * 60 * 1000); // 1 hour
+      }
+      return logResponse;
+    }
   }
-  // Upload with TTL index in days
+
+  getCacheKey(params) {
+    // Escape special characters
+    const parsed = `logs-${JSON.stringify(params)}`;
+    const key = parsed.replace(/[^a-zA-Z0-9]/g, "");
+    return key;
+  }
+
   async uploadLogs(retentionPolicy, logGroup, data) {
     const params = {
       TableName: "logs",

@@ -20,6 +20,18 @@
                 {
                     "name": "AWS_REGION",
                     "value": "ap-southeast-1"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "value": "master.becachesmall.leeatg.apse1.cache.amazonaws.com"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "value": "6379"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "value": "production"
                 }
             ],
             "environmentFiles": [],

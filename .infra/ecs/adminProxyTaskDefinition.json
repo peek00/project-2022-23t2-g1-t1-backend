@@ -39,11 +39,11 @@
                 },
                 {
                     "name": "CLIENT_AUTH_REDIRECT_URL",
-                    "value": "https://dy4wjbjjwtjyj.cloudfront.net/users"
+                    "value": "https://api.itsag1t1.com/users"
                 },
                 {
                     "name": "CLIENT_BASE_URL",
-                    "value": "https://dy4wjbjjwtjyj.cloudfront.net"
+                    "value": "https://api.itsag1t1.com"
                 },
                 {
                     "name": "DNS",
