@@ -72,16 +72,16 @@ function Routing() {
         path="/user/account"
         // element={<PrivateRoute page={"points"} permission={"GET"} />}
       >
-        <Route path ="company" element={<CompanyGatewayPage />} >
-        <Route path=":companyId" element={<CompanyAccountPage />} />
+        <Route path ="company" element={<CompanyGatewayPage />} />
+        <Route path="company/:companyId" element={<CompanyAccountPage />} />
         
-        <Route path=":companyId/:userId/editPoints" element={<UpdatePointsPage />} />
-        </Route>
+        <Route path="company/:companyId/:userId/editPoints" element={<UpdatePointsPage />} />
+       
 
      
         <Route path=":userId/addPoints" element={<AddAccountPage />} />
         <Route path=":userId" element={<UserAccountPage/>} />
-        <Route path=":userId/editPoints" element={<UpdatePointsPage/>} />
+       
       </Route>
     </Routes>
   );
