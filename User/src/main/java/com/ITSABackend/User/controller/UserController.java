@@ -259,15 +259,15 @@ public class UserController {
     }
 
     @GetMapping(value="/getUserEmailsByRole", produces = {"application/json"})
-    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> roleNames){
+    public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@PathParam("roleNames") ArrayList<String> roleNames){
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
         try {
             List<String> emails = userService.getUsersByRole(roleNames);
-            if (emails.isEmpty()) {
-                throw new RuntimeException("No users found with the specified company / role");
-            }
+            // if (emails.isEmpty()) {
+            //     throw new RuntimeException("No users found with the specified company / role");
+            // }
             
             response.put("logInfo", "User emails retrieved successfully");
             response.put("data", emails);

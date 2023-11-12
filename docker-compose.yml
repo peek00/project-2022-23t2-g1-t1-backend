@@ -13,7 +13,6 @@ services:
       - ./admin-proxy/.env
     environment:
       - NODE_ENV=development #Use `development` or `production`
-      - microservice1=http://microservice1:3000
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_DEFAULT_REGION=local #Change to `ap-southeast-1` for prod
@@ -25,11 +24,11 @@ services:
       - MAKER_CHECKER_MS=http://maker-checker:5000
       - LOGGING_MS=http://logging:3000
     depends_on:
-      - microservice1
       - redis
       - db
     volumes:
       - efs:/tmp
+    restart: always
   logging:
     build: ./logging
     volumes:
@@ -42,6 +41,9 @@ services:
     environment:
       - AWS_REGION=local
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
+      - NODE_ENV=development #Use `development` or `production`
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
   maker-checker:
     build: 
       context: ./maker-checker
@@ -71,13 +73,6 @@ services:
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
     ports:
       - 3000:3000
-  microservice1:
-    build: ./testMicroservice
-    networks:
-      - vpc
-    deploy: # Example of load balancing with service discovery using virtual ip address
-      mode: replicated
-      replicas: 2
   user:
     build: ./User
     networks:

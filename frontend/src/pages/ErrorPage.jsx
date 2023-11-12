@@ -1,21 +1,11 @@
 
 import React from 'react';
 import SideBar from '../components/common_utils/SideBar';
-import TopBar from '../components/common_utils/TopBar';
-
-import EditPolicyTable from '../components/permission/EditPolicyTable';
-
-export default function EditPolicyPage(props) {
+import AlertIcon from '../components/common_utils/AlertIcon';
+export default function ErrorPage() {
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
-
-
-  
-
-  
-
-
     return(
 
         <div className='h-screen min-w-full min-h-screen overflow-y-auto'>
@@ -35,9 +25,9 @@ export default function EditPolicyPage(props) {
           <div className='absolute left-[20%] min-w-[65%]'>
             <div className='container'>
                     <h1 className='text-3xl font-bold mt-[20%]'>
-                        Edit Policies
+                        401 Error Unauthorized
                     </h1>
-                    <EditPolicyTable/>
+                  <AlertIcon className="p-12" message ="You do not have permissions to access this page. Please contact your admin!"/>
             </div>
           </div>
         </div>

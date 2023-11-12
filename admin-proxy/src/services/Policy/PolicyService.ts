@@ -211,4 +211,11 @@ export class PolicyService {
     return pageMap;
   }
 
+  public userOnlyPolicyValidation(userId: string, userIdClaim:string): boolean {
+    if (userId === userIdClaim) {
+      return true;
+    }
+    return false;
+  }
+
 }

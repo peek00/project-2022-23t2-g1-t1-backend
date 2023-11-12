@@ -5,6 +5,7 @@ import {
   Card,
   IconButton,
 } from "@material-tailwind/react";
+import {Link} from 'react-router-dom';
  
 function NextIcon() {
   return (
@@ -15,24 +16,26 @@ function NextIcon() {
 export default function ListWithIcon(props) {
   const { company_id } = props;
 
-  const navigateToCompany = (companyId) => {
-    // Construct the URL here. This is just an example.
-    const url = `http://127.0.0.1:5173/user/accounts/company/${companyId}`;
-    window.location.href = url; // Change the window location to the new URL
-  };
+  // const navigateToCompany = (companyId) => {
+  //   // Construct the URL here. This is just an example.
+  //   const url = `http://127.0.0.1:5173/user/accounts/company/${companyId}`;
+  //   window.location.href = url; // Change the window location to the new URL
+  // };
 
 
   return (
     <Card className="w-96 absolute top-[150%]">
       <List>
-        {company_id.length > 0 ? (
+        {company_id && company_id.length > 0 ? (
           company_id.map((item, index) => (
             <ListItem key={index} ripple={false} className="py-1 pr-1 pl-4">
             <b>{item.toUpperCase()}</b>
               <ListItemSuffix>
-                <IconButton variant="text" color="blue-gray"onClick={() => navigateToCompany(item)}>
-                  <NextIcon />
-                </IconButton>
+                <Link to={`/user/account/company/${item}`}>
+                  <IconButton variant="text" color="blue-gray">
+                    <NextIcon />
+                  </IconButton>
+                </Link>
               </ListItemSuffix>
             </ListItem>
           ))

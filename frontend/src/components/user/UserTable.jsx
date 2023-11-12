@@ -1,58 +1,154 @@
-import { useEffect, useState,useContext } from "react";
-import MenuDefault from "../common_utils/MenuDefault.jsx";
-import axios from "axios";
-import {API_BASE_URL} from "@/config/config";
+import { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config/config';
+import MenuDefault from '../common_utils/MenuDefault';
 
 export default function UserTable() {
-    const [users, setUsers] = useState([]);
-    const [role, setRole] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]);
+  const [role, setRole] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const nextPage = useRef(null);
+  const previousPage = useRef([]);
+  const lastEvaluatedKey = useRef(null);
+  const viewAdmin = useRef(null);
+  const [viewUserFinished, setViewUserFinished] = useState(false);
+  const hasNext = useRef(true);
 
-    useEffect(() => {
-      viewUser()
-      // Fetch the role from localStorage or an API here
-      const storedRole = JSON.parse(localStorage.getItem("permissions"));
-      console.log(storedRole);
-      setRole(storedRole);
-      
-    }, []);
+  const pushToStack = (item) => {
+    previousPage.current = [...previousPage.current, item];
+  };
 
-    const viewUser = async () => {
-      // First check user permissions to access ?isAdmin=True
-      try {
-        const viewUserPermissions = await axios.post(API_BASE_URL+"/policy/permissions", {
-          pageLs: ["user/User/getAllUsers?isAdmin=True"],
-        }, {
-          withCredentials: true
-        });
-        const canViewAdmin = viewUserPermissions.data["user/User/getAllUsers?isAdmin=True"].GET;
-        const response = await axios.get(API_BASE_URL+`/api/user/User/getAllUsers?isAdmin=${canViewAdmin}`, {
-          withCredentials: true
-        })
-        setUsers(response.data.data);
-      } catch (error) {
-        // Handle errors here
-        console.error("Cannot view user:", error);
-      }
+  // Function to pop the top item from the stack
+  const popFromStack = () => {
+    if (previousPage.current.length === 0) {
+      console.log('Stack is empty');
+      return;
     }
-    const handlePreviousPage = () => {
-      if (currentPage > 1) {
-        setCurrentPage((prevPage) => prevPage - 1);
-      }
-    };
+
+    previousPage.current = previousPage.current.slice(0, -1);
+  };
+
   
-    const handleNextPage = () => {
+
+  useEffect(() => {
+    viewUser();
     
-        setCurrentPage((prevPage) => prevPage + 1);
+    // Fetch the role from localStorage or an API here
+    const storedRole = JSON.parse(localStorage.getItem('permissions'));
+    console.log(storedRole);
+    setRole(storedRole);
+  }, []);
+
+  useEffect(() => {
+    // Prefetch the next page data only when viewUser has finished or the component has mounted
+    if (viewUserFinished||currentPage) {
+      prefetchNextPageData();
+    }
+  }, [viewUserFinished,currentPage]);
+
+  const viewUser = async () => {
+    try {
+      const viewUserPermissions = await axios.post(
+        API_BASE_URL + '/policy/permissions',
+        {
+          pageLs: ['user/User/getAllUsersPaged?isAdmin=True','user/User/getAllUsersPaged?isAdmin=False'],
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      const canViewAdmin = viewUserPermissions.data['user/User/getAllUsersPaged?isAdmin=True'].GET;
+      const canViewNonAdmin = viewUserPermissions.data['user/User/getAllUsersPaged?isAdmin=False'].GET;
+      if (!canViewNonAdmin && !canViewAdmin) {
+        alert('You do not have permission to view users');
+        return;
+      }
+      viewAdmin.current = canViewAdmin;
+
+      console.log(lastEvaluatedKey.current);
+
+      let response;
+      if (lastEvaluatedKey.current === null) {
+        response = await axios.get(
+          API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}` ,
+          {
+            withCredentials: true,
+          }
+        );
+        setUsers(response.data.data.users);
+      lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
+
+      if(response.data.data.next){
+        hasNext.current = true;
+      }
+      else{
+        hasNext.current = false;
+      }
+      } 
       
-    };
+      
+      setViewUserFinished(true); // Indicate that viewUser has finished
+    } catch (error) {
+      console.error('Cannot view user:', error);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+      setUsers(previousPage.current.pop());
+    }
+    
+  };
+
+  const handleNextPage = () => {
+    
+    if(lastEvaluatedKey.current != null){
+      pushToStack(users);
+    setCurrentPage((prevPage) => prevPage + 1);
+    setUsers(nextPage.current);
+  }
+  else{
+    alert("No more pages to show")
+  }
+};
+
+  const prefetchNextPageData = async () => {
+
+    if(lastEvaluatedKey!=null){
+    try {
+      const response = await axios.get(
+      
+        API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${viewAdmin.current}&lastEvaluatedKey=${lastEvaluatedKey.current}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      // You can use the prefetched data as needed, for example, update state or store it in a ref.
+      nextPage.current = response.data.data.users;
+      hasNext.current = response.data.data.next;
+      console.log(hasNext.current);
+      lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
+      console.log(nextPage.current);
+      console.log(response)
+    } catch (error) {
+      console.error('Error prefetching data:', error);
+    }
+  };
+};
+
+  // Rest of your component code...
+
+
 
   return (
-    <div className="relative overflow-x-auto w-[85%] mb-[100px]">
+    <div className="relative overflow-x-auto mb-[100px]">
       <table className="w-full text-sm text-left bg-[#F5F5F5]">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">
-          <th scope="col" class="px-6 py-3">
+          <th scope="col" className="px-6 py-3">
             Avatar
                           
                           </th>
@@ -65,7 +161,7 @@ export default function UserTable() {
             <th scope="col" className="px-6 py-3">
               Email
             </th>
-            <th scope="col" className="px-6 py-3 flex">
+            <th scope="col" className="flex px-6 py-3">
               Roles
             </th>
           </tr>
@@ -97,14 +193,14 @@ export default function UserTable() {
       </table>
       <div className="flex justify-end p-4">
         <button
-          className="bg-blue-500 text-white px-4 py-2 mx-4"
+          className="px-4 py-2 mx-4 text-white bg-blue-500"
           onClick={handlePreviousPage}
         >
           Previous
         </button>
         Current Page : {currentPage}
         <button
-          className="bg-blue-500 text-white px-4 py-2 mx-4"
+          className="px-4 py-2 mx-4 text-white bg-blue-500"
           onClick={handleNextPage}
         >
           Next
@@ -113,4 +209,6 @@ export default function UserTable() {
     </div>
   
   );
+
+
 }

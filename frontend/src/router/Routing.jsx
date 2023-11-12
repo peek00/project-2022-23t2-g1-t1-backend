@@ -17,19 +17,6 @@ import EditMakerCheckerPage from '../pages/EditMakerCheckerPage';
 function Routing() {
   return (
     <Routes>
-      
-      <Route exact path='/' element={<LandingPage/>}/>
-      <Route exact path='/user/editPolicy' element={<EditPolicyPage/>}/>
-      <Route path="/login" element={<LoginPage />} />
-      {/* <Route path ="/users" element={<PrivateRoute page={"user"} permission ={"GET"}/>}> */}
-      <Route index element={<UserListingPage/>}/>
-      <Route path ="add" element={<PrivateRoute page={"user"} permission={"POST"}/>}>
-      <Route index element={<AddUserPage type="add" />}/>
-      {/* </Route> */}
-      <Route path ="update" element={<PrivateRoute page ={"user"} permission={"PUT"}/>}>
-      <Route index element={<AddUserPage type="update" />}/>
-      </Route>
-      
 
       <Route path="/" element={<LandingPage />} />
 
@@ -65,14 +52,11 @@ function Routing() {
       >
         <Route path="" element={<LogsPage />} />
       </Route>
-      <Route
-        path="/points"
-        element={<PrivateRoute page={"points"} permission={"PUT"} />}
-      >
+  
         <Route path="updateAccount" element={<UpdatePointsPage />} />
      
         <Route path="addAccount" element={<AddAccountPage />} />
-      </Route>
+
 
       <Route
         path="/makerchecker"
@@ -85,10 +69,14 @@ function Routing() {
       </Route>
       <Route
         path="/user/account/company"
-        element={<PrivateRoute page={"points"} permission={"GET"} />}
+        // element={<PrivateRoute page={"points"} permission={"GET"} />}
       >
         <Route index element={<CompanyGatewayPage />} />
         <Route path=":companyId" element={<UserAccountPage />} />
+        
+        <Route path=":companyId/:userId/editPoints" element={<UpdatePointsPage />} />
+     
+        <Route path=":companyId/:userId/addPoints" element={<AddAccountPage />} />
       </Route>
     </Routes>
   );

@@ -1,4 +1,4 @@
-package com.ITSABackend.User.service;
+package com.ITSABackend.User.repository;
 
 import static org.mockito.Mockito.when;
 
@@ -10,9 +10,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ITSABackend.User.repo.DynamoDBRepo;
+import com.ITSABackend.User.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
-public class userServiceTest {
+public class RepositoryTest {
   @Mock
   private DynamoDBRepo dynamoDBRepo;
 
