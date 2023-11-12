@@ -1,26 +1,35 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import ValidationError
 
 from models.ApprovalRequest import ApprovalRequest, ApprovalUpdate, ApprovalResponse, DeleteRequest
 from models.approval_request_repository import ApprovalRequestRepository
 from controllers.db import initialize_db, create_table_on_first_load, get_db_connection
+from controllers.queue import initialize_queue, test_queue
 from botocore.exceptions import ClientError
 from datetime import datetime
-
-import boto3
 import requests
-from dotenv import load_dotenv
 
 router = APIRouter(
   prefix = "/approval",
   tags = ["Approvals"],
 )
 
+sqs = initialize_queue()
 
-load_dotenv()
-sqs = boto3.client('sqs')
+# Get the queue URL from the environment variables if not found, use the local endpoint
+queue_url = os.getenv('SQS_URL')
+
 db = get_db_connection()
 approval_request_repository = ApprovalRequestRepository(db)
+
+# Get user_ms and point_ms from environment variables
+USER_MS = os.getenv('USER_MS')
+POINTS_MS = os.getenv('POINTS_MS')
+
+# Print to see if user_ms and point_ms are loaded
+print("USER_MS:", USER_MS)
+print("POINTS_MS:", POINTS_MS)
 
 def isExpired(expiry_date:str):
     """
@@ -28,6 +37,12 @@ def isExpired(expiry_date:str):
     to determine if it is expired.
     """
     return datetime.now() > datetime.fromisoformat(expiry_date)
+
+@router.get('/testQueue')
+def test():
+    test_queue(sqs, queue_url)
+    return f"Published test message to queue at: {queue_url}"
+
 
 # =================== START: GET requests =======================
 @router.get("/", response_model=None)
@@ -766,7 +781,7 @@ def create_approval_requests(
         # TODO: get url to view requests for particular user from env
         url = "test url"
         # request for the emails that need to be sent to
-        recipients = requests.get(ADMIN_PROXY_API_URL + "/api/User/getUserEmailsByRole", 
+        recipients = requests.get(USER_MS + "/api/User/getUserEmailsByRole", 
             headers = {
                 "userid": userid
             }, 
@@ -776,7 +791,7 @@ def create_approval_requests(
         )
         # Japheth send email notifications here
         email = sqs.send_message(
-            QueueUrl="https://sqs.ap-southeast-1.amazonaws.com/717942231127/OutgoingEmailQueue",
+            QueueUrl=queue_url,
             DelaySeconds=10,
             MessageAttributes={
                 'fromName': {
@@ -785,7 +800,7 @@ def create_approval_requests(
                 },
                 'subject': {
                     'DataType': 'String',
-                    'stringValue': f'Request Approval for {combined_data['request_type']}'
+                    'stringValue': f"Request Approval for {combined_data['request_type']}"
                 },
                 'toEmail': {
                     'DataType': 'String',
@@ -1081,11 +1096,11 @@ def approve_or_reject_approval_request(
             details['withCredentials'] = True
             if combined_data['request_type'] == "Points Update":
                 # make call to endpoint to change amount
-                requests.post("http://localhost:8000/api/points/changeBalance", headers = headers, json=details)
+                requests.post(POINTS_MS+"/api/points/changeBalance", headers = headers, json=details)
 
             elif combined_data['request_type'] == "Update User Details":
                 # make call to endpoint to change user
-                requests.put("http://localhost:8000/api/user/updateUser", headers = headers, json=details)
+                requests.put(USER_MS+"/api/user/updateUser", headers = headers, json=details)
 
         elif combined_data["status"] == "rejected":
             action = "rejected"

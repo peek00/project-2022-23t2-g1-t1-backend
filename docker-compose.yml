@@ -50,9 +50,16 @@ services:
       - vpc
     depends_on:
       - db
+      - sqs
     environment:
       - AWS_REGION=local
       - AWS_DYNAMODB_ENDPOINT=http://db:8000
+      - USER_MS=http://user:8080
+      - POINTS_MS=http://points:3000
+      - SQS_LOCAL_ENDPOINT=http://sqs:9324
+      - SQS_URL=http://sqs:9324/queue/default
+    ports:
+      - 5001:5000 #Exposing 5001 port for tesing locally
   points:
     build: ./points-ledger
     networks:
@@ -110,6 +117,15 @@ services:
       - redis
     volumes:
       - dynamodb:/data
+  sqs:
+    image: roribio16/alpine-sqs:latest
+    ports:
+      - 9324:9324
+      - 9325:9325
+    stdin_open: true
+    tty: true
+    networks:
+      - vpc
 volumes:
   efs:
   dynamodb:
