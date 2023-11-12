@@ -1,12 +1,14 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import passport from "../../middleware/auth/passport";
 import { authController } from "../../controllers/auth";
+import authorize from "../../middleware/auth/authorize";
 
 const authRouter = Router();
 authRouter.use(express.json());
 authRouter.use(express.urlencoded({ extended: true }));
 authRouter.get(
   "/me",
+  authorize(),
   (req: Request, res: Response, next: NextFunction) => {
     console.log(req.user);
     res.json(req.user);
@@ -29,6 +31,7 @@ authRouter.get(
 // Logout Route
 authRouter.get(
   "/logout", 
+  authorize(),
   authController.logout);
 
 // Magic Token Route only for development

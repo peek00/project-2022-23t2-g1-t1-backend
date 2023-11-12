@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { API_BASE_URL } from '@/config/config';
 import ErrorPage from '../pages/ErrorPage';
 
@@ -12,6 +12,7 @@ import { Spinner } from "@material-tailwind/react";
 
 const PrivateRoute = ({ page, permission }) => {
   const [authorized, setAuthorized] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
@@ -31,7 +32,6 @@ const PrivateRoute = ({ page, permission }) => {
         const response = await axios.post(API_BASE_URL + '/policy/permissions', body, {
           withCredentials: true,
         });
-
         console.log(response.data);
 
         const roleresponse = await axios.get(API_BASE_URL + '/auth/me', {
@@ -54,8 +54,14 @@ const PrivateRoute = ({ page, permission }) => {
         console.log(localStorage.getItem('permissions'));
         return response.data; // This is the role
       } catch (error) {
-        // Handle errors here
-        console.error('Error fetching role:', error);
+        if (error instanceof AxiosError) {
+
+          // Check the message
+          if (error.message === 'Request failed with status code 401') {
+            // Set session expired to true
+            setSessionExpired(true);
+          }
+        }
         throw error;
       }
     };
@@ -92,6 +98,14 @@ const PrivateRoute = ({ page, permission }) => {
         setLoading(false);
       });
   }, [page]);
+
+  useEffect(() => {
+    if (sessionExpired) {
+      // Redirect to login page
+      alert('Login session expired. Please login again.');
+      window.location.href = '/login';
+    }
+  }, [sessionExpired]);
 
   // Render loader if still loading
   if (loading) {

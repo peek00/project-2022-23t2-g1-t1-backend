@@ -1,12 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "./customError";
+import { CustomError, InvalidSessionError } from "./customError";
 
 export const errorHandler = (
   error: Error,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ) => {
+  if (error instanceof InvalidSessionError) {
+    console.log(error.message);
+    // Clear cookie
+    res.clearCookie("jwt");
+    res.status(401).send({ error: "Unauthorized", message: error.message });
+  }
   if (error instanceof CustomError) {
     res
       .status(error.statusCode)
