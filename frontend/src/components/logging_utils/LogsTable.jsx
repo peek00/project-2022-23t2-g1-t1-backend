@@ -51,7 +51,9 @@ function LogsTable({ pageData}) {
         </tbody>
       </table>
     ) : (
-      <p>No data available</p>
+      <div className="grid text-2xl text-center text-gray-300 place-items-center" style={{ height: "500px" }}>
+        No logs available.
+      </div>
     )}
   </div>
 )
