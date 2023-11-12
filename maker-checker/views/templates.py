@@ -1,5 +1,6 @@
+import json
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Header, status
+from fastapi import APIRouter, HTTPException, Header, status, Request
 
 from controllers.db import get_db_connection
 from models.approval_template_repository import ApprovalRequestTemplateRepo
@@ -97,12 +98,21 @@ async def update_template(
 
 @router.get("/allowed_requestors")
 async def get_allowed_requestors(
-    role: str
+    role: str = Header(...)
     ):
     """
     Traverses entire DB and scans all templates to find all allowed requestors for a given role.
     """
     try:
+        roles = json.loads(role)
+        if type(roles) != list:
+            raise ValueError("Role must be a list of roles.")
+        role=[]
+        for r in roles:
+            # Remove starting and trailing spaces if any
+            role.append(r.strip())
+            
+        print(role)
         response = template_repository.get_allowed_requestors(role)
         return response
     except ValueError as e:

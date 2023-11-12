@@ -97,11 +97,19 @@ class ApprovalRequestTemplateRepo:
         except ClientError as e:
             print(e.response['Error']['Message'])
 
-    def get_allowed_requestors(self, role:str):
+    def get_allowed_requestors(self, role:list[str]):
         try:
-            response = self.__table.scan(
-                FilterExpression=Attr("allowed_requestors").contains(role)
-            )
+            if len(role) == 1:
+                response = self.__table.scan(
+                    FilterExpression=Attr("allowed_requestors").contains(role[0])
+                )
+            else:
+                filter = Attr("allowed_requestors").contains(role[0])
+                for i in range(1, len(role)):
+                    filter = filter | Attr("allowed_requestors").contains(role[i])
+                response = self.__table.scan(
+                    FilterExpression=filter
+                )
             return response['Items']
         except ClientError as e:
             print(e.response['Error']['Message'])
