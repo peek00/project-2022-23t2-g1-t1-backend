@@ -44,7 +44,6 @@ function CreateRequest() {
     // Handle create request form submit
     const handleFormSubmit = (formData) => {
         // TODO Form validation here
-        console.log("Form data: ", formData);
         const url = API_BASE_URL+"/api/maker-checker/approval/create";
         axios
             .post(url, formData, {
@@ -58,8 +57,8 @@ function CreateRequest() {
             });
     }
     return (
-        <div className="w-2/5 mx-auto bg-orange-50">
-            <div className="relative flex flex-col text-middle bg-slate-600">
+        <div className="w-3/5 py-5 mx-auto bg-[#b8c5e0] rounded drop-shadow-lg" >
+            <div className="relative flex flex-col mb-5 text-middle bg-slate-600">
                 {/* Button */}
                 <button
                     onClick={toggleDropdown}
