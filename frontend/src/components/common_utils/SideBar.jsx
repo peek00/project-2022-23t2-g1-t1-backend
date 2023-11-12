@@ -84,6 +84,15 @@ export default function SideBar() {
             Enroll User
           </NavLink>
           <NavLink
+            to="/user/account/company"
+            className={`text-white text-sm py-2 px-4 mt-2 rounded cursor-pointer ${activeLink === "/user/account/company"
+              ? "bg-gray-500 text-black font-bold"
+              : "hover:bg-blue-500 opacity-80"
+              }`}
+          >
+            View Company Accounts
+          </NavLink>
+          <NavLink
             to="/makerchecker"
             className={`text-white text-sm py-2 px-4 mt-2 rounded cursor-pointer ${activeLink === "/makerchecker"
               ? "bg-gray-500 text-black font-bold"
