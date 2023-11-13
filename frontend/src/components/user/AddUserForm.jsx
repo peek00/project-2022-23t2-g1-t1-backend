@@ -44,6 +44,7 @@ export default function AddUserForm() {
   
     
       console.log(response);
+      alert("User Added Successfully")
       window.location.href = "/users";
     } catch (error) {
       console.log(error);

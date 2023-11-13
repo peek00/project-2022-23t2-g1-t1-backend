@@ -8,7 +8,7 @@ export default function UpdateUserForm() {
 
 
     const { userData, updateUserData } = useUserContext();
-    console.log(userData);
+    
   const [formData, setFormData] = useState({
     firstName: userData.firstName,
     lastName: userData.lastName,
@@ -20,11 +20,14 @@ export default function UpdateUserForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    console.log(formData)
+    console.log(userData.id)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
+  
 
   const updateUser = async (e) => {
     e.preventDefault();
@@ -43,7 +46,7 @@ export default function UpdateUserForm() {
       };
       
      const userId = userData.id;
-      console.log(requestBody);
+      console.log(userId);
       const response = await axios.put(API_BASE_URL+`/api/user/User/updateUser?userID=${userId}`, requestBody, {
         withCredentials: true
       });
@@ -67,6 +70,9 @@ export default function UpdateUserForm() {
 
   return (
     <div className="absolute overflow-x-auto w-[100%] mt-[30%] bg-[#F5F5F5] rounded-2xl">
+      
+      
+
       <form onSubmit={updateUser} className="p-10 text-center">
         <div className="row flex gap-12">
           <div className="mb-6 ml-12">
