@@ -38,13 +38,13 @@ export class PolicyService {
 
     // Check if table exists
     const tables = await policyService.db.listTables();
-    console.log(tables);
+    if (process.env.NODE_ENV !== 'production') console.log(tables);
     if (tables===undefined || !tables.TableNames.includes(policyService.tableName)) {
       await policyService.createTable();
     } 
     // Check if there are any policies in the table
     const policies = await policyService.findAll();
-    console.log(policies)
+    if (process.env.NODE_ENV !== 'production') console.log(policies)
     if (policies === undefined || policies.length === 0) {
       await Promise.all(initialPolicy.map(async (policy: Policy) => {
         await policyService.add(policy);
@@ -56,14 +56,14 @@ export class PolicyService {
     const policyService = PolicyService.getInstance();
     // Check if table exists
     const tables = await policyService.db.listTables();
-    console.log(tables);
+    if (process.env.NODE_ENV !== 'production') console.log(tables);
     if (tables && tables.TableNames.includes(policyService.tableName)) {
       await policyService.deleteTable();
     }
   }
 
   private async createTable(): Promise<any> {
-    console.log("createTable");
+    if (process.env.NODE_ENV !== 'production') console.log("createTable");
     await this.db.createTable(this.tableName, {
       KeySchema: [
         {
@@ -85,7 +85,7 @@ export class PolicyService {
   }
 
   public async add(policy: Policy): Promise<any> {
-    console.log("policyService", policy, this.tableName);
+    if (process.env.NODE_ENV !== 'production') console.log("policyService", policy, this.tableName);
     // Drop cache for policy
     await this.cacheProvider.remove("policies");
     return await this.db.add(this.tableName, policy);
@@ -129,7 +129,7 @@ export class PolicyService {
       UpdateExpression: `SET ${UpdateExpressionArr.join(", ")}`,
       ExpressionAttributeValues,
     }
-    console.log(details)
+    if (process.env.NODE_ENV !== 'production') console.log(details)
     // Drop cache for policy
     await this.cacheProvider.remove("policies");
     return await this.db.updateBy(this.tableName, details);
@@ -143,11 +143,12 @@ export class PolicyService {
     }
     // Drop cache for policy
     await this.cacheProvider.remove("policies");
+    await this.cacheProvider.flushAllMatchingPattern(`policy*`);
     return await this.db.deleteBy(this.tableName, details);
   }
 
   public async findAll(): Promise<any> {
-    console.log("findAll");
+    if (process.env.NODE_ENV !== 'production') console.log("findAll");
     const params = {};
     return await this.db.findAll(this.tableName, params);
   }
@@ -159,7 +160,7 @@ export class PolicyService {
       return JSON.parse(cachedPolicies);
     } else {
       const policies = await this.findAll();
-      console.log(policies);
+      if (process.env.NODE_ENV !== 'production') console.log(policies);
       await this.cacheProvider.write("policies", JSON.stringify(policies), -1); 
       return policies;
     }
@@ -180,42 +181,49 @@ export class PolicyService {
   }
 
   public async mapRoleActions(role: string[], pageLs: string[]): Promise<any> {
-    let pageMap:{[key:string]: any} = {};
-    await Promise.all(pageLs.map(async ms => {
-      const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
-      console.log(api_endpoint);
-      let permissions:{[key:string]:boolean} = {
-        GET: false,
-        POST: false,
-        PUT: false,
-        DELETE: false,
+    const cachedPolicies = await this.cacheProvider.get(this.getCacheKey(role, pageLs));
+    if (cachedPolicies) {
+      return JSON.parse(cachedPolicies);
+    } else {
+      let pageMap:{[key:string]: any} = {};
+      try {
+        await Promise.all(pageLs.map(async ms => {
+          const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
+          let permissions:{[key:string]:boolean} = {
+            GET: false,
+            POST: false,
+            PUT: false,
+            DELETE: false,
+          }
+          const methods = Object.keys(permissions);
+          await Promise.all(methods.map(async (method: string) => {
+            // Retrieve the policy for the endpoint
+            const endpointPolicy = await this.getPolicy(api_endpoint, method);
+            // if (process.env.NODE_ENV !== 'production') console.log(endpointPolicy);
+            // compare userRole and endpointPolicy
+            // if (process.env.NODE_ENV !== 'production') console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
+            // Make sure that at least one role is included in the endpoint policy
+            if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
+              // if (process.env.NODE_ENV !== 'production') console.log('true')
+              permissions[method] = true;
+            } else {
+              // if (process.env.NODE_ENV !== 'production') console.log('false')
+              permissions[method] = false;
+            }
+          }));
+          pageMap[ms] = permissions;
+        }));
+        await this.cacheProvider.write(this.getCacheKey(role, pageLs), JSON.stringify(pageMap), -1); 
+      } catch (error) {
+        console.error(error);
+      } finally {
+        return pageMap;
       }
-      const methods = Object.keys(permissions);
-      await Promise.all(methods.map(async (method: string) => {
-        // Retrieve the policy for the endpoint
-        const endpointPolicy = await this.getPolicy(api_endpoint, method);
-        // console.log(endpointPolicy);
-        // compare userRole and endpointPolicy
-        // console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
-        // Make sure that at least one role is included in the endpoint policy
-        if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
-          // console.log('true')
-          permissions[method] = true;
-        } else {
-          // console.log('false')
-          permissions[method] = false;
-        }
-      }));
-      pageMap[ms] = permissions;
-    }));
-    return pageMap;
+    }
   }
 
-  public userOnlyPolicyValidation(userId: string, userIdClaim:string): boolean {
-    if (userId === userIdClaim) {
-      return true;
-    }
-    return false;
+  public getCacheKey(role:string[], pageLs:string[]):string {
+    return `policy${role.join('')}${pageLs.join('')}`.replace(/\s/g, '');  
   }
 
 }

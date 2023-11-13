@@ -26,6 +26,7 @@ approval_request_repository = ApprovalRequestRepository(db)
 # Get user_ms and point_ms from environment variables
 USER_MS = os.getenv('USER_MS')
 POINTS_MS = os.getenv('POINTS_MS')
+MAKER_CHECKER_PAGE_URL = os.getenv('MAKER_CHECKER_PAGE_URL')
 
 # Print to see if user_ms and point_ms are loaded
 print("USER_MS:", USER_MS)
@@ -790,12 +791,10 @@ def create_approval_requests(
             params={
                 "email": combined_data['request_details']['email']
             }).json()
-            print(verify)
             if verify['data'] == "User Doesn't Exist":
                 raise RequestError("user not found")
 
         elif combined_data['request_type'] == 'Points Update':
-            print("it is getting the correct request type")
             verify = requests.get(POINTS_MS + "/getoneaccount",
             headers = {
                 "userid": userid
@@ -804,21 +803,16 @@ def create_approval_requests(
                 "user_id": combined_data['request_details']['account_id'],
                 "company_id": combined_data['request_details']['company_id']
             }).json()
-            print("it is verifying")
-            print(verify)
-            print(verify['data'])
-            print(verify['code'])
             if verify['code'] == 400:
-                print('this error is going through')
                 raise RequestError("Points account not found")
 
-        approval_request_repository.create_approval_request(combined_data)
-        print("And we got here")
+        create_request = approval_request_repository.create_approval_request(combined_data)
+        print("-----------------------")
+        print(create_request)
+        print("-----------------------")
         roles = combined_data['approval_role']
         # TODO: get url to view requests for particular user from env
-        url = "test url"
-        print(USER_MS + "/User/getUserEmailsByRole")
-        print(roles)
+        url = MAKER_CHECKER_PAGE_URL
         
         # request for the emails that need to be sent to
         recipients = requests.get(USER_MS + "/User/getUserEmailsByRole",
@@ -827,11 +821,9 @@ def create_approval_requests(
             },
             json=roles
         )
-        print(recipients)
         # Get data
         recipients = recipients.json()["data"]
         # Get email from the recipients.data
-        print(recipients)
         
         if len(recipients) == 0:
             raise RequestError("No recipients found.")
@@ -1151,7 +1143,7 @@ def approve_or_reject_approval_request(
 
             elif combined_data['request_type'] == "Update User Details":
                 # make call to endpoint to change user
-                requests.put(USER_MS+"User/updateUser", headers = headers, json=details)
+                requests.put(USER_MS+"/User/updateUser", headers = headers, json=details)
 
         elif combined_data["status"] == "rejected":
             action = "rejected"

@@ -5,7 +5,7 @@ from controllers.db import get_db_connection, create_table_on_first_load
 from models.approval_request_repository import ApprovalRequestRepository
 from views import approvals, templates
 
-status = create_table_on_first_load(reset=True)
+status = create_table_on_first_load(reset=False)
 if status:
     app = FastAPI()
     # CORS policy for backend to interact with the frontend

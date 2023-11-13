@@ -33,7 +33,7 @@ export class AuthenticationService {
     try {
       const user = await this.findUserByEmail(email);
       const { userId, roles = [] } = user;
-      console.log("UserID, role: "+ userId,roles);
+      if (process.env.NODE_ENV !== 'production') console.log("UserID, role: "+ userId,roles);
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(userId);
       const userWithToken = {
@@ -41,6 +41,8 @@ export class AuthenticationService {
         role: roles,
         token: token
       };
+      // Flush old token in DB
+      await this.cacheProvider.remove(userId);
       await this.cacheProvider.write(userId, JSON.stringify(userWithToken), 3 * 24 * 60 * 60 * 1); // 3 day
       return userWithToken;
     } catch (error) {
@@ -49,28 +51,30 @@ export class AuthenticationService {
   }
   private async findUserByEmail(email: string): Promise<any> {
     try {
-      console.log(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
+      if (process.env.NODE_ENV !== 'production') console.log(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       if (!user.data || !user.data.data) {
         throw new Error("User not found");
       }
       return user.data.data;
     } catch (error) {
-      console.log("Axios error: " + error); 
+      if (process.env.NODE_ENV !== 'production') console.log("Axios error: " + error); 
       throw error;
     }
   }
   public async logout(id: string): Promise<boolean> {
-    console.log("authenticationService.logout", id);
+    if (process.env.NODE_ENV !== 'production') console.log("authenticationService.logout", id);
     await this.cacheProvider.remove(id);
     return true;
   }
   public async getUserById(id: string): Promise<any> {
-    console.log("authenticationService.getUserById", id);
+    if (process.env.NODE_ENV !== 'production') console.log("authenticationService.getUserById", id);
     const userData = await this.cacheProvider.get(id);
 
     if (userData) {
       const { id, role, companyId, token } = JSON.parse(userData);
+      // Check if JWT Token is the same as session
+
       return { id, role, companyId, token };
     } else {
       throw new InvalidSessionError("User Session not found");
@@ -79,7 +83,7 @@ export class AuthenticationService {
   public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {
     const token = this.jwtService.generateToken("temporary");
     const response = { id: "temporary", role: roleLs, companyId: 'test-company-id', token };
-    console.log(response);
+    if (process.env.NODE_ENV !== 'production') console.log(response);
     await this.cacheProvider.write("temporary", JSON.stringify(response), 60 * 3); // 3 minutes
     return response;
   }

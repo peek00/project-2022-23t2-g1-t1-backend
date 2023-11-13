@@ -12,17 +12,16 @@ export class ProxyController{
         [`^${path}`]: "",
       },
       selfHandleResponse: true,
-      xfwd: true,
       onProxyReq: (proxyReq, req, res) => {
-        // console.log("Original Req IP", req.ip);
-        // console.log("onProxyReq", req.user);
-        // console.log("target", target);
+        // if (process.env.NODE_ENV !== 'production') console.log("Original Req IP", req.ip);
+        // if (process.env.NODE_ENV !== 'production') console.log("onProxyReq", req.user);
+        // if (process.env.NODE_ENV !== 'production') console.log("target", target);
         // req.headers["userid"] = req.user!.id;
         proxyReq.setHeader("userid", req.user!.id);
-        proxyReq.setHeader("originalip", req.ip);
+        proxyReq.setHeader("originalip", req.headers["X-Forwarded-For"] || req.headers["x-forwarded-for"] || req.ip);
         proxyReq.setHeader("role", JSON.stringify(req.user!.role || ["User"]));
         req.headers["userid"] = req.user!.id;
-        req.headers["originalip"] = req.ip;
+        req.headers["originalip"] = req.headers["X-Forwarded-For"] || req.headers["x-forwarded-for"] || req.ip;
       },
       onProxyRes: responseInterceptor(
         async (responseBuffer, proxyRes, req, res) => {
@@ -31,12 +30,12 @@ export class ProxyController{
           let originalIP = "";
           // If X-Forwarded-For header is present
           if (req.headers["X-Forwarded-For"]) {
-            console.log("X-Forwarded-For header present: ", req.headers["X-Forwarded-For"]);
+            console.info("X-Forwarded-For header present: ", req.headers["X-Forwarded-For"]);
             originalIP = req.headers["X-Forwarded-For"] as string;
           } else {
             originalIP = req.headers["originalip"] as string;
           }
-          console.log("response", response);
+          if (process.env.NODE_ENV !== 'production') console.log("response", response);
           if (logger === undefined) return responseBuffer; // For routes without logging
           try {
             let responseDetails = JSON.parse(response);
@@ -67,10 +66,13 @@ export class ProxyController{
         res.writeHead(500, {
           "Content-Type": "text/plain",
         });
+        console.error("Proxy Error", err);
         res.end(
           "Something went wrong. And we are reporting a custom error message.",
         );
       },
+      proxyTimeout: 10000, // 10 seconds
+      timeout: 10000, // 10 seconds
     });
   }
 

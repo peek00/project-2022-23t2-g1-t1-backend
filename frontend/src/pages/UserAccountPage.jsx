@@ -9,26 +9,27 @@ import {API_BASE_URL} from "@/config/config";
 import { Link } from 'react-router-dom';
 import { useUserContext } from '../context/userContext';
 import {getAllAccountsByUserId} from '../apis/points';
+import { Spinner } from '@material-tailwind/react';
 
 
 export default function UserAccountPage() {
   
   const [accounts, setAccounts] = useState([]);
+  const [userData, setUserData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   console.log(accounts);
     
-    const { userId } = useParams();
-    console.log(userId );
-  // console.log(companyId);
-  // company and points
+  const { userId } = useParams();
+  console.log(userId);
 
   useEffect(() => {
-    // Have to change the data
     const fetchData = async () => {
       try {
         // Check if userid is available
         if (userId) {
           let response = await getAllAccountsByUserId(userId);
-         
+          console.log("response: ");
+          console.log(response);
           const accounts = [];
           Object.keys(response.data).forEach((key) => {
             console.log(key);
@@ -37,12 +38,25 @@ export default function UserAccountPage() {
           
           setAccounts(accounts);
           console.log(accounts);
+
+          await axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + userId, {
+            withCredentials: true,
+          }
+          // await axios.get("http://localhost:8080/api/user/User/getUser?userID=" + userId
+          ).then((response) => {
+            const userInfo = response.data.data;
+            setUserData(userInfo);
+          }).catch((error) => {
+            console.error("Error fetching user data: ", error);
+          })
         } 
         else {
           console.warn("userid is not available yet.");
         }
       } catch (error) {
         console.error("Error fetching accounts:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
   
@@ -59,13 +73,16 @@ export default function UserAccountPage() {
       <div className="w-4/5 min-h-screen overflow-y-auto">
         <div className="min-h-screen overflow-y-auto">
         <div className='flex w-[100%] absolute top-[10%]'>  
-          <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>User Accounts</h1>
+          <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>User Accounts - {userData.fullName}</h1>
           </div>
           <Link to={`/user/account/${userId}/addPoints`}><button type="button" class=" fixed  top-[10%] right-[10%] text-white  bg-[#1C2434]  hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>
           
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
-            
-            <UserAccountTable accounts={accounts}/>
+            {
+              isLoading ?
+              <Spinner color="teal" size="large" className='mt-20'/> :
+              <UserAccountTable accounts={accounts}/>
+            }
           </div>
         </div>
       </div>
