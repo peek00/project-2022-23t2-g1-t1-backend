@@ -343,7 +343,7 @@ def populate_template_db(ddb):
                 "firstName": "str",
                 "lastName": "str",
                 "email": "email",
-                "roles": "str",
+                "role": "str",
                 },
             "allowed_approvers": [
                 "Owner",
