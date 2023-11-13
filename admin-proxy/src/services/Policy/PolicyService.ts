@@ -143,6 +143,7 @@ export class PolicyService {
     }
     // Drop cache for policy
     await this.cacheProvider.remove("policies");
+    await this.cacheProvider.flushAllMatchingPattern(`policy*`);
     return await this.db.deleteBy(this.tableName, details);
   }
 
@@ -180,42 +181,49 @@ export class PolicyService {
   }
 
   public async mapRoleActions(role: string[], pageLs: string[]): Promise<any> {
-    let pageMap:{[key:string]: any} = {};
-    await Promise.all(pageLs.map(async ms => {
-      const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
-      console.log(api_endpoint);
-      let permissions:{[key:string]:boolean} = {
-        GET: false,
-        POST: false,
-        PUT: false,
-        DELETE: false,
+    const cachedPolicies = await this.cacheProvider.get(this.getCacheKey(role, pageLs));
+    if (cachedPolicies) {
+      return JSON.parse(cachedPolicies);
+    } else {
+      let pageMap:{[key:string]: any} = {};
+      try {
+        await Promise.all(pageLs.map(async ms => {
+          const api_endpoint =  ms.includes('policy') ? ms : `/api/${ms}`;
+          let permissions:{[key:string]:boolean} = {
+            GET: false,
+            POST: false,
+            PUT: false,
+            DELETE: false,
+          }
+          const methods = Object.keys(permissions);
+          await Promise.all(methods.map(async (method: string) => {
+            // Retrieve the policy for the endpoint
+            const endpointPolicy = await this.getPolicy(api_endpoint, method);
+            // console.log(endpointPolicy);
+            // compare userRole and endpointPolicy
+            // console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
+            // Make sure that at least one role is included in the endpoint policy
+            if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
+              // console.log('true')
+              permissions[method] = true;
+            } else {
+              // console.log('false')
+              permissions[method] = false;
+            }
+          }));
+          pageMap[ms] = permissions;
+        }));
+        await this.cacheProvider.write(this.getCacheKey(role, pageLs), JSON.stringify(pageMap), -1); 
+      } catch (error) {
+        console.error(error);
+      } finally {
+        return pageMap;
       }
-      const methods = Object.keys(permissions);
-      await Promise.all(methods.map(async (method: string) => {
-        // Retrieve the policy for the endpoint
-        const endpointPolicy = await this.getPolicy(api_endpoint, method);
-        // console.log(endpointPolicy);
-        // compare userRole and endpointPolicy
-        // console.log(`[${method}]${api_endpoint} | endpointPolicy: ${endpointPolicy} | role: ${role}`)
-        // Make sure that at least one role is included in the endpoint policy
-        if (endpointPolicy.length ===0 || endpointPolicy.some((policyRole: string) => role.includes(policyRole))) {
-          // console.log('true')
-          permissions[method] = true;
-        } else {
-          // console.log('false')
-          permissions[method] = false;
-        }
-      }));
-      pageMap[ms] = permissions;
-    }));
-    return pageMap;
+    }
   }
 
-  public userOnlyPolicyValidation(userId: string, userIdClaim:string): boolean {
-    if (userId === userIdClaim) {
-      return true;
-    }
-    return false;
+  public getCacheKey(role:string[], pageLs:string[]):string {
+    return `policy${role.join('')}${pageLs.join('')}`.replace(/\s/g, '');  
   }
 
 }

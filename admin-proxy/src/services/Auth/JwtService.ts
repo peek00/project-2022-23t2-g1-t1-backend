@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { InvalidSessionError } from "../../middleware/error/customError";
+import { v4 as uuid4 } from "uuid";
 
 export class JwtService {
   private static instance: JwtService;
@@ -21,6 +22,8 @@ export class JwtService {
     console.log("JwtService.generateToken()");
     const token = jwt.sign({ id: userId }, this.secret, {
       expiresIn: 3 * 24 * 60 * 60 * 1, // 3 days
+      algorithm: "HS256",
+      jwtid: uuid4()
     });
     return token;
   }
@@ -39,6 +42,14 @@ export class JwtService {
     if (typeof payload.exp !== "undefined" && payload.exp < now) {
       throw new InvalidSessionError("Token expired");
     }
+
     return true;
+  }
+
+  public matchTokenPayload(token: string, payload: JwtPayload) {
+    const decoded = jwt.verify(token, this.secret) as JwtPayload;
+    if (decoded.jti !== payload.jti) {
+      throw new InvalidSessionError("Token does not match Session! Please Login Again");
+    }
   }
 }

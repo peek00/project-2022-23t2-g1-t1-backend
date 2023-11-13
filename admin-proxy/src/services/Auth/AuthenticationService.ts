@@ -41,6 +41,8 @@ export class AuthenticationService {
         role: roles,
         token: token
       };
+      // Flush old token in DB
+      await this.cacheProvider.remove(userId);
       await this.cacheProvider.write(userId, JSON.stringify(userWithToken), 3 * 24 * 60 * 60 * 1); // 3 day
       return userWithToken;
     } catch (error) {
@@ -71,6 +73,8 @@ export class AuthenticationService {
 
     if (userData) {
       const { id, role, companyId, token } = JSON.parse(userData);
+      // Check if JWT Token is the same as session
+
       return { id, role, companyId, token };
     } else {
       throw new InvalidSessionError("User Session not found");

@@ -7,6 +7,7 @@ import router from "./routes";
 import { PolicyService } from "./services/Policy/PolicyService";
 import { Logger } from "./services/Logger/Logger";
 import cron from "node-cron";
+import compression from "compression";
 
 //For env File
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(cors({
   origin: ['*',process.env.CLIENT_BASE_URL as string],
   credentials: true, 
 }));
+app.use(compression());
 
 // Initialize Policy Service
 PolicyService.initialize().then(() => {

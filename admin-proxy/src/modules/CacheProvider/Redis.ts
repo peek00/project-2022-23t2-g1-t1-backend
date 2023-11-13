@@ -73,4 +73,16 @@ export class Redis implements ICacheProvider {
     await promisify(this.client.flushAll).bind(this.client)();
     return true;
   }
+
+  async flushAllMatchingPattern(pattern: string): Promise<boolean> {
+    const keys = await promisify(this.client.keys).bind(this.client)(pattern);
+    console.log("Deleting all cache matching log pattern")
+    console.log(keys);
+    if (keys.length === 0) {
+      return true;
+    }
+    // Delete all keys matching pattern
+    await promisify(this.client.del).bind(this.client)(keys);
+    return true;
+  }
 }

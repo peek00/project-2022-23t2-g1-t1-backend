@@ -70,6 +70,7 @@ passport.use(
         jwtService.validateJwtPayload(jwtPayload);
         const user = await authenticationService.getUserById(jwtPayload.id);
         console.log("User from JWT", user);
+        jwtService.matchTokenPayload(user.token, jwtPayload);
         return done(null, user, { scope: "all" });
       } catch (error) {
         console.log(error);
