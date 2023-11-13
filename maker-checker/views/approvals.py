@@ -812,7 +812,7 @@ def create_approval_requests(
         print("-----------------------")
         roles = combined_data['approval_role']
         # TODO: get url to view requests for particular user from env
-        url = "https://api.itsag1t1.com/makerchecker"
+        url = MAKER_CHECKER_PAGE_URL
         
         # request for the emails that need to be sent to
         recipients = requests.get(USER_MS + "/User/getUserEmailsByRole",
