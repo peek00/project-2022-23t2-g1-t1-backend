@@ -50,7 +50,7 @@ export default function UserAccountTable(props){
 
                   <td className="px-6 py-4">{account.company_id}</td>
 
-                  <Link to={`/user/account/${account.company_id}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
+                  <Link to={`/user/account/company/${account.company_id}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
 
                 </tr>
               ))}
