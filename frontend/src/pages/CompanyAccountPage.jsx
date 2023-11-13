@@ -13,8 +13,6 @@ export default function CompanyAccountPage() {
   const { companyId } = useParams(); 
   const [accounts, setAccounts] = useState([]);
   const [isLoading,setIsLoading] = useState(true);
-  // console.log(companyId);
-  // company and points
 
   useEffect(() => {
     const fetchData = async () => {
