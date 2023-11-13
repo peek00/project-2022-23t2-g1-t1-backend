@@ -32,12 +32,17 @@ export class AuthenticationService {
     // Invoke User Proxy to retrieve user details
     try {
       const user = await this.findUserByEmail(email);
-      const { id, role = [], companyId } = user;
+      const { userId, roles = [] } = user;
+      console.log("UserID, role: "+ userId,roles);
       // If not, generate a new token and store it in cache
-      const token = this.jwtService.generateToken(id);
-      const response = { ...user, token };
-      await this.cacheProvider.write(id, JSON.stringify(response), 3 * 24 * 60 * 60 * 1); // 3 day
-      return { id, role, companyId, token };
+      const token = this.jwtService.generateToken(userId);
+      const userWithToken = {
+        id: userId,
+        role: roles,
+        token: token
+      };
+      await this.cacheProvider.write(userId, JSON.stringify(userWithToken), 3 * 24 * 60 * 60 * 1); // 3 day
+      return userWithToken;
     } catch (error) {
       throw error;
     }
@@ -46,11 +51,10 @@ export class AuthenticationService {
     try {
       console.log(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
       const user = await axios.get(`${ProxyPaths.userProxy}/User/getUserByEmail?email=${email}`);
-      console.log(user);
-      if (!user.data) {
+      if (!user.data || !user.data.data) {
         throw new Error("User not found");
       }
-      return user.data;
+      return user.data.data;
     } catch (error) {
       console.log("Axios error: " + error); 
       throw error;
