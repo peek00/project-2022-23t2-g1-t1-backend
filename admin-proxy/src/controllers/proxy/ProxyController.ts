@@ -66,10 +66,13 @@ export class ProxyController{
         res.writeHead(500, {
           "Content-Type": "text/plain",
         });
+        console.error("Proxy Error", err);
         res.end(
           "Something went wrong. And we are reporting a custom error message.",
         );
       },
+      proxyTimeout: 10000, // 10 seconds
+      timeout: 10000, // 10 seconds
     });
   }
 
