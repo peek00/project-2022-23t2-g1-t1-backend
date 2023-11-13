@@ -9,9 +9,9 @@ export default function UserListingPage() {
       <SideBar />
         {/* <TopBar /> */}
       {/* Content Area */}
-      <div className="w-4/5 min-h-screen overflow-y-auto">
+      <div className="w-full min-h-screen overflow-y-auto">
 
-          <div className='ms-[30%]  mt-[10%]  '>
+          <div className='ms-[10%]  mt-[10%]  '>
             <UserTable />
           </div>
       </div>
