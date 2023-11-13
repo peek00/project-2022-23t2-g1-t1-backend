@@ -7,8 +7,8 @@ export default function AddUserForm() {
     firstName: '',
     lastName: '',
     email: '',
-    role: 'Customer',
-    startingPoints: '',
+    role: 'User',
+    
   });
 
   const handleChange = (e) => {
@@ -35,15 +35,18 @@ export default function AddUserForm() {
         
        
       };
+      console.log(requestBody)
       const response = addUser(requestBody)
+    
   
       // Assuming the response contains the user's role
 
-      window.location.href = "/users";
   
     
       console.log(response);
+      window.location.href = "/users";
     } catch (error) {
+      console.log(error);
       // Handle errors here
       console.error("Cannot log out of auth:", error);
       throw error; // Optionally re-throw the error to propagate it to the caller

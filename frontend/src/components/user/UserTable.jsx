@@ -9,7 +9,7 @@ export default function UserTable() {
   const [email,setEmail] = useState('');
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const nextPage = useRef(null);
+  const [nextPage,setNextPage] = useState(null);
   const previousPage = useRef([]);
   const lastEvaluatedKey = useRef(null);
   const viewAdmin = useRef(null);
@@ -32,7 +32,7 @@ export default function UserTable() {
   const resetPage = () => {
     setCurrentPage(1);
     previousPage.current = [];
-    nextPage.current = null;
+    setNextPage(null);
     lastEvaluatedKey.current = null;
     viewAdmin.current = null;
     setViewUserFinished(false);
@@ -131,7 +131,7 @@ export default function UserTable() {
     if(lastEvaluatedKey.current != null){
       pushToStack(users);
     setCurrentPage((prevPage) => prevPage + 1);
-    setUsers(nextPage.current);
+    setUsers(nextPage);
   }
   else{
     alert("No more pages to show")
@@ -151,11 +151,11 @@ export default function UserTable() {
       );
 
       // You can use the prefetched data as needed, for example, update state or store it in a ref.
-      nextPage.current = response.data.data.users;
+      setNextPage( response.data.data.users);
       hasNext.current = response.data.data.next;
       console.log(hasNext.current);
       lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
-      console.log(nextPage.current);
+    
       console.log(response)
     } catch (error) {
       console.error('Error prefetching data:', error);
