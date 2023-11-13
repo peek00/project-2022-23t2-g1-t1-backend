@@ -40,13 +40,36 @@ export default function UserTable() {
     viewUser();
   };
 
-  const startSearch = () => {
-    setSearch(email);
+  const  startSearch = async () => {
+   
+    
+    try{
+      let response = await axios.get(
+      API_BASE_URL+ `/api/user/User/getUserByEmail?email=${email}` ,
+      {
+        withCredentials: true,
+      }
+      
+    );
+    if(response.data.data ==null){
+      alert("No such user found");
+
+    }
+    else{
+    setUsers([response.data.data]);
+    }}
+    catch(error){
+      alert("No such user found");
+      console.error('Cannot view user:', error);
+    }
+
+
   };
 
   const resetSearch = () => {
     setSearch('');
     setEmail('');
+    resetPage();
   };
 
   useEffect(() => {
@@ -95,7 +118,7 @@ export default function UserTable() {
       let response;
       if (lastEvaluatedKey.current === null) {
         response = await axios.get(
-          API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}&email=${email}` ,
+          API_BASE_URL+ `/api/user/User/getAllUsersPaged?isAdmin=${canViewAdmin}` ,
           {
             withCredentials: true,
           }
@@ -114,7 +137,7 @@ export default function UserTable() {
       
       setViewUserFinished(true); // Indicate that viewUser has finished
     } catch (error) {
-      alert("User do not exisit in the database")
+      
       console.error('Cannot view user:', error);
     }
   };
