@@ -8,8 +8,8 @@ import NavBar from "../components/common_utils/NavBar";
 function LandingPage(){
   
     return(
-        <div className='min-h-screen min-w-full'>
-            <div className='container relative min-w-full'>
+        <div className='min-h-screen min-w-full overflow-y-hidden'>
+            <div className='container relative min-w-full overflow-y-hidden'>
                 <NavBar/>
                 
             <Hero/>
