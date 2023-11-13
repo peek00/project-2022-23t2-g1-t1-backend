@@ -11,6 +11,7 @@ import { API_BASE_URL } from "@/config/config";
 
 export default function UserListingPage() {
     const [templateData, setTemplateData] = useState([]);
+    const [updateStatus, setUpdateStatus] = useState(""); // "pending", "success", "error"
 
     const onUpdate = async (updatedData) => {
         try {
@@ -25,7 +26,9 @@ export default function UserListingPage() {
             // Update the local state with the updated data
             const newTemplateData = [...templateData];
             setTemplateData(newTemplateData);
+            setUpdateStatus("success");
         } catch (error) {
+            setUpdateStatus("error");
             console.error("Error updating template:", error);
         }
     };
@@ -52,7 +55,7 @@ export default function UserListingPage() {
             <SideBar />
             {/* <TopBar /> */}
             {/* Content Area */}
-            <div className="w-4/5 min-h-screen overflow-y-auto mt-28 ms-10">
+            <div className="w-4/5 min-h-screen overflow-y-auto mt-28 ms-[20%]">
                 <div className="mb-5 text-4xl">Edit Template Permissions</div>
                 <div className="px-5 py-5">
                     <li>
@@ -61,6 +64,16 @@ export default function UserListingPage() {
                     </li>
                     <li>Do not include spaces when editing the requestors.</li>
                 </div>
+
+                {updateStatus === "success" ? (
+        <div className="flex w-1/2 px-5 py-5 mb-5 text-green-800 bg-green-200 border border-green-800">
+          Permissions updated successfully! Please refresh to see updated changes.
+        </div>
+      ) : updateStatus === "error" ? (
+        <div className="flex w-1/2 px-5 py-5 mb-5 text-red-800 bg-red-200 border border-red-800">
+          Error encountered, permissions were not updated. Please refresh and try again.
+        </div>
+      ) : null}
                 <table className="min-w-full">
                     <thead>
                         <tr>
