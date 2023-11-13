@@ -68,12 +68,12 @@ public class UserService {
 
         try{
             String id = UUID.randomUUID().toString();
-            System.out.println("Hi");
-            System.out.println(id);
-            System.out.println(user.getfirstName());
-            System.out.println(user.getlastName());
-            System.out.println(user.getEmail());
-            System.out.println(user.getRoles());
+
+            // System.out.println(id);
+            // System.out.println(user.getfirstName());
+            // System.out.println(user.getlastName());
+            // System.out.println(user.getEmail());
+            // System.out.println(user.getRoles());
 
             
 
@@ -87,7 +87,6 @@ public class UserService {
             return id;
 
         } catch(Exception e){
-            System.out.println("Only error");
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
             throw new IllegalStateException("Unable to create user");
@@ -99,8 +98,8 @@ public class UserService {
     public User getUserById( String userId) throws LimitExceededException {
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
-        System.out.println("Getting User from the DB");
-        System.out.println(userId);
+        // System.out.println("Getting User from the DB");
+        // System.out.println(userId);
     
         if (table != null) {
             GetItemSpec spec = new GetItemSpec()
@@ -139,9 +138,9 @@ public class UserService {
     
         try {
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
-            System.out.println("Deleting item....");
+            // System.out.println("Deleting item....");
             table.deleteItem(deleteItemSpec);
-            System.out.println("Item deleted successfully");
+            // System.out.println("Item deleted successfully");
     
         } catch (Exception e) {
             System.err.println("Unable to delete item.");
@@ -150,12 +149,12 @@ public class UserService {
     }
     
     public void updateUser(User user, String userId) {
-        System.out.println("Trying....");
-        System.out.println(userId);
-        System.out.println(user.getfirstName());
-        System.out.println(user.getlastName());
-        System.out.println(user.getEmail());
-        System.out.println(user.getRoles());
+        // System.out.println("Trying....");
+        // System.out.println(userId);
+        // System.out.println(user.getfirstName());
+        // System.out.println(user.getlastName());
+        // System.out.println(user.getEmail());
+        // System.out.println(user.getRoles());
         
         
     
@@ -169,11 +168,9 @@ public class UserService {
                         .withStringSet(":userRole", user.getRoles()))
                 .withReturnValues(ReturnValue.UPDATED_NEW);
         
-        System.out.println("Update item spec created");
-    
         try {
             Table table = dynamoDBRepo.getTable(AppConstant.USER);
-            System.out.println("Updating User...");
+            // System.out.println("Updating User...");
             UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
             System.out.println("Update user successful " + outcome.getItem().toJSONPretty());
         } catch (Exception e) {
@@ -194,11 +191,11 @@ public class UserService {
 
         if (table != null){
             try{
-                System.out.println("Reading user....");
+                // System.out.println("Reading user....");
                 ItemCollection<QueryOutcome> items = emailIndex.query(spec);
                 Item outcome = items.iterator().next();
 
-                System.out.println(outcome);
+                // System.out.println(outcome);
 
                 if (outcome != null){
                     user = new User();
@@ -298,7 +295,7 @@ public class UserService {
 
         if (table != null) {
             try {
-                System.out.println("Reading user....");
+                // System.out.println("Reading user....");
                 // If validRoleName is only of length 1, User, include a filter expression to not include the role name
                 if (validRoleNames.size() == 1 && validRoleNames.contains("User")) {
                     String filterExpression = "contains (userRole, :roleName)";
@@ -314,11 +311,9 @@ public class UserService {
 
                 items = table.scan(spec);
 
-                System.out.println(items);
-                System.out.println("line287");
+                // System.out.println(items);
 
                 items.forEach(item -> {
-                    System.out.println(item);
                     User user = new User();
                     user.setUserId(item.getString("userID"));
                     user.setEmail(item.getString("email"));
@@ -328,7 +323,6 @@ public class UserService {
 
                     users.add(user);
                 });
-                System.out.println("line299");
 
                 Map<String, AttributeValue> lastEvaluatedKeyMap = items.getLastLowLevelResult().getScanResult().getLastEvaluatedKey();
                 
@@ -338,9 +332,6 @@ public class UserService {
                     newLastEvaluatedKey = lastEvaluatedKeyMap.get("userID").getS();
                 }
 
-
-                // System.out.println(newLastEvaluatedKey);
-                System.out.println("line307");
             } catch (Exception e) {
                 result.put("error", e.getMessage());
                 System.err.println("Unable to read user");
@@ -409,17 +400,16 @@ public class UserService {
         User[] usersArray = getAllUsers(validRoleNames);
         List<User> users = Arrays.asList(usersArray);
 
-        System.out.println(roleNames.get(0));
-        System.out.println(usersArray);
-        System.out.println(users.get(0).getEmail());
+        // System.out.println(roleNames.get(0));
+        // System.out.println(usersArray);
+        // System.out.println(users.get(0).getEmail());
 
         // Filter users by roleName in userRole array
         List<String> filteredEmails = users.stream()
             .filter(user -> user.getRoles().stream().anyMatch(roleNames::contains))
             .map(User::getEmail)
             .collect(Collectors.toList());
-        
-        System.out.println("Hi");
+    
         return filteredEmails;
         
     }
