@@ -51,12 +51,10 @@ function Routing() {
         path="/logs"
         element={<PrivateRoute page={"logging"} permission={"GET"} />}
       >
-        <Route path="" element={<LogsPage />} />
+        <Route index element={<LogsPage />} />
       </Route>
   
-        <Route path="updateAccount" element={<UpdatePointsPage />} />
-     
-        <Route path="addAccount" element={<AddAccountPage />} />
+      
 
 
       <Route
@@ -70,16 +68,19 @@ function Routing() {
       </Route>
       <Route
         path="/user/account"
-        // element={<PrivateRoute page={"points"} permission={"GET"} />}
+        element={<PrivateRoute page={"points"} permission={"GET"} />}
       >
         <Route path ="company" element={<CompanyGatewayPage />} />
         <Route path="company/:companyId" element={<CompanyAccountPage />} />
-        
-        <Route path="company/:companyId/:userId/editPoints" element={<UpdatePointsPage />} />
+
+        <Route path="company/:companyId/:userId/editPoints" element= {<PrivateRoute page={"points"} permission={"PUT"} />}>
+        <Route index element={<UpdatePointsPage />} />
+        </Route>
        
 
-     
-        <Route path=":userId/addPoints" element={<AddAccountPage />} />
+        <Route path=":userId/addPoints" element= {<PrivateRoute page={"points"} permission={"POST"} />}>
+        <Route index element={<AddAccountPage />} />
+        </Route>
         <Route path=":userId" element={<UserAccountPage/>} />
        
       </Route>
