@@ -113,6 +113,23 @@ def populate_request_db(ddb):
         requests_packet = [
             {
                 "uid": "3517402c-a306-4bdb-9da0-b478973fa42c",
+                "companyid": "Logitech",
+                "comments": "Optional comment for this particular request",
+                "request_type": "Points Update",
+                "request_title": "Optional title for this particular request",
+                "requestor_id": "db0eae93-f3fe-453b-8da9-14767ffc5332",
+                "created_at": "2023-11-07T15:12:44.583490",
+                "request_details": {
+                    "company_id": "Logitech",
+                    "change": 100,
+                    "user_id": "00963026-3491-4571-8b64-b37fe4320122"
+                },
+                "approval_role": "Owner",
+                "request_expiry": "2023-12-12T15:12:44.583502",
+                "status": "pending"
+            },
+            {
+                "uid": "3517402c-a306-4bdb-9da0-b478973fa42c",
                 "companyid": "Descenda",
                 "comments": "Optional comment for this particular request",
                 "request_type": "Points Update",
@@ -181,22 +198,23 @@ def populate_request_db(ddb):
                 "status": "pending"
             },
             {
-                "companyid": "Descenda",
+                "companyid": "Mojang",
                 "uid": "4b3ba938-a7aa-44f4-b8d4-d83906a3623f",
                 "comments": "Request made in error",
-                "request_type": "Transaction Update",
-                "request_title": None,
+                "request_type": "Update User Details",
+                "request_title": "testing",
                 "requestor_id": "admin1",
                 "approver_id": "admin1",
                 "created_at": "2023-11-12T15:12:44.583502",
                 "request_details": {
-                    "increment": "true",
-                    "amount": "100",
-                    "account_id": "123"
+                    "firstName": "Ben",
+                    "lastName": "Test",
+                    "email": "kylie.hintz@nolan-walsh.info",
+                    "role": "User",
                 },
-                "approval_role": "ADMINS",
+                "approval_role": "Owner",
                 "resolution_at": "2023-10-15T05:16:49.631432",
-                "request_expiry": "2023-11-12T15:12:44.583502",
+                "request_expiry": "2023-12-12T15:12:44.583502",
                 "status": "withdrawn"
             },
             {
