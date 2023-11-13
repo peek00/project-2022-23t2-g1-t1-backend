@@ -61,26 +61,23 @@ export default function AddAccountForm(props) {
   
     const requestBody = {
       company_id: formData.companyID,
+      user_id: userId,
       balance: formData.startingPoints,
     };      
 
     // axios.post("http://localhost:3000/createAccount", requestBody,{
-    axios.post(API_BASE_URL+"/api/points/createAccount", requestBody,{
-      withCredentials:true,
-      headers: {
-        'Content-Type': 'application/json',
-        'userid': userId, 
-      }})
+    axios.post(API_BASE_URL+"/api/points/createAccount", requestBody, { withCredentials:true })
     .then((response) => {
       console.log(response);
       window.alert("Points Account Successfully created!");
+      window.history.back();
     })
     .catch((err) => {
       console.log(err);
       alert("Failed to create Points account");
 
     // Assuming the response contains the user's role
-    window.location.href = "/users";
+    // window.location.href = "/users";
     })
   };
 
