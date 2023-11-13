@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,8 @@ public class UserController {
     @Autowired 
     RoleService roleService;
 
+
+    @CacheEvict(value = "usersCache", allEntries = true)
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
@@ -282,6 +285,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @Cacheable(value = "usersCache", key = "{#isAdmin, #lastEvaluatedKey}")
     @GetMapping(value = "/getAllUsersPaged", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey, @RequestParam(name="email", defaultValue = "") String email){
         Map<String, Object> response = new HashMap<>();
@@ -289,6 +293,7 @@ public class UserController {
 
         try {
             // Set Default role if not specified
+            System.out.println("Pulling from DB");
             Role[] allRoles = roleService.getRoles();
             Set<String> validRoleNames = Arrays.stream(allRoles)
                                     .map(Role::getRoleName)
