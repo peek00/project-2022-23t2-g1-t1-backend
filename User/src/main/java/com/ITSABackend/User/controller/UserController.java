@@ -150,7 +150,7 @@ public class UserController {
         }
     }
 
-
+    @CacheEvict(value = "usersCache", allEntries = true)
     @PutMapping(value = "/updateUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
