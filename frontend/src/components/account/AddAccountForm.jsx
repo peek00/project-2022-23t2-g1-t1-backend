@@ -66,6 +66,7 @@ export default function AddAccountForm(props) {
 
     // axios.post("http://localhost:3000/createAccount", requestBody,{
     axios.post(API_BASE_URL+"/api/points/createAccount", requestBody,{
+      withCredentials:true,
       headers: {
         'Content-Type': 'application/json',
         'userid': userId, 
