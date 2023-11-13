@@ -774,7 +774,37 @@ def create_approval_requests(
             "requestor_id": userid,
         }
         validate_create_request_body(combined_data)
-        # Put in validation  that combined_data has request details
+        # Put in validation that combined_data has request details
+        # verify that user exists by getting userID by email
+        if combined_data['request_type'] == 'Update User Details':
+            try:
+                verify = requests.get(USER_MS + "/User/getUser",
+                headers = {
+                    "userid": userid
+                },
+                params={
+                    "email": combined_data['request_details']['email']
+                })
+                if verify.json()['data'] == None:
+                    raise HTTPException(status_code=404, detail="User not found")
+            except:
+                raise HTTPException(status_code=404, detail="User not found")
+
+        elif combined_data['request_type'] == 'Points Update':
+            try:
+                verify = requests.get(POINTS_MS + "/getoneaccount",
+                headers = {
+                    "userid": userid
+                },
+                params={
+                    "user_id": combined_data['request_details']['account_id'],
+                    "company_id": combined_data['request_details']['company_id']
+                })
+                if verify.json()['data'] == None:
+                    raise HTTPException(status_code=404, detail="Points account not found")
+            except:
+                raise HTTPException(status_code=404, detail="Points account not found")
+
         approval_request_repository.create_approval_request(combined_data)
         print("And we got here")
         roles = combined_data['approval_role']
@@ -815,8 +845,8 @@ def create_approval_requests(
                 },
                 'toEmail': {
                     'DataType': 'String',
-                    # 'StringValue': ",".join(recipients)
-                    'StringListValue': recipients
+                    'StringValue': ",".join(recipients)
+                    # 'StringListValue': recipients
                 },
                 'url': {
                     'DataType': 'String',
