@@ -38,7 +38,7 @@ export default function AddUserForm() {
       console.log(response);
       // window.location.href = "/users";
       alert("User Created Successfully!")
-      window.location.replace("/users");
+      window.location.replace("/users");;
     } catch (error) {
       console.log(error);
       // Handle errors here

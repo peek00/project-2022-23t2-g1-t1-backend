@@ -65,10 +65,10 @@ export default function UserTable() {
 
   useEffect(() => {
     // Prefetch the next page data only when viewUser has finished or the component has mounted
-    if (viewUserFinished||currentPage) {
+    if (currentPage) {
       prefetchNextPageData();
     }
-  }, [viewUserFinished,currentPage]);
+  }, [currentPage,viewUserFinished]);
 
   const viewUser = async () => {
     try {
@@ -121,6 +121,7 @@ export default function UserTable() {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
+     
       setUsers(previousPage.current.pop());
     }
     
@@ -179,7 +180,7 @@ export default function UserTable() {
         </div>
       </div>
 
-      <table className="w-full text-sm text-left bg-[#F5F5F5]">
+      <table className="w-full text-sm text-left bg-[#F5F5F5] mt-10">
         <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
           <tr className="border-b-2 border-[#A4A4A4]">
           <th scope="col" className="px-6 py-3">
