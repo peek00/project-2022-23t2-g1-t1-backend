@@ -11,7 +11,7 @@ export default function UserListingPage() {
       {/* Content Area */}
       <div className="w-full min-h-screen overflow-y-auto">
 
-          <div className='ms-[10%]  mt-[10%]  '>
+          <div className='ms-[15%]  mt-[10%]  '>
             <UserTable />
           </div>
       </div>

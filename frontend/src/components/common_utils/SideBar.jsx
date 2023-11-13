@@ -43,7 +43,7 @@ export default function SideBar() {
   }, [location]);
 
   return (
-    <div className="bg-[#1C2434] min-h-screen overflow-y-auto w-[10%] z-50 fixed ">
+    <div className="bg-[#1C2434] min-h-screen overflow-y-auto w-[15%] z-50 fixed ">
       <div className="flex flex-col ">
         <Link to="/users" className="mx-auto">
           <img src="/footerLogo.svg" className="h-[100px] w-[100px]" />
@@ -124,7 +124,7 @@ export default function SideBar() {
 
           <button
   type="submit"
-  className="block w-full px-4 py-2 mt-[370%] text-sm font-semibold text-white transition duration-300 rounded bg-dark-blue hover:bg-gray-500"
+  className="block w-full  py-2 mt-[20%] text-sm font-semibold text-white transition duration-300 rounded bg-dark-blue hover:bg-gray-500"
   role="menuitem"
   tabIndex="-1"
   id="menu-item-3"
