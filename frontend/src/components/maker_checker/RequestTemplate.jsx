@@ -33,6 +33,10 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
         inputField = (
           <input type="text" name={fieldName} className="p-2 border w-96" />
         );
+      } else if (fieldType === "company") {
+        inputField = (
+          <input type="text" name={fieldName} className="p-2 border w-96" value={selectedCompany}/>
+        );
       } else if (fieldType === "email") {
         inputField = (
           <input type="email" name={fieldName} className="p-2 border w-96" />

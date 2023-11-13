@@ -325,7 +325,7 @@ def populate_template_db(ddb):
             "details": {
                 "amount": "int",
                 "account_id": "str",
-                "company_id": "str"
+                "company_id": "company"
                 },
             "allowed_approvers": [
                 "Owner",
