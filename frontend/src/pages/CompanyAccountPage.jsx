@@ -6,11 +6,13 @@ import CompanyAccountTable from '../components/account/CompanyAccountTable';
 import axios from "axios";
 import {API_BASE_URL} from "@/config/config";
 import { getAllUserAccountsByCompanyId } from '../apis/points';
+import { Spinner } from '@material-tailwind/react';
 
 
 export default function CompanyAccountPage() {
   const { companyId } = useParams(); 
   const [accounts, setAccounts] = useState([]);
+  const [isLoading,setIsLoading] = useState(true);
   // console.log(companyId);
   // company and points
 
@@ -19,32 +21,23 @@ export default function CompanyAccountPage() {
       try {
         const results = await getAllUserAccountsByCompanyId(companyId);
         const accountsData = results.data;
-
-        // Fetch additional data for each account
-        const accountsWithAdditionalData = await Promise.all(
-          accountsData.map(async (account) => {
-            try {
-              const response = await axios.get(
-                API_BASE_URL +
-                  `/api/user/User/getUser?userID=` +
-                  account["user_id"],
-                {
-                  withCredentials: true,
-                }
-              );
-              // const response = await axios.get("http://localhost:8080/User/getUser?userID=" + account["user_id"]);
-              // Merge the additional data with the account data
-              return { ...account, userData: response.data.data };
-            } catch (error) {
-              console.error("Error fetching user data:", error);
-              return account; // Return the original account if the request fails
-            }
-          })
-        );
-
-        setAccounts(accountsWithAdditionalData);
+        const userIdList = accountsData.map((account) => account["user_id"]);
+        await axios.post(API_BASE_URL + `/api/user/User/getAllUsersByIdList`, userIdList, {
+          withCredentials: true,
+        }).then((response) => {
+          const userDataList = response.data.data;
+          const accountsWithAdditionalData = accountsData.map((account) => {
+            const userData = userDataList.find((user) => user["userId"] === account["user_id"]);
+            return { ...account, userData: userData };
+          });
+          setAccounts(accountsWithAdditionalData);
+        }).catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
       } catch (error) {
         console.error("Error fetching accounts:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -66,12 +59,14 @@ export default function CompanyAccountPage() {
         <div className="min-h-screen overflow-y-auto">
         <div className='flex w-[100%] absolute top-[10%]'>  
           <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>Company Accounts</h1>
-          </div>
-          
-          <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
-            
+        </div>
+        <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
+          {
+            isLoading ? 
+            <Spinner color="teal" size="large" className='mt-20'/> :
             <CompanyAccountTable accounts={accounts} companyId={companyId}/>
-          </div>
+          }
+        </div>
         </div>
       </div>
     </div>

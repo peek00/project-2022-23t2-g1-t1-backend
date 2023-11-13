@@ -12,11 +12,14 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.GlobalSecondaryIndex;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
 import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import com.ITSABackend.User.config.DynamoDBConfig;
 import com.ITSABackend.User.constant.AppConstant;
@@ -24,8 +27,9 @@ import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.utils.ResourceCSVFileParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -294,7 +298,6 @@ public class DynamoDBRepo {
         Table table = dynamoDBConfig.getDynamoDB().getTable(tableName);
         return table;
     }
-
     public void deleteTable(String tableName) throws Exception{
         Table table = dynamoDBConfig.getDynamoDB().getTable(tableName);
         try{
@@ -309,4 +312,5 @@ public class DynamoDBRepo {
             throw new Exception("Error has occured");
         }
     }
+
 }

@@ -18,8 +18,6 @@ public class User {
     @DynamoDBHashKey
     private String userID;
 
-
-
     @DynamoDBAttribute
     private String firstName;
 

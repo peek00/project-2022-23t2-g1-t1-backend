@@ -1,8 +1,11 @@
+import React, { useState } from "react";
+
 export default function RequestTemplate({ requestDetail, onSubmit, selectedCompany }) {
   // JS Function come here
   const formDetails = requestDetail["details"];
   const approvers = requestDetail["allowed_approvers"];
   const handleSubmit = (event) => {
+    console.log(event)
     event.preventDefault();
     const formData = { request_details: {} }; // Initialize formData object
 
@@ -19,6 +22,7 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
     
     onSubmit(formData);
   }
+
   return (
     <div className="ms-48 ">
   <p>
@@ -55,28 +59,28 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
         );
       }
 
-      return (
-        <div key={fieldName} className="flex items-center mb-4">
-          <label
-            htmlFor={fieldName}
-            className="block w-48 mx-5 mb-2 font-bold text-gray-700"
-          >
-            {fieldName}
-          </label>
-          <div className="px-5">
-            {inputField}
+        return (
+          <div key={fieldName} className="flex items-center mb-4">
+            <label
+              htmlFor={fieldName}
+              className="block w-48 mx-5 mb-2 font-bold text-gray-700"
+            >
+              {fieldName}
+            </label>
+            <div className="px-5">
+              {inputField}
+            </div>
           </div>
-        </div>
-      );
-    })}
-
-        <button
-          type="submit"
+        );
+      })}
+      <button
           className="px-4 py-2 text-white bg-blue-500 rounded"
+          onClick={handleSubmit}
         >
-          Submit request. 
+          Submit Request
         </button>
-      </form>
-    </div>
-  );
-}
+        </form>
+      </div>
+    );
+  } 
+

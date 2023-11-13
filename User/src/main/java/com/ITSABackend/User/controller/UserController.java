@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,8 @@ public class UserController {
     @Autowired 
     RoleService roleService;
 
+
+    @CacheEvict(value = "usersCache", allEntries = true)
     @PostMapping(value = "/createUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
@@ -159,8 +162,8 @@ public class UserController {
 
 
             Set<String> validRoleNames = Arrays.stream(allRoles)
-                                 .map(Role::getRoleName)
-                                 .collect(Collectors.toSet());
+                                .map(Role::getRoleName)
+                                .collect(Collectors.toSet());
             
 
 
@@ -282,6 +285,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @Cacheable(value = "usersCache", key = "{#isAdmin, #lastEvaluatedKey}")
     @GetMapping(value = "/getAllUsersPaged", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey, @RequestParam(name="email", defaultValue = "") String email){
         Map<String, Object> response = new HashMap<>();
@@ -289,6 +293,7 @@ public class UserController {
 
         try {
             // Set Default role if not specified
+            System.out.println("Pulling from DB");
             Role[] allRoles = roleService.getRoles();
             Set<String> validRoleNames = Arrays.stream(allRoles)
                                     .map(Role::getRoleName)
@@ -310,6 +315,23 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @PostMapping(value = "/getAllUsersByIdList", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getAllUsersByUserIDList(@RequestBody List<String> userIDList){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
 
+        try {
+            User[] users = userService.getUsersByIdList(userIDList);
+            response.put("logInfo", "Retrieved "+users.length+" users Successfully");
+            response.put("data", users);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
 }
 
