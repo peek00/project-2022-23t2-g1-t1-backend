@@ -59,8 +59,8 @@ public class UserController {
 
 
             Set<String> validRoleNames = Arrays.stream(allRoles)
-                                 .map(Role::getRoleName)
-                                 .collect(Collectors.toSet());
+                                .map(Role::getRoleName)
+                                .collect(Collectors.toSet());
             
             boolean isValidRoles = userRoles.stream().allMatch(validRoleNames::contains);
 
@@ -130,6 +130,7 @@ public class UserController {
         }
     }
 
+    @CacheEvict(value = "usersCache", allEntries = true)
     @DeleteMapping(value = "/deleteUser")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
@@ -149,7 +150,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
+    
     @CacheEvict(value = "usersCache", allEntries = true)
     @PutMapping(value = "/updateUser", consumes = "application/json")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("companyID") String companyID, @PathParam("userID") String userID) {
@@ -216,29 +217,6 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    // @GetMapping(value = "/getUserEmails", produces = {"application/json"})
-    // public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody List<String> userIDs) {
-    // Map<String, Object> response = new HashMap<>();
-    // HttpStatus status = HttpStatus.OK;
-
-    //     try {
-    //         List<String> emails = userService.getUserEmailsFromCompany(userIDs);
-    //         if (emails.isEmpty()) {
-    //             throw new RuntimeException("No users found with the specified company / role");
-    //         }
-            
-    //         response.put("logInfo", "User emails from entered list retrieved successfully");
-    //         response.put("data", emails);
-    //     } catch (Exception e) {
-    //         System.err.println(e.getMessage());
-    //         response.put("logInfo", "Error occurred");
-    //         response.put("data", e.getMessage());
-    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
-    //     }
-
-    //     return new ResponseEntity<>(response, status);
-    // }
-
     @GetMapping(value = "/getUserEmailsByRoleFromList", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getUserEmailsByRoleFromList(@PathParam("roleName") String roleName, @RequestBody List<String> userIDs) {
     Map<String, Object> response = new HashMap<>();
@@ -262,6 +240,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @Cacheable(value = "usersCache", key = "{#roleNames}", condition = "#roleNames.size() > 0")
     @GetMapping(value="/getUserEmailsByRole", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getUserEmailsByRole(@RequestBody ArrayList<String> roleNames){
         Map<String, Object> response = new HashMap<>();
@@ -285,7 +264,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
-    @Cacheable(value = "usersCache", key = "{#isAdmin, #lastEvaluatedKey}")
+    @Cacheable(value = "usersCache", key = "{#isAdmin, #lastEvaluatedKey}", condition = "#email == ''")
     @GetMapping(value = "/getAllUsersPaged", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getAllUsersPaged(@RequestParam("isAdmin") boolean isAdmin, @RequestParam(name = "lastEvaluatedKey", defaultValue = "") String lastEvaluatedKey, @RequestParam(name="email", defaultValue = "") String email){
         Map<String, Object> response = new HashMap<>();
@@ -315,6 +294,7 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @Cacheable(value = "usersCache", key = "{#userIDList}", condition = "#userIDList.size() > 0")
     @PostMapping(value = "/getAllUsersByIdList", produces = {"application/json"})
     public ResponseEntity<Map<String, Object>> getAllUsersByUserIDList(@RequestBody List<String> userIDList){
         Map<String, Object> response = new HashMap<>();

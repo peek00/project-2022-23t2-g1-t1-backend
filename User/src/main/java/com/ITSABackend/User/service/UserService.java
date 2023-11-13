@@ -87,6 +87,7 @@ public class UserService {
             return id;
 
         } catch(Exception e){
+            System.out.println("Create user failed");
             System.out.println(e.getStackTrace());
             System.out.println(e.getMessage());
             throw new IllegalStateException("Unable to create user");
@@ -285,9 +286,12 @@ public class UserService {
         ScanSpec spec = new ScanSpec();
 
         if (email.contains("@")) {
+            ArrayList<User> userList = new ArrayList<>();
             User user = getUserByEmail(email);
-            users.add(user);
-            result.put("users", users.toArray(new User[users.size()]));
+            if (user != null) {
+                userList.add(user);
+            }
+            result.put("users", userList.toArray(new User[userList.size()]));
             result.put("newLastEvaluatedKey", newLastEvaluatedKey);
             result.put("next", users.size() < 50);
             return result;
