@@ -45,6 +45,7 @@ class ApprovalResponse(BaseModel):
     status: ApprovalStatus
     comments: Optional[str] = None
     resolution_at: str = datetime.now().isoformat()
+    # approver_id: user
 
 class DeleteRequest(BaseModel):
     uid: str

@@ -8,6 +8,7 @@ import ApprovalButton from "./ApprovalButton";
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
     const [shownData, setShownData] = useState([]);
+    const [submissionState, setSubmissionState] = useState(null);
 
     useEffect(() => {
         // Update the shownData when data or activeTab changes
@@ -58,14 +59,14 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             const response = await axios.post(approveUrl, formObject, {
                 withCredentials: true,
             });
-
             // Handle the success response here
-            console.log("Approved:", response.data);
+            setSubmissionState("approval")
 
             // You may want to update your UI or perform other actions here
         } catch (error) {
             // Handle errors here
-            console.error("Error approving:", error);
+            setSubmissionState("error")
+            // console.error("Error approving:", error);
         }
     };
 
@@ -83,14 +84,13 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             const response = await axios.post(approveUrl, formObject, {
                 withCredentials: true,
             });
-
             // Handle the success response here
-            console.log("Approved:", response.data);
-
+            setSubmissionState("rejected")
             // You may want to update your UI or perform other actions here
         } catch (error) {
             // Handle errors here
-            console.error("Error approving:", error);
+            setSubmissionState("error")
+            // console.error("Error approving:", error);
         }
     };
 
@@ -192,6 +192,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                         <ApprovalButton
                                             handleApprove={() => handleApprove(request.uid)}
                                             handleReject={() => handleReject(request.uid)}
+                                            submissionState={submissionState}
                                         />
                                     )}
                                 </div>
