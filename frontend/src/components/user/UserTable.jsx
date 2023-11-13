@@ -114,6 +114,7 @@ export default function UserTable() {
       
       setViewUserFinished(true); // Indicate that viewUser has finished
     } catch (error) {
+      alert("User do not exisit in the database")
       console.error('Cannot view user:', error);
     }
   };
