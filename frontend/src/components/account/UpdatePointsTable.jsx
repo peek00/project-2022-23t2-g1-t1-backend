@@ -3,7 +3,7 @@ import AvatarInfo from './AvatarInfo';
 import AvatarText from '../common_utils/AvatarText';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
-
+import {API_BASE_URL} from "@/config/config";
 
 export default function UpdatePointsTable(props) {
     const { companyId, userId } = useParams();
