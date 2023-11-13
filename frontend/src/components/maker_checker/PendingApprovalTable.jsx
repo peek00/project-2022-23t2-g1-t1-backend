@@ -59,15 +59,19 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             const response = await axios.post(approveUrl, formObject, {
                 withCredentials: true,
             });
+            console.log("This is what response is  ")
+            console.log(response)
+
             // Handle the success response here
             setSubmissionState("approval")
-
+            
             // You may want to update your UI or perform other actions here
         } catch (error) {
             // Handle errors here
             setSubmissionState("error")
             // console.error("Error approving:", error);
         }
+        console.log("Setting submission state to be " + submissionState)
     };
 
     // Handle approval or response
@@ -87,9 +91,11 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             // Handle the success response here
             setSubmissionState("rejected")
             // You may want to update your UI or perform other actions here
+            console.log("Setting submission state to be " + submissionState)
         } catch (error) {
             // Handle errors here
             setSubmissionState("error")
+            console.log("Setting submission state to be " + submissionState)
             // console.error("Error approving:", error);
         }
     };
