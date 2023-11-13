@@ -63,10 +63,9 @@ router.get('/allaccounts', async(req,res) => {
   allquery.getAllAccounts(userId,companyId)
   .then((results) => {
     console.log("Results: ", results);
-    if (results.length==0) {
+    if (results.length==0 || results == null) {
       return res.status(400).json({
         "code" : 400,
-        "logInfo": userId + " accessed '/allaccounts', status: 400",
         "logInfo": userId + " accessed '/allaccounts', status: 400",
         "data": results,
         "message": "No records found."
@@ -85,6 +84,40 @@ router.get('/allaccounts', async(req,res) => {
     return res.status(500).json({
       "code" : 500,
       "logInfo": userId + " accessed '/allaccounts', status: 500",
+      "data": [],
+      "message": error.message
+    });
+  })
+})
+
+router.get('/getoneaccount', async(req,res) => {
+  const companyId = req.query.company_id;
+  const userId = req.query.user_id;
+
+  allquery.getAllAccounts(userId,companyId)
+  .then((results) => {
+    console.log("Results: ", results);
+    if (results == null || results.length==0) {
+      return res.status(400).json({
+        "code" : 400,
+        "logInfo": userId + " accessed '/getoneaccount', status: 400",
+        "data": results,
+        "message": "No records found."
+      })
+    } else {
+      return res.status(200).json({
+        "code" : 200,
+        "logInfo": userId + " accessed '/getoneaccount', status: 200",
+        "data": results,
+        "message": "Success"
+      });
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+    return res.status(500).json({
+      "code" : 500,
+      "logInfo": userId + " accessed '/getoneaccount', status: 500",
       "data": [],
       "message": error.message
     });
