@@ -1,4 +1,3 @@
-import SubmitRequestbutton from "./SubmitRequestbutton";
 import React, { useState } from "react";
 
 export default function RequestTemplate({ requestDetail, onSubmit, selectedCompany }) {
@@ -70,7 +69,6 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
           </div>
         );
       })}
-      {/* <SubmitRequestbutton handleSubmit={handleSubmit} setSubmissionState={setSubmissionState}/> */}
       <button
           className="px-4 py-2 text-white bg-blue-500 rounded"
           onClick={handleSubmit}
