@@ -26,25 +26,19 @@ export default function AddUserForm() {
     try {
       // Create a request body, if needed
       const requestBody = {
-
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         role:[formData.role],
-      
-        
-       
       };
       console.log(requestBody)
       const response = addUser(requestBody)
     
-  
       // Assuming the response contains the user's role
-
-  
-    
       console.log(response);
-      window.location.href = "/users";
+      // window.location.href = "/users";
+      alert("User Created Successfully!")
+      window.location.replace("/users");
     } catch (error) {
       console.log(error);
       // Handle errors here
