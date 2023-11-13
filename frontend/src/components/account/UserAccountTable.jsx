@@ -3,14 +3,11 @@ import axios from "axios";
 
 import { Button } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { useUserContext } from "../../context/userContext.jsx";
 import { useParams } from "react-router-dom";
 
 export default function UserAccountTable(props){
     const { accounts } = props;
-    const { userData, updateUserData } = useUserContext();
-    console.log(userData);
-   
+
     console.log("Table rendering")
 
     return (
@@ -19,19 +16,10 @@ export default function UserAccountTable(props){
           <thead className="text-xs text-gray-700 uppercase bg-[#F5F5F5]">
             <tr className="border-b-2 border-[#A4A4A4]">
                 <th scope="col" className="px-6 py-3">
-                    First Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                    Last Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                    Email
-                </th>
-                <th scope="col" className="px-6 py-3">
-                    Points
-                </th>
-                <th scope="col" className="px-6 py-3">
                     Company Name
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    Balance
                 </th>
             </tr>
           </thead>
@@ -43,12 +31,8 @@ export default function UserAccountTable(props){
                   key={account.id}
                   className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <td className="px-6 py-4">{userData.firstName}</td>
-                  <td className="px-6 py-4">{userData.lastName}</td>
-                  <td className="px-6 py-4">{userData.email}</td>
-                  <td className="px-6 py-4">{account.balance}</td>
-
                   <td className="px-6 py-4">{account.company_id}</td>
+                  <td className="px-6 py-4">{account.balance}</td>
 
                   <Link to={`/user/account/company/${account.company_id}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
 
