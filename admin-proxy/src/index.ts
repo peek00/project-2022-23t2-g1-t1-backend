@@ -24,8 +24,8 @@ app.use(compression());
 
 // Initialize Policy Service
 PolicyService.initialize().then(() => {
-  console.log("Policy Service Initialized");
-  console.log(process.env.CLIENT_BASE_URL);
+  if (process.env.NODE_ENV !== 'production') console.log("Policy Service Initialized");
+  if (process.env.NODE_ENV !== 'production') console.log(process.env.CLIENT_BASE_URL);
   // Adding Passport
   app.use(passport.initialize());
   
@@ -40,18 +40,17 @@ PolicyService.initialize().then(() => {
   app.use(errorHandler);
 
   app.listen(port, host, () => {
-    console.log(`Server is running on port ${port}`);
+    console.info(`Server is running on port ${port}`);
   });
 
   // Schedule a cron job to run at the start of every minute
   cron.schedule("*/60 * * * * *", () => {
     // Trigger reinitialization of logger 
-    console.log("Reinitializing Logger");
+    if (process.env.NODE_ENV !== 'production') console.log("Reinitializing Logger");
     Logger.getInstance().createLogger();
   });
 
 }).catch((err) => {
-  console.log("Error initializing Policy Service");
-  console.log(err);
+  console.error("Error initializing Policy Service: ",err.message);
   process.exit(1);
 });

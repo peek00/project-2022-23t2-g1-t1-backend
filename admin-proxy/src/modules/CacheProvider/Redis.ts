@@ -25,10 +25,10 @@ export class Redis implements ICacheProvider {
       });
     }
     this.client.connect().then(() => {
-      console.log("Connected to Redis");
+      if (process.env.NODE_ENV !== 'production') console.log("Connected to Redis");
       this.connected = true;
     }).catch((e) => {
-      console.log(e);
+      if (process.env.NODE_ENV !== 'production') console.log(e);
       this.connected = false;
     });
   }
@@ -51,7 +51,7 @@ export class Redis implements ICacheProvider {
     ttl: number = 1000,
   ): Promise<boolean> {
     try {
-      console.log(key, value, ttl);
+      if (process.env.NODE_ENV !== 'production') console.log(key, value, ttl);
       if (ttl === -1) {
         await promisify(this.client.set).bind(this.client)(key, value);
         return true;
@@ -59,7 +59,7 @@ export class Redis implements ICacheProvider {
       await promisify(this.client.set).bind(this.client)(key, value, "EX", ttl);
       return true;
     } catch (e) {
-      console.log(e);
+      if (process.env.NODE_ENV !== 'production') console.log(e);
       return false;
     }
   }
@@ -76,8 +76,8 @@ export class Redis implements ICacheProvider {
 
   async flushAllMatchingPattern(pattern: string): Promise<boolean> {
     const keys = await promisify(this.client.keys).bind(this.client)(pattern);
-    console.log("Deleting all cache matching log pattern")
-    console.log(keys);
+    if (process.env.NODE_ENV !== 'production') console.log("Deleting all cache matching log pattern")
+    if (process.env.NODE_ENV !== 'production') console.log(keys);
     if (keys.length === 0) {
       return true;
     }
