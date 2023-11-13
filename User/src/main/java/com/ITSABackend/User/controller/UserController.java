@@ -159,8 +159,8 @@ public class UserController {
 
 
             Set<String> validRoleNames = Arrays.stream(allRoles)
-                                 .map(Role::getRoleName)
-                                 .collect(Collectors.toSet());
+                                .map(Role::getRoleName)
+                                .collect(Collectors.toSet());
             
 
 
@@ -310,6 +310,23 @@ public class UserController {
         return new ResponseEntity<>(response, status);
     }
 
+    @PostMapping(value = "/getAllUsersByIdList", produces = {"application/json"})
+    public ResponseEntity<Map<String, Object>> getAllUsersByUserIDList(@RequestBody List<String> userIDList){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
 
+        try {
+            User[] users = userService.getUsersByIdList(userIDList);
+            response.put("logInfo", "Retrieved "+users.length+" users Successfully");
+            response.put("data", users);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.put("logInfo", "error occurred");
+            response.put("data", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
 }
 
