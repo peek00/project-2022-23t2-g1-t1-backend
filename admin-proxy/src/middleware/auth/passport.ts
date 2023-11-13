@@ -90,9 +90,6 @@ passport.use(
       profile: Profile,
       done: VerifyCallback,
     ) => {
-      // Invoke API request to User Microservice to retrieve or create user
-      // Mocking user for now
-      // console.log(profile)
       const userProfile: IProfile = {
         id: profile.id,
         displayName: profile.displayName,
@@ -104,17 +101,16 @@ passport.use(
         const user = await authenticationService.authenticate(
           userProfile.email,
         );
-        console.log(user);
         done(null, user);
       } catch (error) {
         done(error as Error, undefined);
       }
-      // const user = await getOrCreateUser(userProfile);
     },
   ),
 );
 
 passport.serializeUser((user, done) => {
+  console.log(`Serialise: ${user}`)
   if (!user) {
     throw new Error("User not found");
   }
