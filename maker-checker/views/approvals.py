@@ -37,6 +37,11 @@ class RequestError(Exception):
         self.message = message
         super().__init__(self.message)
 
+class MessageError(Exception):
+    def __init__(self, message="Message could not be sent"):
+        self.message = message
+        super().__init__(self.message)
+
 def isExpired(expiry_date:str):
     """
     Takes in a string in isoformat and uses current time 
@@ -828,32 +833,35 @@ def create_approval_requests(
         if len(recipients) == 0:
             raise RequestError("No recipients found.")
         # Japheth send email notifications here
-        email = sqs.send_message(
-            QueueUrl=queue_url,
-            DelaySeconds=10,
-            MessageAttributes={
-                'fromName': {
-                    'DataType': 'String',
-                    'StringValue': combined_data['requestor_id']
+        try:
+            email = sqs.send_message(
+                QueueUrl=queue_url,
+                DelaySeconds=10,
+                MessageAttributes={
+                    'fromName': {
+                        'DataType': 'String',
+                        'StringValue': combined_data['requestor_id']
+                    },
+                    'subject': {
+                        'DataType': 'String',
+                        'StringValue': f"Request Approval for {combined_data['request_type']}"
+                    },
+                    'toEmail': {
+                        'DataType': 'String',
+                        'StringValue': ",".join(recipients)
+                        # 'StringListValue': recipients
+                    },
+                    'url': {
+                        'DataType': 'String',
+                        'StringValue': url
+                    }
                 },
-                'subject': {
-                    'DataType': 'String',
-                    'StringValue': f"Request Approval for {combined_data['request_type']}"
-                },
-                'toEmail': {
-                    'DataType': 'String',
-                    'StringValue': ",".join(recipients)
-                    # 'StringListValue': recipients
-                },
-                'url': {
-                    'DataType': 'String',
-                    'StringValue': url
-                }
-            },
-            MessageBody=(
-                'placeholder'
+                MessageBody=(
+                    'placeholder'
+                )
             )
-        )
+        except Exception as e:
+            print(f"error has been caught {e}")
         response = {
             "logInfo" : f"ID {combined_data['requestor_id']} created a request with ID {combined_data['uid']} for {combined_data['approval_role']} approval.",
             "request_id" : combined_data['uid'],
