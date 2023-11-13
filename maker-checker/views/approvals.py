@@ -31,6 +31,11 @@ POINTS_MS = os.getenv('POINTS_MS')
 print("USER_MS:", USER_MS)
 print("POINTS_MS:", POINTS_MS)
 
+class RequestError(Exception):
+    def __init__(self, message="Something went wrong with request creation"):
+        self.message = message
+        super().__init__(self.message)
+
 def isExpired(expiry_date:str):
     """
     Takes in a string in isoformat and uses current time 
@@ -776,34 +781,36 @@ def create_approval_requests(
         validate_create_request_body(combined_data)
         # Put in validation that combined_data has request details
         # verify that user exists by getting userID by email
+        print(combined_data['request_type'])
         if combined_data['request_type'] == 'Update User Details':
-            try:
-                verify = requests.get(USER_MS + "/User/getUser",
-                headers = {
-                    "userid": userid
-                },
-                params={
-                    "email": combined_data['request_details']['email']
-                })
-                if verify.json()['data'] == None:
-                    raise HTTPException(status_code=404, detail="User not found")
-            except:
-                raise HTTPException(status_code=404, detail="User not found")
+            verify = requests.get(USER_MS + "/User/getUser",
+            headers = {
+                "userid": userid
+            },
+            params={
+                "email": combined_data['request_details']['email']
+            }).json()
+            print(verify)
+            if verify['data'] == "User Doesn't Exist":
+                raise RequestError("user not found")
 
         elif combined_data['request_type'] == 'Points Update':
-            try:
-                verify = requests.get(POINTS_MS + "/getoneaccount",
-                headers = {
-                    "userid": userid
-                },
-                params={
-                    "user_id": combined_data['request_details']['account_id'],
-                    "company_id": combined_data['request_details']['company_id']
-                })
-                if verify.json()['data'] == None:
-                    raise HTTPException(status_code=404, detail="Points account not found")
-            except:
-                raise HTTPException(status_code=404, detail="Points account not found")
+            print("it is getting the correct request type")
+            verify = requests.get(POINTS_MS + "/getoneaccount",
+            headers = {
+                "userid": userid
+            },
+            params={
+                "user_id": combined_data['request_details']['account_id'],
+                "company_id": combined_data['request_details']['company_id']
+            }).json()
+            print("it is verifying")
+            print(verify)
+            print(verify['data'])
+            print(verify['code'])
+            if verify['code'] == 400:
+                print('this error is going through')
+                raise RequestError("Points account not found")
 
         approval_request_repository.create_approval_request(combined_data)
         print("And we got here")
@@ -818,9 +825,7 @@ def create_approval_requests(
             headers = {
                 "userid": userid
             },
-            params={
-                "roleNames": roles
-            }
+            json=roles
         )
         print(recipients)
         # Get data
@@ -829,7 +834,7 @@ def create_approval_requests(
         print(recipients)
         
         if len(recipients) == 0:
-            raise ValidationError("No recipients found.")
+            raise RequestError("No recipients found.")
         # Japheth send email notifications here
         email = sqs.send_message(
             QueueUrl=queue_url,
@@ -863,6 +868,9 @@ def create_approval_requests(
             "message": "Created!"
         }
         return response
+
+    except RequestError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except (ValidationError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e))
     except ClientError as e:
