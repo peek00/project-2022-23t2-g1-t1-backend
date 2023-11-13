@@ -35,12 +35,15 @@ describe("AuthenticationService", () => {
     // Mock axios
     axios.get = jest.fn().mockResolvedValue({
       data: {
-        id: "1",
-        role: ["admin"],
-      },
+        data: {
+          userId: "1",
+          roles: ["admin"],
+        },
+      }
     });
     JwtService.getInstance = jest.fn().mockReturnValue(jwtService);
     authenticationService = AuthenticationService.getInstance();
+    console.log = jest.fn();
   });
 
   afterAll(() => {

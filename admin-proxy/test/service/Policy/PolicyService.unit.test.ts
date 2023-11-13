@@ -16,6 +16,7 @@ const mockRedis = {
   get: jest.fn(),
   write: jest.fn(),
   remove: jest.fn(),
+  flushAllMatchingPattern: jest.fn(),
 };
 
 const mockPolicy = {
@@ -41,6 +42,8 @@ describe("PolicyService", () => {
     DynamoDB.getInstance = jest.fn().mockReturnValue(mockDynamoDB);
     Redis.getInstance = jest.fn().mockReturnValue(mockRedis);
     policyService = PolicyService.getInstance();
+    // Mock console.log
+    console.log = jest.fn();
   });
 
   afterAll(() => {

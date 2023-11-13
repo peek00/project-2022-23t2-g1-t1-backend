@@ -14,9 +14,9 @@ export class ProxyController{
       selfHandleResponse: true,
       xfwd: true,
       onProxyReq: (proxyReq, req, res) => {
-        // console.log("Original Req IP", req.ip);
-        // console.log("onProxyReq", req.user);
-        // console.log("target", target);
+        // if (process.env.NODE_ENV !== 'production') console.log("Original Req IP", req.ip);
+        // if (process.env.NODE_ENV !== 'production') console.log("onProxyReq", req.user);
+        // if (process.env.NODE_ENV !== 'production') console.log("target", target);
         // req.headers["userid"] = req.user!.id;
         proxyReq.setHeader("userid", req.user!.id);
         proxyReq.setHeader("originalip", req.ip);
@@ -31,12 +31,12 @@ export class ProxyController{
           let originalIP = "";
           // If X-Forwarded-For header is present
           if (req.headers["X-Forwarded-For"]) {
-            console.log("X-Forwarded-For header present: ", req.headers["X-Forwarded-For"]);
+            if (process.env.NODE_ENV !== 'production') console.log("X-Forwarded-For header present: ", req.headers["X-Forwarded-For"]);
             originalIP = req.headers["X-Forwarded-For"] as string;
           } else {
             originalIP = req.headers["originalip"] as string;
           }
-          console.log("response", response);
+          if (process.env.NODE_ENV !== 'production') console.log("response", response);
           if (logger === undefined) return responseBuffer; // For routes without logging
           try {
             let responseDetails = JSON.parse(response);
