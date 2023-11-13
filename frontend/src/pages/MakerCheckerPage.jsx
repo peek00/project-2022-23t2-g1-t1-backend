@@ -75,7 +75,7 @@ export default function UserListingPage() {
     <div className="flex h-screen min-w-full min-h-screen overflow-y-auto">
       <SideBar />
       {/* <TopBar /> */}
-      <div className="w-[80%] ms-[15%] relative min-h-full  overflow-y-auto mt-28 ">
+      <div className="w-[80%] ms-[17%] relative min-h-full  overflow-y-auto mt-28 ">
         <MakerCheckerNav activeTab={activeTab} onTabChange={handleTabChange} />
         <CompanyDropdown
           selectedCompany={selectedCompany}
