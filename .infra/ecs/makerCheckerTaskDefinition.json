@@ -32,6 +32,10 @@
                 {
                     "name": "SQS_URL",
                     "value": "https://sqs.ap-southeast-1.amazonaws.com/717942231127/OutgoingEmailQueue"
+                },
+                {
+                    "name": "MAKER_CHECKER_PAGE_URL",
+                    "value": "https://api.itsag1t1.com/makerchecker"
                 }
             ],
             "environmentFiles": [],
