@@ -1143,7 +1143,7 @@ def approve_or_reject_approval_request(
 
             elif combined_data['request_type'] == "Update User Details":
                 # make call to endpoint to change user
-                requests.put(USER_MS+"User/updateUser", headers = headers, json=details)
+                requests.put(USER_MS+"/User/updateUser", headers = headers, json=details)
 
         elif combined_data["status"] == "rejected":
             action = "rejected"
