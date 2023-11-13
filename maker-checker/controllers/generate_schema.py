@@ -115,17 +115,17 @@ def populate_request_db(ddb):
                 "uid": "3517402c-a306-4bdb-9da0-b478973fa42c",
                 "companyid": "Descenda",
                 "comments": "Optional comment for this particular request",
-                "request_type": "Transaction",
+                "request_type": "Points Update",
                 "request_title": "Optional title for this particular request",
                 "requestor_id": "db0eae93-f3fe-453b-8da9-14767ffc5332",
                 "created_at": "2023-11-07T15:12:44.583490",
                 "request_details": {
-                    "increment": "False",
-                    "amount": 100,
-                    "account_id": 456789
+                    "company_id": "Descenda",
+                    "change": 100,
+                    "user_id": "1602286c-e1eb-4ec6-a0d2-360d8b6e3deb"
                 },
-                "approval_role": "ADMIN",
-                "request_expiry": "2023-11-12T15:12:44.583502",
+                "approval_role": "Owner",
+                "request_expiry": "2023-12-12T15:12:44.583502",
                 "status": "pending"
             },
             {
@@ -133,51 +133,51 @@ def populate_request_db(ddb):
                 "uid": "cds7f49f-d5ef-42fd-9fdf-1c27cf61b51e",
                 "companyid": "Descenda",
                 "comments": "No comments",
-                "request_type": "Transaction",
+                "request_type": "Points Update",
                 "request_title": None,
                 "requestor_id": "db0eae93-f3fe-453b-8da9-14767ffc5332",
-                "created_at": "2023-11-07T15:12:44.583490",
+                "created_at": "2023-12-07T15:12:44.583490",
                 "request_details": {
-                    "increment": "true",
-                    "amount": "100",
-                    "account_id": "123"
+                    "company_id": "Descenda",
+                    "change": 100,
+                    "user_id": "2f998bd3-f8b7-4b39-ab3a-16409a3b1936"
                 },
-                "approval_role": "ADMINS",
-                "request_expiry": "2023-11-12T15:12:44.583502",
+                "approval_role": "Owner",
+                "request_expiry": "2023-12-12T15:12:44.583502",
                 "status": "pending"
             },
             {
                 "companyid": "Descenda",
                 "uid": "b47204b2-3940-46d4-bb7d-911a969578a3",
                 "comments": None,
-                "request_type": "Transaction Update",
+                "request_type": "Points Update",
                 "request_title": None,
                 "requestor_id": "admin1",
                 "created_at": "2023-10-15T05:16:49.626324",
                 "request_details": {
-                    "increment": "true",
-                    "amount": "100",
-                    "account_id": "123"
+                    "company_id": "Descenda",
+                    "change": 100,
+                    "user_id": "32d3207d-93d7-4093-8f94-9621499470fc"
                 },
-                "approval_role": "ADMINS",
-                "request_expiry": "2023-11-12T15:12:44.583502",
+                "approval_role": "Owner",
+                "request_expiry": "2023-12-12T15:12:44.583502",
                 "status": "pending"
             },
             {
                 "companyid": "Descenda",
                 "uid": "b47204b2-3310-46d4-bb7d-911a969578a3",
                 "comments": None,
-                "request_type": "Transaction Update",
+                "request_type": "Points Update",
                 "request_title": None,
                 "requestor_id": "admin1",
                 "created_at": "2023-10-15T05:16:49.626324",
                 "request_details": {
-                    "increment": "true",
-                    "amount": "1000",
-                    "account_id": "13"
+                    "company_id": "Descenda",
+                    "change": 1000,
+                    "user_id": "3519dbed-f5cf-43d7-8c89-837564694530"
                 },
-                "approval_role": "ADMINS",
-                "request_expiry": "2023-11-12T15:12:44.583502",
+                "approval_role": "Owner",
+                "request_expiry": "2023-12-12T15:12:44.583502",
                 "status": "pending"
             },
             {
