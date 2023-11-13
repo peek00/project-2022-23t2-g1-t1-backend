@@ -88,7 +88,7 @@ export default function UserTable() {
 
   useEffect(() => {
     // Prefetch the next page data only when viewUser has finished or the component has mounted
-    if (viewAdmin.current!=null && viewAdmin!=null ) {
+    if (viewAdmin.current!=null && lastEvaluatedKey.current!=null ) {
       prefetchNextPageData();
     }
   }, [currentPage,viewUserFinished]);
