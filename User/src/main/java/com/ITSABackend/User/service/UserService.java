@@ -3,6 +3,7 @@ package com.ITSABackend.User.service;
 import com.ITSABackend.User.constant.AppConstant;
 import com.ITSABackend.User.models.User;
 import com.ITSABackend.User.repo.DynamoDBRepo;
+import com.amazonaws.services.dynamodbv2.document.BatchGetItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Index;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
@@ -20,12 +21,16 @@ import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
+import com.amazonaws.services.dynamodbv2.model.LimitExceededException;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,7 +96,7 @@ public class UserService {
 
     }
 
-    public User getUserById( String userId) {
+    public User getUserById( String userId) throws LimitExceededException {
         User user = null;
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
         System.out.println("Getting User from the DB");
@@ -118,15 +123,16 @@ public class UserService {
     
                 return user;
     
+            } catch (LimitExceededException e) {
+                throw e;
             } catch (Exception e) {
-                System.err.println("Unable to read user" + userId);
+                System.err.println("Unable to read user");
                 System.err.println(e.getMessage());
             }
         }
         return user;
     }
     
-
     public void deleteUser(String userId) {
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
                 .withPrimaryKey("userID", userId);
@@ -143,7 +149,6 @@ public class UserService {
         }
     }
     
-
     public void updateUser(User user, String userId) {
         System.out.println("Trying....");
         System.out.println(userId);
@@ -176,7 +181,6 @@ public class UserService {
             System.err.println(e.getMessage());
         }
     }
-    
 
     public User getUserByEmail(String email){
         User user = null;
@@ -213,6 +217,28 @@ public class UserService {
             }
         }
         return user;
+    }
+
+    public User[] getUsersByIdList(List<String> userIdList){
+        ArrayList<User> users = new ArrayList<User>();
+        int count = 0;
+        do{
+            try {
+                User user = getUserById(userIdList.get(count));
+                users.add(user);
+                count++;
+            } catch (LimitExceededException e) {
+                System.err.println("Retrying");
+                System.err.println(e.getMessage());
+                // Sleep
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            } 
+        }while(count < userIdList.size());
+        return users.toArray(new User[users.size()]);
     }
 
     public User[] getAllUsers(Set<String> validRoleNames) {
@@ -252,7 +278,6 @@ public class UserService {
         }
         return users.toArray(new User[users.size()]);
     }
-
 
     public Map<String, Object> getAllUsersPaged(Set<String> validRoleNames, String lastEvaluatedKey, String email) {
         Table table = dynamoDBRepo.getTable(AppConstant.USER);
@@ -376,9 +401,6 @@ public class UserService {
         return emails;
         
     }
-
-
-
 
     public List<String> getUsersByRole(ArrayList<String> roleNames) {
         Set<String> validRoleNames = new HashSet<>();
