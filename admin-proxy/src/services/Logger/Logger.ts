@@ -32,7 +32,7 @@ export class Logger {
         }),
       ),
       transports: [
-        new transports.Console(),
+        // new transports.Console(),
         new transports.File({ filename: `/tmp/${logFileName}`, options:{
           flags: 'a+',
           encoding: 'utf8',
@@ -41,11 +41,11 @@ export class Logger {
   }
 
   public log(level: string, message: string, addedInfo: any) {
-    let additionalInfo = JSON.stringify({
-      timestamp: new Date().toUTCString(),
-      ...JSON.parse(addedInfo),
-    });
     try {
+      let additionalInfo = JSON.stringify({
+        timestamp: new Date().toUTCString(),
+        ...JSON.parse(addedInfo),
+      });
       if (level === "info") {
         if (process.env.NODE_ENV !== 'production') console.log("Logging info", message, additionalInfo)
         this.logger.info(message, { additionalInfo });

@@ -132,6 +132,7 @@ export class PolicyService {
     if (process.env.NODE_ENV !== 'production') console.log(details)
     // Drop cache for policy
     await this.cacheProvider.remove("policies");
+    await this.cacheProvider.flushAllMatchingPattern(`policy*`);
     return await this.db.updateBy(this.tableName, details);
   }
 
