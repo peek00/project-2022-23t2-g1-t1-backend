@@ -114,14 +114,14 @@ public class UserController {
     @GetMapping(value = "/getUserByEmail", produces = {"application/json"})
     public ResponseEntity getUserByEmail(@PathParam("email") String email){
         try{
-            System.out.println(email);
+            // System.out.println(email);
             User user = userService.getUserByEmail(email);
             // Map reponse to return id and role
             HashMap<String, Object> response = new HashMap<>();
             response.put("data", user);
             response.put("logs", "retrieved user by email");
   
-            System.out.println(response);
+            // System.out.println(response);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(Exception e){
@@ -293,7 +293,7 @@ public class UserController {
 
         try {
             // Set Default role if not specified
-            System.out.println("Pulling from DB");
+            // System.out.println("Pulling from DB");
             Role[] allRoles = roleService.getRoles();
             Set<String> validRoleNames = Arrays.stream(allRoles)
                                     .map(Role::getRoleName)
