@@ -141,7 +141,7 @@ export default function UserTable() {
 
   const prefetchNextPageData = async () => {
 
-    if(lastEvaluatedKey!=null&&  viewAdmin.current!=null){
+    if(lastEvaluatedKey!=null){
     try {
       const response = await axios.get(
       
