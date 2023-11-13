@@ -383,8 +383,9 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         await CacheProvider.remove(redisKeyAccounts);
         await CacheProvider.remove(redisKey);
         await CacheProvider.remove(otherredisKey);
+        await CacheProvider.remove(`pointsBalance:${companyId}:${userId}`)
         await CacheProvider.remove(`idsByCompanyId:${companyId}`)
-
+        await CacheProvider.remove(`userIdsByCompanyId:${companyId}`)
 
         console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
         return data;

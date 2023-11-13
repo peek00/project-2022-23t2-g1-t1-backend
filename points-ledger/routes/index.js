@@ -380,9 +380,8 @@ router.get('/validate', async (req,res) => {
 // POST request to create a new points balance account
 // takes in user_id and input balance 
 router.post('/createAccount', async (req,res) => {
-  console.log(req.headers);
   const companyId = req.body.company_id;
-  const userId = req.headers.userid;
+  const userId = req.body.user_id;
   const inputbalance = req.body.balance;
   const new_pointsId = uuidv4();
   console.log(companyId);
