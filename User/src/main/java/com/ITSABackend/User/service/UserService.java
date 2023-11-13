@@ -187,7 +187,8 @@ public class UserService {
 
         QuerySpec spec = new QuerySpec()
             .withKeyConditionExpression("email = :email")
-            .withValueMap(new ValueMap().withString(":email", email));
+            .withValueMap(new ValueMap().withString(":email", email))
+            .withMaxResultSize(1);
             
 
         if (table != null){
