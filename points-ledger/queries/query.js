@@ -383,6 +383,7 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         await CacheProvider.remove(redisKeyAccounts);
         await CacheProvider.remove(redisKey);
         await CacheProvider.remove(otherredisKey);
+        await CacheProvider.remove(`idsByCompanyId:${companyId}`)
 
 
         console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
@@ -424,6 +425,8 @@ async function updatePoints(companyId, userId, newbalance) {
         await CacheProvider.remove(redisKey);
         await CacheProvider.remove(otherredisKey);
         await CacheProvider.remove(newredisKey);
+        await CacheProvider.remove(`idsByCompanyId:${companyId}`);
+        await CacheProvider.remove(`userIdsByCompanyId:${companyId}`)
 
         return data;
     }
@@ -455,7 +458,8 @@ async function deleteAccount(companyId, userId) {
         await CacheProvider.remove(redisKey);
         await CacheProvider.remove(otherredisKey);
         await CacheProvider.remove(newredisKey);
-        
+        await CacheProvider.remove(`idsByCompanyId:${companyId}`);
+        await CacheProvider.remove(`userIdsByCompanyId:${companyId}`)
         return data;
     }
     catch (err) {
@@ -510,6 +514,8 @@ async function modifyPoints(companyId, userId, change) {
         await CacheProvider.remove(redisKey);
         await CacheProvider.remove(otherredisKey);
         await CacheProvider.remove(newredisKey);
+        await CacheProvider.remove(`idsByCompanyId:${companyId}`);
+        await CacheProvider.remove(`userIdsByCompanyId:${companyId}`)
 
         return data;
     }
