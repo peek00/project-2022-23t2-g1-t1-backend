@@ -21,15 +21,15 @@
         <li><a href="#listing-users">Listing Users</a></li>
         <li><a href="#enrolling-new-users">Enrolling new Users</a></li>
         <li><a href="#updating-new-users">Updating User Infromation</a></li>
-        <li><a href="#deleting-usersdeleting-users">Deleting User Infromation</a></li>
-        <li><a href="view-all-companies">View All Companies</a></li>
-        <li><a href="view-all-users-in-company">View all Users Under A Company</a></li>
-        <li><a href="edit-points">Edit Points</a></li>
-        <li><a href="view-all-accounts">Viewing All Accounts Under A Particular Company</a></li>
-        <li><a href="add-points-accounts">Add Points Account For A Particular User</a></li>
-	      <li><a href="update-permissions-for-users">Updating Permissions for Users</a></li>
-	      <li><a href="maker-checker-update-points">Maker Checker Update Points</a></li>
-	      <li><a href="maker-checker-update-user-details">Maker Checker Update User Details</a></li>
+        <li><a href="#deleting-users">Deleting User Infromation</a></li>
+        <li><a href="#view-all-companies">View All Companies</a></li>
+        <li><a href="#viewing-all-users-under-a-company">View all Users Under A Company</a></li>
+        <li><a href="#edit-points">Edit Points</a></li>
+        <li><a href="#viewing-all-accounts-under-a-particular-company">Viewing All Accounts Under A Particular Company</a></li>
+        <li><a href="#add-points-account-for-a-particular-user">Add Points Account For A Particular User</a></li>
+	      <li><a href="#update-permission-for-users">Updating Permissions for Users</a></li>
+	      <li><a href="#maker-checker-update-points">Maker Checker Update Points</a></li>
+	      <li><a href="#maker-checker-update-user-details">Maker Checker Update User Details</a></li>
       </ul>
     </li>
 
@@ -89,7 +89,7 @@ Our project consists of three backend applications which are the `User Storage `
 </ol>
 </div>
 
-## Viewing All Companies
+## View All Companies
 <div align="left">
   <img src="images/companygateway.png"/>
   <ol>
@@ -105,7 +105,7 @@ Our project consists of three backend applications which are the `User Storage `
   </ol>
 </div>
 
-## Edit Points Of A Particular User Under A Particular Company
+## Edit Points
 <div align="left">
   <img src="images/editPoints.png"/>
   <ol>
