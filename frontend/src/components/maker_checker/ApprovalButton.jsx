@@ -13,7 +13,7 @@ export default function ApprovalButton({
     setAction(action);
     setLoading(true);
     try {
-      if (action == "approve") {
+      if (action == "approved") {
         handleApprove();
       } else {
         handleReject();
