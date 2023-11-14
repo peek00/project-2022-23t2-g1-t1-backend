@@ -59,6 +59,17 @@ Our project consists of three backend applications which are the `User Storage `
 </ol>
 </div>
 
+## Updating New Users
+<div align="center">
+
+<img src="images/update_user.png"/>
+<ol>
+	<li>User will navigate to the <b>Update User Details button<b> by clicking on the View User Details Button</li>
+	<li>After inputting the new user details, the user would be navigated back to the users listings page</li>
+	<li>The user should see a change in the user details on the user listing page</li>
+</ol>
+</div>
+
 
 <!-- ACKNOWLEDGMENTS -->
 
