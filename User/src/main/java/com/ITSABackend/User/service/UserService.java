@@ -149,16 +149,7 @@ public class UserService {
         }
     }
     
-    public void updateUser(User user, String userId) {
-        // System.out.println("Trying....");
-        // System.out.println(userId);
-        // System.out.println(user.getfirstName());
-        // System.out.println(user.getlastName());
-        // System.out.println(user.getEmail());
-        // System.out.println(user.getRoles());
-        
-        
-    
+    public void updateUser(User user, String userId) throws Exception {    
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                 .withPrimaryKey("userID", userId)
                 .withUpdateExpression("set firstName = :firstName, lastName = :lastName, email = :email, userRole = :userRole")
@@ -177,6 +168,7 @@ public class UserService {
         } catch (Exception e) {
             System.err.println("Unable to update User");
             System.err.println(e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 

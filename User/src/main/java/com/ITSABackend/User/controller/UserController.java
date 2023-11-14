@@ -153,7 +153,7 @@ public class UserController {
     
     @CacheEvict(value = "usersCache", allEntries = true)
     @PutMapping(value = "/updateUser", consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("companyID") String companyID, @PathParam("userID") String userID) {
+    public ResponseEntity<Map<String, Object>> updateUser(@RequestBody User user, @PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
@@ -182,7 +182,8 @@ public class UserController {
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.put("logInfo", e.getMessage());
+            response.put("error", e.getMessage());
+            response.put("logInfo", "error on updating user");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
