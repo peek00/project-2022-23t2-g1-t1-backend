@@ -1158,13 +1158,26 @@ def approve_or_reject_approval_request(
                 # make call to endpoint to change user
                 print("it goes to the correct side")
                 print(details)
-                result = requests.put(USER_MS+"/User/updateUser?userID={userid}", 
+                target = requests.get(USER_MS + "/User/getUserByEmail",
+                headers = {
+                    "userid": userid
+                },
+                params={
+                "email": details['email']
+                }).json()
+                print("This is the target")
+                print(target)
+                result = requests.put(USER_MS+"/User/updateUser",
+                params={
+                    "userID": target['data']['userId']
+                },
                 json={
                     "firstName": details['firstName'],
                     "lastName": details['lastName'],
                     'email': details['email'],
                     'role': details['role']
                 }).json()
+                print("This is the result")
                 print(result)
 
         elif combined_data["status"] == "rejected":
