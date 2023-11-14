@@ -23,7 +23,7 @@ export default function UserTable() {
   // Function to pop the top item from the stack
   const popFromStack = () => {
     if (previousPage.current.length === 0) {
-      console.log('Stack is empty');
+      //console.log('Stack is empty');
       return;
     }
     previousPage.current = previousPage.current.slice(0, -1);
@@ -82,7 +82,7 @@ export default function UserTable() {
     viewUser();
     // Fetch the role from localStorage or an API here
     const storedRole = JSON.parse(localStorage.getItem('permissions'));
-    console.log(storedRole);
+    //console.log(storedRole);
     setRole(storedRole);
   }, []);
 
@@ -113,7 +113,7 @@ export default function UserTable() {
       }
       viewAdmin.current = canViewAdmin;
 
-      console.log(lastEvaluatedKey.current);
+      //console.log(lastEvaluatedKey.current);
 
       let response;
       if (lastEvaluatedKey.current === null) {
@@ -178,10 +178,10 @@ export default function UserTable() {
       // You can use the prefetched data as needed, for example, update state or store it in a ref.
       setNextPage( response.data.data.users);
       hasNext.current = response.data.data.next;
-      console.log(hasNext.current);
+      //console.log(hasNext.current);
       lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
     
-      console.log(response)
+      //console.log(response)
     } catch (error) {
       console.error('Error prefetching data:', error);
     }

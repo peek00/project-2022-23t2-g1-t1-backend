@@ -36,7 +36,7 @@ function CreateRequest() {
   };
 
   const handleButtonClick = (index, data) => {
-    console.log(data);
+    // //console.log(data);
     setSelectedTemplate(data);
     setIsOpen(false);
   };
@@ -54,7 +54,7 @@ function CreateRequest() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
+        // //console.log(response.data);
         setFormSubmissionStatus("success");
       })
       .catch((error) => {

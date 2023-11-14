@@ -43,7 +43,7 @@ export default function CompanyAccountPage() {
   }, [companyId]);
 
   useEffect(() => {
-    console.log("Accounts updated:", accounts);
+    //console.log("Accounts updated:", accounts);
   }, [accounts]);
 
   return (

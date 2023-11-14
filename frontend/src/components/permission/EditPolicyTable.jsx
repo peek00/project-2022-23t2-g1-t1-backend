@@ -25,7 +25,7 @@ function PolicyTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data")
+        //console.log("Fetching data")
         const response = await axios.get(API_BASE_URL+'/policy',{withCredentials: true});
         const roleResponse = await axios.get(API_BASE_URL+'/api/user/Role/getAllRoles',{withCredentials: true});
         if (roleResponse.data.data.length > 0){
@@ -39,7 +39,7 @@ function PolicyTable() {
         setCurrentRoles(response.data);
         
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     };
     fetchData(); // Call the fetchData function
@@ -51,14 +51,14 @@ function PolicyTable() {
       acc[action] = {};
       
       roles.forEach(role => {
-        console.log(role);
-        console.log(acc);
+        //console.log(role);
+        //console.log(acc);
         const url =policyMapping[action][0];
         
         const method = policyMapping[action][1];
-        console.log(currentRoles);
-        console.log(url);
-        console.log(method);
+        //console.log(currentRoles);
+        //console.log(url);
+        //console.log(method);
         if (currentRoles[url][method].includes(role)){
           acc[action][role] = true;
         }
@@ -97,7 +97,7 @@ function PolicyTable() {
       }
 
       newPermission[method] = roleList;
-      console.log(newPermission);
+      //console.log(newPermission);
 
       try {
         const response = await axios.put(API_BASE_URL+"/policy", newPermission, { withCredentials: true });

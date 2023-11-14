@@ -324,7 +324,7 @@ async function enableAutoScaling(autoScalingClient) {
     await autoScalingClient.registerScalableTarget(enable_points_ledger_user_id_target_write).promise();
     await autoScalingClient.putScalingPolicy(enable_points_ledger_user_id_policy_write).promise();
 
-    console.log("Successfully applied autoscaling");
+    //console.log("Successfully applied autoscaling");
   } catch(err) {
     handleAutoScalingError(err);
   }

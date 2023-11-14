@@ -34,10 +34,10 @@ class dbtableconfig {
 
   async batchWrite() {
     // Divide items array into chunks of 25 items each
-    console.log("Start writing base data into database");
+    //console.log("Start writing base data into database");
 
     const users = this.baseData;
-    console.log(users[0]["company_id"]);
+    //console.log(users[0]["company_id"]);
     try {
       let count = users.length;
       do {
@@ -52,7 +52,7 @@ class dbtableconfig {
               balance: user["balance"]  // Assuming 'balance' is a numeric value
             })
           }));
-          console.log("PutItem succeeded:", user["user_id"]);
+          //console.log("PutItem succeeded:", user["user_id"]);
           count--;
         } catch (err) {
           console.error("Unable to add item:", user["user_id"]);
@@ -60,11 +60,11 @@ class dbtableconfig {
           await this.delay(1000) // Wait for 1 second
         }
         // for (const user of users) {
-        //   console.log(user);
-        //   console.log(user["company_id"])
-        //   console.log(user["user_id"])
-        //   console.log(user["id"])
-        //   console.log(user["balance"])
+        //   //console.log(user);
+        //   //console.log(user["company_id"])
+        //   //console.log(user["user_id"])
+        //   //console.log(user["id"])
+        //   //console.log(user["balance"])
         //   // count--;
         //   try {
         //     await this.db.send(new PutItemCommand({
@@ -77,7 +77,7 @@ class dbtableconfig {
         //       })
         //     }));
             
-        //     console.log("PutItem succeeded:", user["user_id"]);
+        //     //console.log("PutItem succeeded:", user["user_id"]);
         //     count--;
         //   } catch (e) {
         //     console.error("Unable to add item:", user["user_id"]);
@@ -87,7 +87,7 @@ class dbtableconfig {
         //   }
       } while (count > 0);
   
-      console.log("Initialisation successful, added", users.length, "records");
+      //console.log("Initialisation successful, added", users.length, "records");
     } catch (e) {
       console.error("Error occurred while populating points table from JSON file:", e.message);
     }
@@ -110,7 +110,7 @@ class dbtableconfig {
     }
   
     if (isTableActive) {
-      console.log(`Table ${tableName} is active.`);
+      //console.log(`Table ${tableName} is active.`);
     } else {
       throw new Error(`Table ${tableName} is not active after ${maxAttempts} attempts.`);
     }
@@ -196,28 +196,28 @@ class dbtableconfig {
 
     try {
         const data = await this.db.send(new ListTablesCommand({}));
-        console.log(data);
+        //console.log(data);
         await this.loadBaseData();
         if (data.TableNames.includes("new-points-ledger")) {
-            console.log("Table exists");
+            //console.log("Table exists");
             if (tearDown) {
               // Delete table if it exists
               await this.db.send(new DeleteTableCommand({ TableName: "new-points-ledger" }));
-              console.log("Table is deleted");
+              //console.log("Table is deleted");
               await this.delay(5000);
               await this.db.send(new CreateTableCommand(params));
-              console.log("Table is created");
+              //console.log("Table is created");
               await this.delay(5000);
               this.batchWrite();
             }
         } else {
           await this.db.send(new CreateTableCommand(params));
-          console.log("Table is created");
+          //console.log("Table is created");
           await this.delay(5000);
           await this.batchWrite();
         }
     } catch (err) {
-      console.log("Error", err);
+      //console.log("Error", err);
     }
   };
 }

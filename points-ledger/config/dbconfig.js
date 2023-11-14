@@ -6,7 +6,7 @@ const { DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
 
 
 const createDynamoDBClient = () => {
-//   console.log(`{ 
+//   //console.log(`{ 
 //     region: ${process.env.AWS_REGION || "local"},
 //     endpoint: ${process.env.AWS_DYNAMODB_ENDPOINT || "http://host.docker.internal:8000"},
 //     credentials: {

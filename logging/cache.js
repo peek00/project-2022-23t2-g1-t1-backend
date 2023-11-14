@@ -24,10 +24,10 @@ export class Redis {
       });
     }
     this.client.connect().then(() => {
-      console.log("Connected to Redis");
+      //console.log("Connected to Redis");
       this.connected = true;
     }).catch((e) => {
-      console.log(e);
+      //console.log(e);
       this.connected = false;
     });
   }
@@ -50,7 +50,7 @@ export class Redis {
     ttl = 1000,
   ){
     try {
-      console.log(key, value, ttl);
+      //console.log(key, value, ttl);
       if (ttl === -1) {
         await promisify(this.client.set).bind(this.client)(key, value);
         return true;
@@ -58,7 +58,7 @@ export class Redis {
       await promisify(this.client.set).bind(this.client)(key, value, "EX", ttl);
       return true;
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       return false;
     }
   }
@@ -76,8 +76,8 @@ export class Redis {
   async flushAllMatchingLogPattern(){
     const logPattern = "logs*";
     const keys = await promisify(this.client.keys).bind(this.client)(logPattern);
-    console.log("Deleting all cache matching log pattern")
-    console.log(keys);
+    //console.log("Deleting all cache matching log pattern")
+    //console.log(keys);
     if (keys.length === 0) {
       return true;
     }

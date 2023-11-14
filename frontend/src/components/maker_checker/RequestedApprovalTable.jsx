@@ -75,7 +75,7 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
 
     // Handle approval or response
     const handleEdit = async (uid) => {
-        console.log("Edit not implemented");
+        //console.log("Edit not implemented");
     };
 
     // Handle approval or response

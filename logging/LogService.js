@@ -63,17 +63,17 @@ export class LogService {
         if (tearDown) {
           // Delete table if it exists
           await this.db.send(new DeleteTableCommand({ TableName: "logs" }));
-          console.log("Table is deleted");
+          //console.log("Table is deleted");
           await this.db.send(new CreateTableCommand(params));
-          console.log("Table is created");
+          //console.log("Table is created");
         }
       } else {
         await this.db.send(new CreateTableCommand(params));
-        console.log("Table is created");
+        //console.log("Table is created");
       }
       await this.cache.flushAllMatchingLogPattern();
     } catch (err) {
-      console.log("Error", err);
+      //console.log("Error", err);
     }
   };
 
@@ -91,7 +91,7 @@ export class LogService {
       }
       
       if (data.Items && data.Items.length > 0) {
-        console.log("Total Number of Logs Retrieved: ", data.Items.length);
+        //console.log("Total Number of Logs Retrieved: ", data.Items.length);
         records = data.Items.map((item) => unmarshall(item))
       }
       return {
@@ -99,7 +99,7 @@ export class LogService {
         nextPageKey: nextPageKey,
       };
     } catch (err) {
-      console.log("Error", err);
+      //console.log("Error", err);
     }
   };
 
@@ -164,7 +164,7 @@ export class LogService {
       queryParams.FilterExpression = FilterExpressionLs.join(" AND ");
     }
 
-    console.log(queryParams)
+    //console.log(queryParams)
     return queryParams;
   }
 
@@ -174,13 +174,13 @@ export class LogService {
       TableName: "logs",
       ...queryParams,
     };
-    console.log(params)
+    //console.log(params)
     const cachedLogs = await this.cache.get(this.getCacheKey(params));
     if (cachedLogs) {
-      console.log('cache hit')
+      //console.log('cache hit')
       return JSON.parse(cachedLogs);
     } else {
-      console.log('cache miss')
+      //console.log('cache miss')
       const logResponse = await this.queryLog(params);
       // If logResponse is not empty, write to cache
       if (logResponse.data && logResponse.data.length > 0) {
@@ -208,7 +208,7 @@ export class LogService {
         ...data,
       }),
     };
-    console.log("Uploading Logs with params: ", params);
+    //console.log("Uploading Logs with params: ", params);
     return await this.db.send(new PutItemCommand(params));
   }
 
@@ -229,7 +229,7 @@ export class LogService {
       });
       return Array.from(output);
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
       return [];
     }
   }

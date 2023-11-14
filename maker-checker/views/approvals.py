@@ -805,7 +805,7 @@ def create_approval_requests(
                 "userid": userid
             },
             params={
-                "user_id": combined_data['request_details']['account_id'],
+                "user_id": combined_data['request_details']['user_id'],
                 "company_id": combined_data['request_details']['company_id']
             }).json()
             if verify['code'] == 400:
@@ -1145,11 +1145,20 @@ def approve_or_reject_approval_request(
             headers = { "userid": userid }
             details = original_request['request_details']
             details['withCredentials'] = True
-            if combined_data['request_type'] == "Points Update":
+            if original_request['request_type'] == "Points Update":
                 # make call to endpoint to change amount
-                requests.post(POINTS_MS+"/changeBalance", headers = headers, json=details)
+                result = requests.post(POINTS_MS + "/changeBalance", 
+                headers = {
+                    "userid": userid
+                },
+                json={
+                    "user_id": details['user_id'],
+                    "company_id": details['company_id'],
+                    "change": int(details['change'])
+                }).json()
+                print(result)
 
-            elif combined_data['request_type'] == "Update User Details":
+            elif original_request['request_type'] == "Update User Details":
                 # make call to endpoint to change user
                 requests.put(USER_MS+"/User/updateUser", headers = headers, json=details)
 
@@ -1164,14 +1173,15 @@ def approve_or_reject_approval_request(
             "result" : f"Successfully {action} Request ID {combined_data['uid']}!"
         }
         return response
-    
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except ClientError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+    # except ValueError as e:
+    #     raise HTTPException(status_code=404, detail=str(e))
+    # except ValidationError as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
+    # except ClientError as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
     
 # =================== END: CHECKER requests =======================

@@ -43,7 +43,7 @@ export default function UserListingPage() {
                 });
                 setTemplateData(templateResponse.data);
             } catch (error) {
-                console.log(error);
+                //console.log(error);
             }
         };
         fetchData();

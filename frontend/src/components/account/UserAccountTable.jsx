@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 export default function UserAccountTable(props){
     const { accounts } = props;
 
-    console.log("Table rendering")
+    // //console.log("Table rendering")
 
     return (
       <div className="relative overflow-x-auto w-[85%] mb-[100px]">
@@ -21,18 +21,22 @@ export default function UserAccountTable(props){
                 <th scope="col" className="px-6 py-3">
                     Balance
                 </th>
+                <th scope="col" className="px-6 py-3">
+                    User ID
+                </th>
             </tr>
           </thead>
           {accounts.length > 0 ? (
             <tbody>
               {accounts.map((account) => (
-                console.log(account),
+                //console.log(account),
                 <tr
                   key={account.id}
                   className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
                 >
                   <td className="px-6 py-4">{account.company_id}</td>
                   <td className="px-6 py-4">{account.balance}</td>
+                  <td className="px-6 py-4">{account.user_id}</td>
 
                   <Link to={`/user/account/company/${account.company_id}/${account.user_id}/editPoints`}><td className="px-6 py-4"><Button>Edit Points</Button></td></Link>
 

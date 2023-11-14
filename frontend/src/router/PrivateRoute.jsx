@@ -80,13 +80,13 @@ const PrivateRoute = ({ page, permission }) => {
     fetchRole()
       .then((role) => {
         // Check if the user is authorized to access the page
-        console.log(role);
+        //console.log(role);
 
         if (page == 'user' && permission == 'GET') {
           const isAdmin = role['user/User/getAllUsersPaged?isAdmin=True']['GET'];
-          console.log(isAdmin);
+          //console.log(isAdmin);
           const isUser = role['user/User/getAllUsersPaged?isAdmin=False']['GET'];
-          console.log(isUser);
+          //console.log(isUser);
 
           if (isAdmin || isUser) {
             setAuthorized(true);
