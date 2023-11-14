@@ -22,6 +22,7 @@
 	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
 	<li><a href="#updating-new-users">Updating User Infromation</a></li>
 	<li><a href="deleting-users">Deleting User Infromation</a></li>
+	      <li><a href="update-permissions-for-users">Updating Permissions for Users</a></li>
 	 <li><a href="maker-checker-update-points">Maker Checker Update Points</a></li>
 	      <li><a href="maker-checker-update-user-details">Maker Checker Update User Details</a></li>
       </ul>
@@ -79,6 +80,18 @@ Our project consists of three backend applications which are the `User Storage `
 <ol>
 	<li>User will navigate to the <b>Delete User <b> by clicking on the View User Details Button</li>
 	<li>After pressing the Delete User button , the user would not appear on the user listing page</li>
+	
+</ol>
+</div>
+
+## Update Permission for Users
+<div align="center">
+
+<img src="images/admin_proxy.png"/>
+<ol>
+	<li>Admin will be able to update permission for the roles specified</li>
+	<li>After unchecking the <b>Add User<b> permission for Owner , and then navigating to the enroll user tab</li>
+ 	<li>The current User who has the Owner permisson, would then have an unauthoized page and not allowed to enroll users</li>
 	
 </ol>
 </div>
