@@ -19,10 +19,10 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#listing-users">Listing Users</a></li>
-	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
-	<li><a href="#updating-new-users">Updating User Infromation</a></li>
-	<li><a href="deleting-users">Deleting User Infromation</a></li>
-	 <li><a href="maker-checker-update-points">Maker Checker Update Points</a></li>
+        <li><a href="#enrolling-new-users">Enrolling new Users</a></li>
+        <li><a href="#updating-new-users">Updating User Infromation</a></li>
+        <li><a href="deleting-users">Deleting User Infromation</a></li>
+        <li><a href="maker-checker-update-points">Maker Checker Update Points</a></li>
 	      <li><a href="maker-checker-update-user-details">Maker Checker Update User Details</a></li>
       </ul>
     </li>
@@ -36,6 +36,13 @@
 
 Our project consists of three backend applications which are the `User Storage ` mircoservice which allow user to list user,enroll new user and update and delete user information.It also consists of the `Point Ledger` microservice which allow user to query point balance of an user and adjust balance of their points account. Lastly we have the `Admin Proxy` application which acts as a gateway betweeen the client and the two applications stated above.
 
+## Deployment
+
+Deployment of the project is done on AWS cloud. The set up of the infrastructure was done manually previously on the cloud console, but we have since extracted the cloudformation templates to enable us to set up the ECS Cluster and ECS Service Environments and developed Continuous Deployment Pipeline to automate the deployment of ECS Tasks onto the ECS Cluster.This will allow us to deploy the solution across different regions.
+
+Some of the services and resources, however, would still require manual provision through the cloud management console. There are attempts to automate the infrastructure management with IaaC using Terraform, but it is still a work in progress.
+
+Please refer to the [Deployment Guide](./aws-setup.readme.md) for more information on how to set-up and deploy the AWS Environment.
 
 	
 ## Getting Started
