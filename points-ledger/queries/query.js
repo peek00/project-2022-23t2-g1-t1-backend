@@ -30,12 +30,12 @@ if (process.env.NODE_ENV === "production") {
 async function getAllAccounts(userId, companyId) {
     try {
         const redisKey = `account:${companyId}:${userId}`;
-        console.log("Calling cache");
+        //console.log("Calling cache");
         const cachedData = await CacheProvider.get(redisKey);
-        console.log("called cache");
+        //console.log("called cache");
         
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -63,7 +63,7 @@ async function getAllAccounts(userId, companyId) {
         // }
         // Cache result in Redis for 10min
         await CacheProvider.write(redisKey, JSON.stringify(result), 300);
-        console.log(result);
+        //console.log(result);
 
         return result.length > 0 ? result : null;
 
@@ -74,7 +74,7 @@ async function getAllAccounts(userId, companyId) {
         // }
 
     } catch (err) {
-        console.log("Error retrieving accounts:", err);
+        //console.log("Error retrieving accounts:", err);
         throw err;
     }
 }
@@ -83,12 +83,12 @@ async function getAllAccounts(userId, companyId) {
 async function getAllUserIdsByCompanyId(companyId) {
     try {
         const redisKey = `userIdsByCompanyId:${companyId}`;
-        console.log("Calling cache");
+        //console.log("Calling cache");
         const cachedData = await CacheProvider.get(redisKey);
-        console.log("called cache");
+        //console.log("called cache");
 
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -110,12 +110,12 @@ async function getAllUserIdsByCompanyId(companyId) {
 
         // Cache result in Redis for 10min
         await CacheProvider.write(redisKey, JSON.stringify(userIds), 300);
-        console.log(userIds);
+        //console.log(userIds);
 
         return userIds.length > 0 ? userIds : [];
 
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -124,12 +124,12 @@ async function getAllUserIdsByCompanyId(companyId) {
 async function getAllIdsByCompanyId(companyId) {
     try {
         const redisKey = `idsByCompanyId:${companyId}`;
-        console.log("Calling cache");
+        //console.log("Calling cache");
         const cachedData = await CacheProvider.get(redisKey);
-        console.log("called cache");
+        //console.log("called cache");
 
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -151,12 +151,12 @@ async function getAllIdsByCompanyId(companyId) {
         const result = items.map(item => unmarshall(item));
         // Cache result in Redis for 5min (300 seconds)
         await CacheProvider.write(redisKey, JSON.stringify(result), 300);
-        // console.log(ids);
+        // //console.log(ids);
 
         return result.length > 0 ? result : [];
 
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -165,12 +165,12 @@ async function getAllIdsByCompanyId(companyId) {
 async function getAllAccountsByUserId(userId) {
     try {
         const redisKey = `accountsByUserId:${userId}`;
-        console.log("Calling cache");
+        //console.log("Calling cache");
         const cachedData = await CacheProvider.get(redisKey);
-        console.log("called cache");
+        //console.log("called cache");
 
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -192,12 +192,12 @@ async function getAllAccountsByUserId(userId) {
 
         // Cache result in Redis for 10min
         // await CacheProvider.write(redisKey, JSON.stringify(result), 300);
-        console.log(result);
+        //console.log(result);
 
         return result.length > 0 ? result : [];
 
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -208,7 +208,7 @@ async function getPointsBalance(companyId, pointsId) {
         const redisKey = `pointsBalance:${companyId}:${pointsId}`;
         const cachedData = await CacheProvider.get(redisKey);
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -227,7 +227,7 @@ async function getPointsBalance(companyId, pointsId) {
         const data = await ddbClient.send(new QueryCommand(params));
         
         if (data.Items.length === 0) {
-            console.log("Item not found");
+            //console.log("Item not found");
             return null;  // or handle this scenario as you deem appropriate
         }
         
@@ -239,7 +239,7 @@ async function getPointsBalance(companyId, pointsId) {
         return result;
     }
     catch (err) {
-        console.log("Error retrieving points balance:", err);
+        //console.log("Error retrieving points balance:", err);
         throw err;
     }
 }
@@ -260,7 +260,7 @@ async function pointsAccExist(companyId, pointsId) {
 
         const data = await ddbClient.send(new QueryCommand(params));
         
-        console.log(data);
+        //console.log(data);
         let exists = false;
         if (data.Items.length != 0){
             exists = true;
@@ -269,7 +269,7 @@ async function pointsAccExist(companyId, pointsId) {
         return exists;
     }
     catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -288,13 +288,13 @@ async function userAccExist(companyId, userId) {
 
         const data = await ddbClient.send(new QueryCommand(params));
         
-        console.log(data);
+        //console.log(data);
         const exists = data.Items.length > 0;
         
         return exists;
     }
     catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -302,12 +302,12 @@ async function userAccExist(companyId, userId) {
 async function getAllCompanyIds() {
     try {
         const redisKey = `allCompanyIds`;
-        console.log("Calling cache");
+        //console.log("Calling cache");
         const cachedData = await CacheProvider.get(redisKey);
-        console.log("called cache");
+        //console.log("called cache");
 
         if (cachedData) {
-            console.log("Cache hit");
+            //console.log("Cache hit");
             return JSON.parse(cachedData);
         }
 
@@ -325,12 +325,12 @@ async function getAllCompanyIds() {
 
         // Cache result in Redis for 10min
         await CacheProvider.write(redisKey, JSON.stringify(allCompanyIds), 600);
-        console.log(allCompanyIds);
+        //console.log(allCompanyIds);
 
         return allCompanyIds.length > 0 ? allCompanyIds : [];
 
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -355,7 +355,7 @@ async function companyExists(companyId) {
         return exists;
     }
     catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 }
@@ -387,12 +387,12 @@ async function createAccount(companyId, userId, new_pointsId, inputbalance) {
         await CacheProvider.remove(`idsByCompanyId:${companyId}`)
         await CacheProvider.remove(`userIdsByCompanyId:${companyId}`)
 
-        console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
+        //console.log(`Created Points Account ${new_pointsId} for Company ${companyId}`);
         return data;
     }
     catch (err) {
         if (err.name === 'ConditionalCheckFailedException') {
-            console.log(`Account with user_id ${userId} already exists for company_id ${companyId}.`);
+            //console.log(`Account with user_id ${userId} already exists for company_id ${companyId}.`);
         } else {
             console.error(err);
         }
@@ -432,7 +432,7 @@ async function updatePoints(companyId, userId, newbalance) {
         return data;
     }
     catch (err) {
-        console.log("Error updating points: ", err);
+        //console.log("Error updating points: ", err);
         throw err;
     }
 }
@@ -521,7 +521,7 @@ async function modifyPoints(companyId, userId, change) {
         return data;
     }
     catch (err) {
-        console.log("Error updating points: ", err);
+        //console.log("Error updating points: ", err);
         throw err;
     }
 }

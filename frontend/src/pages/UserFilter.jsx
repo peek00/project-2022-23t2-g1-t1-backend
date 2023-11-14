@@ -17,7 +17,7 @@ const inputValue = "";
   const handleEnter = (event) => {
     if (event.key === 'Enter') {
 
-        console.log("this works")
+        //console.log("this works")
     }
   }
 

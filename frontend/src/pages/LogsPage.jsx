@@ -89,14 +89,14 @@ export default function LogsPage() {
         setLogGroups(data);
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   }, []);
 
 
   // Uncomment this to check prefetch
   // useEffect(() => {
-  //   console.log(prefetchData);
+  //   //console.log(prefetchData);
   // }, [prefetchData]);
   // Below expects first load to be 0, 5
   const makeQuery = async (pageNumberToSave, remainingPages, offsetId) => {
@@ -133,7 +133,7 @@ export default function LogsPage() {
         await makeQuery(pageNumberToSave + 1, remainingPages - 1, offsetId);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 

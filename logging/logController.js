@@ -2,9 +2,9 @@ import { LogService } from "./LogService.js";
 
 const parseTime = (timeString) => {
   try {
-    console.log(timeString);
+    //console.log(timeString);
     const time = Date.parse(timeString);
-    console.log(time);
+    //console.log(time);
     return time;
   } catch (error) {
     throw new Error("Invalid time format");
@@ -39,7 +39,7 @@ export const getAllLogs = async (req, res, next) => {
       logOptions.userId = req.query.userId;
     }
     
-    console.log(logOptions)
+    //console.log(logOptions)
     const logs = await LogService.getInstance().getLogs(logOptions);
     res.status(200).json(logs);
   } catch (error) {

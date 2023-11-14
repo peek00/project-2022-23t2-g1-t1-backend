@@ -5,7 +5,7 @@ export default function RequestTemplate({ requestDetail, onSubmit, selectedCompa
   const formDetails = requestDetail["details"];
   const approvers = requestDetail["allowed_approvers"];
   const handleSubmit = (event) => {
-    console.log(event)
+    //console.log(event)
     event.preventDefault();
     const formData = { request_details: {} }; // Initialize formData object
 

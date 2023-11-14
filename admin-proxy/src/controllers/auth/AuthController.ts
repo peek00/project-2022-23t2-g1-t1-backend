@@ -16,8 +16,8 @@ export class AuthController {
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.user!;
-      if (process.env.NODE_ENV !== 'production') console.log("Logout ID", id);
-      if (process.env.NODE_ENV !== 'production') console.log("logout", authenticationService === undefined);
+      if (process.env.NODE_ENV !== 'production') //console.log("Logout ID", id);
+      if (process.env.NODE_ENV !== 'production') //console.log("logout", authenticationService === undefined);
       const result = await authenticationService.logout(id);
       // Clear cookies from client
       res.clearCookie("jwt");
@@ -49,7 +49,7 @@ export class AuthController {
 
   public async magicToken(req: Request, res: Response, next: NextFunction) {
     try {
-      if (process.env.NODE_ENV !== 'production') console.log(req.body);
+      if (process.env.NODE_ENV !== 'production') //console.log(req.body);
       const { roleLs } = req.body;
       const user = await authenticationService.generateTemporaryToken(roleLs);
       res.json(user);

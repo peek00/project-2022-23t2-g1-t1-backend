@@ -32,7 +32,7 @@ const PrivateRoute = ({ page, permission }) => {
         const response = await axios.post(API_BASE_URL + '/policy/permissions', body, {
           withCredentials: true,
         });
-        console.log(response.data);
+        //console.log(response.data);
 
         const roleresponse = await axios.get(API_BASE_URL + '/auth/me', {
           withCredentials: true,
@@ -51,7 +51,7 @@ const PrivateRoute = ({ page, permission }) => {
         localStorage.setItem('UserName', JSON.stringify(userDetailsResponse.data.data.fullName));
         // Assuming the response contains the user's role
         localStorage.setItem('permissions', JSON.stringify(response.data));
-        console.log(localStorage.getItem('permissions'));
+        //console.log(localStorage.getItem('permissions'));
         return response.data; // This is the role
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -69,13 +69,13 @@ const PrivateRoute = ({ page, permission }) => {
     fetchRole()
       .then((role) => {
         // Check if the user is authorized to access the page
-        console.log(role);
+        //console.log(role);
 
         if (page == 'user' && permission == 'GET') {
           const isAdmin = role['user/User/getAllUsersPaged?isAdmin=True']['GET'];
-          console.log(isAdmin);
+          //console.log(isAdmin);
           const isUser = role['user/User/getAllUsersPaged?isAdmin=False']['GET'];
-          console.log(isUser);
+          //console.log(isUser);
 
           if (isAdmin || isUser) {
             setAuthorized(true);

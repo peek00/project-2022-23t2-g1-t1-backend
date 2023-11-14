@@ -8,7 +8,7 @@ export class AuthorisationService {
 
   private constructor() {
     this.policyService = PolicyService.getInstance();
-    if (process.env.NODE_ENV !== 'production') console.log(this.policyService)
+    if (process.env.NODE_ENV !== 'production') //console.log(this.policyService)
   }
 
   public static getInstance(): AuthorisationService {
@@ -21,12 +21,12 @@ export class AuthorisationService {
   public async authorize(userRoles: string[], httpMethod:HttpMethod, endpoint: string) {
     // check if user has access to endpoint
     const accessRole = await this.policyService.getPolicy(endpoint, httpMethod);
-    if (process.env.NODE_ENV !== 'production') console.log(accessRole);
+    if (process.env.NODE_ENV !== 'production') //console.log(accessRole);
     if (accessRole.length === 0) return; // Allow all to access
     if (!accessRole) {
       throw new Error("No Policy Exist");
     }
-    if (process.env.NODE_ENV !== 'production') console.log(userRoles);
+    if (process.env.NODE_ENV !== 'production') //console.log(userRoles);
     // check if user has access to resource
     if (userRoles===undefined || !userRoles.some((role) => accessRole.includes(role))) {
       throw new Error("Not authorized");

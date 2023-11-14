@@ -22,7 +22,7 @@ export class Logger {
     const curDate = new Date();
     // Format of log file: logs-YYYY-MM-DD:HH.log
     const logFileName = `logs-${curDate.toUTCString()}.log`;
-    if (process.env.NODE_ENV !== 'production') console.log("Creating logger for", logFileName);
+    if (process.env.NODE_ENV !== 'production') //console.log("Creating logger for", logFileName);
     this.logger = createLogger({
       format: combine(
         // colorize(),
@@ -47,14 +47,14 @@ export class Logger {
         ...JSON.parse(addedInfo),
       });
       if (level === "info") {
-        if (process.env.NODE_ENV !== 'production') console.log("Logging info", message, additionalInfo)
+        if (process.env.NODE_ENV !== 'production') //console.log("Logging info", message, additionalInfo)
         this.logger.info(message, { additionalInfo });
       } else if (level === "error") {
         this.logger.error(message, { additionalInfo });
       }
     } catch (err) {
       // Handle when logger fails
-      if (process.env.NODE_ENV !== 'production') console.log("Logger failed", err);
+      if (process.env.NODE_ENV !== 'production') //console.log("Logger failed", err);
     }
   }
 }

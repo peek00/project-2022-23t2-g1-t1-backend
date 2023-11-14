@@ -16,7 +16,7 @@ export default function EditAccount({companyId, pointsId, points}) {
   useEffect(() => {
     // Fetch the role from localStorage or an API here
     const storedRole = JSON.parse(localStorage.getItem("permissions"));
-    console.log(storedRole);
+    // //console.log(storedRole);
     setRole(storedRole);
     
   }, []);
@@ -62,7 +62,7 @@ export default function EditAccount({companyId, pointsId, points}) {
                           withCredentials: true
                       })
                       .then((response) => {
-                          console.log(response.data);
+                          // //console.log(response.data);
                       })
                       .catch((error) => {
                           console.error('Error fetching data:', error);

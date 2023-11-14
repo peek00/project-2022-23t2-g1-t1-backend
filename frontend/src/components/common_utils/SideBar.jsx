@@ -25,7 +25,7 @@ export default function SideBar() {
       // Clear Local Storage
       localStorage.clear();
       window.location.href = "/";
-      console.log(response);
+      // //console.log(response);
     } catch (error) {
       // Handle errors here
       console.error("Cannot log out of auth:", error);

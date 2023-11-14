@@ -14,10 +14,10 @@ const getPointsBalance = async (pointsid) => {
     }
     try {
         const data = await ddbClient.send(new GetItemCommand(params));
-        console.log(unmarshall(data.Item));
+        //console.log(unmarshall(data.Item));
     }
     catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 
@@ -30,14 +30,14 @@ const pointsAccExist = async(pointsid) => {
         const data = await ddbClient.send(new GetItemCommand(params));
         // return data;
         if (data.Item) {
-            console.log('true');
+            //console.log('true');
         }
         else {
-            console.log('false');
+            //console.log('false');
         }
     }
     catch (err) {
-        console.log(err);
+        //console.log(err);
     }
 }
 
@@ -54,12 +54,12 @@ const getAllAccounts = async (userId) => {
       };
       const data = await ddbClient.send(new QueryCommand(input));
       const items = data.Items;
-    //   console.log(items);
+    //   //console.log(items);
       for (let item of items){
         let cleaneddata = unmarshall(item);
         result.push(cleaneddata);
       }
-      console.log(result);
+      //console.log(result);
 }
 
 const updatePoints = async(pointsId,newbalance) => {
@@ -75,17 +75,17 @@ const updatePoints = async(pointsId,newbalance) => {
         "UpdateExpression": "SET balance = :v1"
     };
     if (!pointsAccExist(pointsId)){
-        console.log("don't exist");
+        //console.log("don't exist");
     }
     else{
-        console.log("exist");
+        //console.log("exist");
     }
     try{
         const data = await ddbClient.send(new UpdateItemCommand(input));
-        console.log(data);
+        //console.log(data);
     }
     catch(err) {
-        console.log(err);
+        //console.log(err);
     }
     
 }

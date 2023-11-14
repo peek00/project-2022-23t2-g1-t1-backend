@@ -8,7 +8,7 @@ export class PolicyController {
 
   public async listExistingPolicy(req:Request, res:Response, next:NextFunction): Promise<any> {
     try {
-      if (process.env.NODE_ENV !== 'production') console.log("listExistingPolicy");
+      if (process.env.NODE_ENV !== 'production') //console.log("listExistingPolicy");
       let response: any = {}
       const policy = await PolicyService.getInstance().getAllPolicies();
       policy.forEach((p: any) => {
@@ -51,7 +51,7 @@ export class PolicyController {
   public async deleteExistingPolicy(req:Request, res:Response, next:NextFunction): Promise<any> {
     try {
       const { endpoint } = req.body;
-      if (process.env.NODE_ENV !== 'production') console.log(endpoint);
+      if (process.env.NODE_ENV !== 'production') //console.log(endpoint);
       if (endpoint === undefined) {
         throw new Error("Invalid policy");
       }
@@ -66,7 +66,7 @@ export class PolicyController {
     try {
       const { role } = req.user!;
       const { pageLs } = req.body;
-      if (process.env.NODE_ENV !== 'production') console.log(`getUserPolicyMapping for ${pageLs} based on user role ${role}`)
+      if (process.env.NODE_ENV !== 'production') //console.log(`getUserPolicyMapping for ${pageLs} based on user role ${role}`)
       if (pageLs === undefined || role === undefined) {
         throw new Error("Invalid Request");
       }

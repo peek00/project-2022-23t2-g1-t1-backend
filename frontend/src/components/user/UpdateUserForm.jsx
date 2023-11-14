@@ -20,8 +20,8 @@ export default function UpdateUserForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(formData)
-    console.log(userData.id)
+    //console.log(formData)
+    //console.log(userData.id)
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
@@ -31,7 +31,7 @@ export default function UpdateUserForm() {
 
   const updateUser = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    //console.log(formData);
   
     try {
       // Create a request body, if needed
@@ -46,7 +46,7 @@ export default function UpdateUserForm() {
       };
       
      const userId = userData.id;
-      console.log(userId);
+      //console.log(userId);
       const response = await axios.put(API_BASE_URL+`/api/user/User/updateUser?userID=${userId}`, requestBody, {
         withCredentials: true
       });
@@ -56,12 +56,12 @@ export default function UpdateUserForm() {
       // Assuming the response contains the user's role
   
     
-      console.log(response);
-      console.log(requestBody)
+      //console.log(response);
+      //console.log(requestBody)
     } catch (error) {
       // Handle errors here
-      console.log(error)
-      console.log(requestBody)
+      //console.log(error)
+      //console.log(requestBody)
       throw error; // Optionally re-throw the error to propagate it to the caller
     }
   };

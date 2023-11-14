@@ -23,27 +23,27 @@ export default function UpdatePointsTable(props) {
     const handleSubmit = () => {       
 
         // Make the Axios GET request
-        console.log("sending")
+        // //console.log("sending")
 
         const formData = {
                             change: inputValue,
                             company_id: companyId,
                             user_id: userId
                         };
-        // console.log(formData);
+        // //console.log(formData);
         // axios.post("http://localhost:3000/changeBalance", formData)
         // .then((response) => {
-        //     console.log(response.data);
+        //     //console.log(response.data);
         //     window.alert("Points updated successfully");
         //     goBack();
         // })
         // .catch((error) => {
-        //     console.log("failed");
+        //     //console.log("failed");
         //     console.error('Error:', error);
         // });
         axios.post(API_BASE_URL+ '/api/points/changeBalance', formData, {withCredentials:true})
         .then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             window.alert("Points updated successfully");
             goBack();
         })

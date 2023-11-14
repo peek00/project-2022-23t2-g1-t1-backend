@@ -8,7 +8,7 @@ export class JwtService {
 
   private constructor() {
     this.secret = process.env.JWT_SECRET as string;
-    if (process.env.NODE_ENV !== 'production') console.log(this.secret);
+    if (process.env.NODE_ENV !== 'production') //console.log(this.secret);
   }
 
   public static getInstance(): JwtService {
@@ -19,7 +19,7 @@ export class JwtService {
   }
 
   public generateToken(userId: string): string {
-    if (process.env.NODE_ENV !== 'production') console.log("JwtService.generateToken()");
+    if (process.env.NODE_ENV !== 'production') //console.log("JwtService.generateToken()");
     const token = jwt.sign({ id: userId }, this.secret, {
       expiresIn: 3 * 24 * 60 * 60 * 1, // 3 days
       algorithm: "HS256",
@@ -30,10 +30,10 @@ export class JwtService {
 
   public validateJwtPayload(payload: JwtPayload) {
     // Validate JWT Token
-    if (process.env.NODE_ENV !== 'production') console.log(payload);
-    if (process.env.NODE_ENV !== 'production') console.log(typeof payload);
-    if (process.env.NODE_ENV !== 'production') console.log(payload.id);
-    if (process.env.NODE_ENV !== 'production') console.log(payload.exp);
+    if (process.env.NODE_ENV !== 'production') //console.log(payload);
+    if (process.env.NODE_ENV !== 'production') //console.log(typeof payload);
+    if (process.env.NODE_ENV !== 'production') //console.log(payload.id);
+    if (process.env.NODE_ENV !== 'production') //console.log(payload.exp);
     if (typeof payload === "string" || !payload.id || !payload.exp) {
       throw new InvalidSessionError("Invalid token");
     }
