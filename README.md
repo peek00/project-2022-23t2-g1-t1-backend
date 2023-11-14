@@ -85,6 +85,8 @@ Our project consists of three backend applications which are the `User Storage `
 
 ## Maker Checker Update Points
 <div align="center">
+
+  <img src="images/maker_checker_point.png"/>
   <ol>
     <li>Go to <b>View Users<b> tab</li>
     <li>Choose any user, take note of the user (may want to take note of email for easy search later on) and click on "View User Details" > "View Accounts"</li>
@@ -109,6 +111,7 @@ Our project consists of three backend applications which are the `User Storage `
 
 ## Maker Checker Update User Details
 <div align="center">
+  <img src="images/maker_checker_points.png"/>
   <ol>
     <li>Go to "View Users" tab</li>
     <li>Choose any user, take note of their email</li>
