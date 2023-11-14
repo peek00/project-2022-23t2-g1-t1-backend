@@ -26,7 +26,7 @@ export default function TopBar() {
       // 
 
       window.location.href = "/";
-      console.log(response);
+      // //console.log(response);
     } catch (error) {
       // Handle errors here
       console.error("Cannot log out of auth:", error);

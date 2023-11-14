@@ -14,7 +14,7 @@ import {API_BASE_URL} from "@/config/config";
 export default function CompanyGatewayPage(props) {
 
   const { userData, updateUserData } = useUserContext();
-  console.log(userData.id);
+  //console.log(userData.id);
   const [uniqueCompanyIdsArray, setUniqueCompanyIdsArray] = useState([]);
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
@@ -28,7 +28,7 @@ export default function CompanyGatewayPage(props) {
           userid: userData.id,
         },
       });
-      console.log(response);
+      //console.log(response);
 
       if (response.data.data.length > 0) {
         const uniqueCompanyIds = new Set();
@@ -38,9 +38,9 @@ export default function CompanyGatewayPage(props) {
 
         const uniqueCompanyIdsArray = Array.from(uniqueCompanyIds);
         setUniqueCompanyIdsArray(uniqueCompanyIdsArray);
-        console.log(uniqueCompanyIdsArray);
+        //console.log(uniqueCompanyIdsArray);
       } else {
-        console.log('No data');
+        //console.log('No data');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -50,7 +50,7 @@ export default function CompanyGatewayPage(props) {
   useEffect(() => {
     getAllCompanyIds()
     .then((results) => {
-      console.log(results.data);
+      //console.log(results.data);
       setUniqueCompanyIdsArray(results.data);
     })
     .catch((err) => {

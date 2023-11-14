@@ -13,7 +13,7 @@ const logService = LogService.getInstance();
 //   processLog();
 // });
 cron.schedule('*/10 * * * * *', () => {
-  console.log('running a task every 1 minute');
+  //console.log('running a task every 1 minute');
   processLog();
 });
 
@@ -30,11 +30,11 @@ logService.initialise()
   app.use(handleError);
 
   app.listen(port, (req, res) => {
-    console.log(`Log Service listening at http://${process.env.HOST}:${port}`);
+    //console.log(`Log Service listening at http://${process.env.HOST}:${port}`);
   });
 })
 .catch(err => {
-  console.log(err);
+  //console.log(err);
   process.exit(1);
 });
 

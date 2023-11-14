@@ -8,13 +8,13 @@ export const readLog = () => {
   try {
     return fs.readFileSync('/tmp/logs.log', 'utf-8');
   } catch (err) {
-    // console.log(err);
+    // //console.log(err);
     return '';
   }
 }
 
 // Cron job to read log file every second
 cron.schedule('* * * * * *', () => {
-  console.log(1)
-  console.log(readLog());
+  //console.log(1)
+  //console.log(readLog());
 });

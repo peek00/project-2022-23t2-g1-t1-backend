@@ -35,7 +35,7 @@ export default function LogsPage() {
         setLogGroups(data);
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   }, []);
 
@@ -88,7 +88,7 @@ export default function LogsPage() {
         }));
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   };
 

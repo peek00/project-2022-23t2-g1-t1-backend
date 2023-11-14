@@ -13,14 +13,14 @@ const deleteLogFile = (logFileName) => {
 
 const getOldLogFiles = () => {
   const logFiles = fs.readdirSync('/tmp');
-  console.log("Reading FileDir: ", logFiles);
+  //console.log("Reading FileDir: ", logFiles);
   const curDate = new Date();
   // Return a list of old log files
   return logFiles.filter((logFile) => {
     if (logFile.startsWith('logs-') && logFile.endsWith('.log')) {
       let date = logFile.split('logs-')[1].split('.log')[0];
       let extractDate = Date.parse(date);
-      console.log(curDate, date);
+      //console.log(curDate, date);
       // If log file is older than 1 minute
       return (curDate.getTime() - extractDate) > 60000;
     } else {
@@ -34,13 +34,13 @@ export const processLog = async () => {
   // Format of log file: logs-YYYY-MM-DD:HH:MM.log
   // const logFileName = `logs-${curDate.getFullYear()}-${curDate.getMonth()}-${curDate.getDate()}:${curDate.getHours()}:${curDate.getMinutes()}.log`;
   const logFiles = getOldLogFiles();
-  console.log("Old Log Files: ", logFiles);
+  //console.log("Old Log Files: ", logFiles);
   await Promise.all(logFiles.map(async (logFileName) => {
     try {
-      console.log("Processing Log File: ",logFileName);
+      //console.log("Processing Log File: ",logFileName);
       const log = readLogFile(logFileName);
       const logRecords = parseLogFile(log);
-      console.log("Number of Records to be added: ",logRecords);
+      //console.log("Number of Records to be added: ",logRecords);
       if (logRecords.length == 0) {
         deleteLogFile(logFileName);
         return
@@ -59,7 +59,7 @@ export const processLog = async () => {
       console.error(error);
     }
   }));
-  console.log('Log Processing Done');
+  //console.log('Log Processing Done');
 }
 
 export const parseLogFile = (log) => {
@@ -68,14 +68,14 @@ export const parseLogFile = (log) => {
   const logLines = log.trim().split('\n');
   // SAMPLE:
   // [info]  [200]   GET     /User/getUser {"timestamp":"2023-10-25T17:47:14.787Z","logGroup":"user-audit-log","retentionPolicy":30,"userId":"1","message":"{\"firstName\":\"test\",\"lastName\":\"test\",\"email\":\"test@gmail.com\",\"fullName\":\"test test\",\"role\":null,\"userId\":\"ea59eec7-32c3-493b-a162-27ada8f52ad7\"}","userAgent":"PostmanRuntime/7.34.0","ip":"172.28.0.1","country":"unknown"}
-  console.log(logLines);
+  //console.log(logLines);
   
   logLines.forEach((logLine) => {
     try {
       logLine = logLine.trim();
       const logLineParts = logLine.split('\t');
       if (logLineParts.length < 5) throw new Error("Invalid Log Line")
-      console.log(logLineParts)
+      //console.log(logLineParts)
       let logRecord = {};
       logRecord.level = logLineParts[0].slice(1, -1);
       logRecord.statusCode = logLineParts[1].slice(1, -1);
@@ -86,7 +86,7 @@ export const parseLogFile = (log) => {
       logRecord = { ...logRecord, ...details, timestamp };
       logRecords.push(logRecord);
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   });
 

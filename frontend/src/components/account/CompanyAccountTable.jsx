@@ -10,7 +10,7 @@ export default function CompanyAccountTable(props){
     const { accounts, companyId } = props;
     const { userData, updateUserData } = useUserContext();
     const { companyid } = useParams();
-    console.log("Table rendering")
+    // //console.log("Table rendering")
 
     return (
       <div className="relative overflow-x-auto w-[85%] mb-[100px]">

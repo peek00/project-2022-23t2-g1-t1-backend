@@ -21,7 +21,7 @@ export default function AddUserForm() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    //console.log(formData);
   
     try {
       // Create a request body, if needed
@@ -31,16 +31,16 @@ export default function AddUserForm() {
         email: formData.email,
         role:[formData.role],
       };
-      console.log(requestBody)
+      //console.log(requestBody)
       const response = addUser(requestBody)
     
       // Assuming the response contains the user's role
-      console.log(response);
+      //console.log(response);
       // window.location.href = "/users";
       alert("User Created Successfully!")
       window.location.replace("/users");;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       // Handle errors here
       console.error("Cannot log out of auth:", error);
       throw error; // Optionally re-throw the error to propagate it to the caller

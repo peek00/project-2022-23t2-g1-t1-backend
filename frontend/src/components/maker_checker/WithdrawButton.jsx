@@ -7,7 +7,7 @@ export default function WithdrawButton({ handleWithdraw }) {
 
     const handleClick = (action) => {
         setAction(action);
-        console.log(action)
+        //console.log(action)
         try {
             handleWithdraw();
             setTimeout(() => {

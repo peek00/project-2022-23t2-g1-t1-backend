@@ -17,10 +17,10 @@ export default function UserAccountPage() {
   const [accounts, setAccounts] = useState([]);
   const [userData, setUserData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(accounts);
+  //console.log(accounts);
     
   const { userId } = useParams();
-  console.log(userId);
+  //console.log(userId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,16 +28,16 @@ export default function UserAccountPage() {
         // Check if userid is available
         if (userId) {
           let response = await getAllAccountsByUserId(userId);
-          console.log("response: ");
-          console.log(response);
+          //console.log("response: ");
+          //console.log(response);
           const accounts = [];
           Object.keys(response.data).forEach((key) => {
-            console.log(key);
+            //console.log(key);
             accounts.push(response.data[key][0]);
           });
           
           setAccounts(accounts);
-          console.log(accounts);
+          //console.log(accounts);
 
           await axios.get(API_BASE_URL + `/api/user/User/getUser?userID=` + userId, {
             withCredentials: true,
@@ -76,7 +76,6 @@ export default function UserAccountPage() {
           <h1 className='text-2xl font-bold ms-11 fixed left-[20%]'>User Accounts - {userData.fullName}</h1>
           </div>
           <Link to={`/user/account/${userId}/addPoints`}><button type="button" class=" fixed  top-[10%] right-[10%] text-white  bg-[#1C2434]  hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">+</button></Link>
-          
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
             {
               isLoading ?

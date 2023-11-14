@@ -44,10 +44,10 @@ export default function AddAccountForm(props) {
   }, []);
 
   
-  console.log(formData)
+  // //console.log(formData)
 
   const handleChange = (e) => {
-    console.log(formData);
+    // //console.log(formData);
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -57,7 +57,7 @@ export default function AddAccountForm(props) {
 
   const addPointAccount = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    // //console.log(formData);
   
     const requestBody = {
       company_id: formData.companyID,
@@ -68,12 +68,12 @@ export default function AddAccountForm(props) {
     // axios.post("http://localhost:3000/createAccount", requestBody,{
     axios.post(API_BASE_URL+"/api/points/createAccount", requestBody, { withCredentials:true })
     .then((response) => {
-      console.log(response);
+      // //console.log(response);
       window.alert("Points Account Successfully created!");
       window.history.back();
     })
     .catch((err) => {
-      console.log(err);
+      // //console.log(err);
       alert("Failed to create Points account");
 
     // Assuming the response contains the user's role

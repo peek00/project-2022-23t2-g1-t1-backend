@@ -12,8 +12,8 @@ import { useParams } from 'react-router-dom';
 
 export default function UpdatePointsPage(props){
     const { companyId, userId } = useParams();
-    // console.log(companyId);
-    // console.log(userId);
+    // //console.log(companyId);
+    // //console.log(userId);
     return(
 
         <div className='min-w-full min-h-screen'>

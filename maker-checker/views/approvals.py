@@ -1147,7 +1147,6 @@ def approve_or_reject_approval_request(
             details['withCredentials'] = True
             if original_request['request_type'] == "Points Update":
                 # make call to endpoint to change amount
-                print("this is working")
                 result = requests.post(POINTS_MS + "/changeBalance", 
                 headers = {
                     "userid": userid
@@ -1176,13 +1175,13 @@ def approve_or_reject_approval_request(
         return response
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except ClientError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except ValueError as e:
+    #     raise HTTPException(status_code=404, detail=str(e))
+    # except ValidationError as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
+    # except ClientError as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
     
 # =================== END: CHECKER requests =======================
