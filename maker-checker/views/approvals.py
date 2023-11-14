@@ -787,16 +787,15 @@ def create_approval_requests(
         validate_create_request_body(combined_data)
         # Put in validation that combined_data has request details
         # verify that user exists by getting userID by email
-        print(combined_data['request_type'])
         if combined_data['request_type'] == 'Update User Details':
-            verify = requests.get(USER_MS + "/User/getUser",
+            verify = requests.get(USER_MS + "/User/getUserByEmail",
             headers = {
                 "userid": userid
             },
             params={
                 "email": combined_data['request_details']['email']
             }).json()
-            if verify['data'] == "User Doesn't Exist":
+            if verify['data'] == None:
                 raise RequestError("user not found")
 
         elif combined_data['request_type'] == 'Points Update':
@@ -812,9 +811,6 @@ def create_approval_requests(
                 raise RequestError("Points account not found")
 
         create_request = approval_request_repository.create_approval_request(combined_data)
-        print("-----------------------")
-        print(create_request)
-        print("-----------------------")
         roles = combined_data['approval_role']
         # TODO: get url to view requests for particular user from env
         url = MAKER_CHECKER_PAGE_URL
@@ -1160,7 +1156,19 @@ def approve_or_reject_approval_request(
 
             elif original_request['request_type'] == "Update User Details":
                 # make call to endpoint to change user
-                requests.put(USER_MS+"/User/updateUser", headers = headers, json=details)
+                print("it goes to the correct side")
+                print(details)
+                result = requests.put(USER_MS+"/User/updateUser", 
+                headers = {
+                    "userid": userid
+                }, 
+                json={
+                    "firstName": details['firstName'],
+                    "lastName": details['lastName'],
+                    'email': details['email'],
+                    'role': details['role']
+                }).json()
+                print(result)
 
         elif combined_data["status"] == "rejected":
             action = "rejected"
