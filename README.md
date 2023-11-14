@@ -93,6 +93,25 @@ Our project consists of three backend applications which are the `User Storage `
   </ol>
 </div>
 
+## Maker Checker Update User Details
+<div>
+  <ol>
+    <li>Go to "View Users" tab</li>
+    <li>Choose any user, take note of their email</li>
+    <li>Navigate to "Maker Checker" tab</li>
+    <li>Choose any company that you want to make the change on behalf of </li>
+    <li>Enter "firstName", "lastName", "role" (can be multiple roles separated by commas without spaces. e.g. User,Owner,Admin) as you wish to change.</li>
+    <li>Enter email that was noted in step 2</li>
+    <li>Click "Submit Request"</li>
+    <li>Log in to a different account (necessary because the person that created the request should not be able to approve it)</li>
+    <li>Navigate to "Maker Checker" tab</li>
+    <li>Select company that you created the request under</li>
+    <li>Approve request</li>
+    <li>Navigate to "View Users" tab</li>
+    <li>Find the same user as in step 2 (you may use the search function by typing their email into the search bar)</li>
+    <li>Verify that their first name, last name and role have changed</li>
+  </ol>
+</div>
 
 <!-- ACKNOWLEDGMENTS -->
 
