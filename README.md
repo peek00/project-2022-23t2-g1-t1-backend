@@ -67,7 +67,9 @@ Our project consists of three backend applications which are the `User Storage `
 	<li>User will navigate to the <b>Update User Details button<b> by clicking on the View User Details Button</li>
 	<li>After inputting the new user details, the user would be navigated back to the users listings page</li>
 	<li>The user should see a change in the user details on the user listing page</li>
-</ol>
+</ol></div>
+
+  
 ## Deleting Users
 <div align="center">
 
@@ -77,6 +79,7 @@ Our project consists of three backend applications which are the `User Storage `
 	<li>After pressing the Delete User button , the user would not appear on the user listing page</li>
 	
 </ol>
+</div>
 
 
 
