@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Import Axios
-import {API_BASE_URL} from "@/config/config";
 
 import RequestDetailModal from "./RequestDetailModal";
 import ApprovalButton from "./ApprovalButton";
@@ -8,7 +6,6 @@ import ApprovalButton from "./ApprovalButton";
 export default function ApprovalTable({ data, activeTab, selectedCompany }) {
     // Handle data load
     const [shownData, setShownData] = useState([]);
-    const [submissionState, setSubmissionState] = useState(null);
 
     useEffect(() => {
         // Update the shownData when data or activeTab changes
@@ -44,51 +41,6 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
             return `${minutes} min${minutes > 1 ? "s" : ""}`;
         }
     }
-
-    // Handle approval or response
-    const handleApprove = async (uid) => {
-        const formObject = {
-            uid: uid,
-            status: "approved",
-            companyid: selectedCompany,
-        };
-
-        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/resolve";
-
-        try {
-            const response = await axios.post(approveUrl, formObject, {
-                withCredentials: true,
-            });
-            // Handle the success response here
-            setSubmissionState("approved")
-            
-            // You may want to update your UI or perform other actions here
-        } catch (error) {
-            // Handle errors here
-            setSubmissionState("error")
-        }
-    };
-
-    // Handle approval or response
-    const handleReject = async (uid) => {
-        const formObject = {
-            uid: uid,
-            status: "rejected",
-            companyid: selectedCompany,
-        };
-
-        const approveUrl = API_BASE_URL+"/api/maker-checker/approval/resolve";
-
-        try {
-            const response = await axios.post(approveUrl, formObject, {
-                withCredentials: true,
-            });
-            setSubmissionState("rejected")
-        } catch (error) {
-            // Handle errors here
-            setSubmissionState("error")
-        }
-    };
 
     if (!shownData || shownData.length === 0) {
         return (
@@ -186,9 +138,8 @@ export default function ApprovalTable({ data, activeTab, selectedCompany }) {
                                         </div>
                                     ) : (
                                         <ApprovalButton
-                                            handleApprove={() => handleApprove(request.uid)}
-                                            handleReject={() => handleReject(request.uid)}
-                                            submissionState={submissionState}
+                                        uid = {request.uid}
+                                        selectedCompany={selectedCompany}
                                         />
                                     )}
                                 </div>
