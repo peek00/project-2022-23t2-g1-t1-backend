@@ -70,7 +70,7 @@ Our project consists of three backend applications which are the `User Storage `
 </ol>
 
 ## Maker Checker Update Points
-<div>
+<div align="center">
   <ol>
     <li>Go to <b>View Users<b> tab</li>
     <li>Choose any user, take note of the user (may want to take note of email for easy search later on) and click on "View User Details" > "View Accounts"</li>
@@ -94,7 +94,7 @@ Our project consists of three backend applications which are the `User Storage `
 </div>
 
 ## Maker Checker Update User Details
-<div>
+<div align="center">
   <ol>
     <li>Go to "View Users" tab</li>
     <li>Choose any user, take note of their email</li>
