@@ -9,13 +9,15 @@ import { useUserContext } from '../context/userContext';
 import { getPoints, getAllCompanyIds } from '../apis/points';
 import { Link } from 'react-router-dom';
 import {API_BASE_URL} from "@/config/config";
-
+import { Spinner } from '@material-tailwind/react';
 
 export default function CompanyGatewayPage(props) {
 
   const { userData, updateUserData } = useUserContext();
   //console.log(userData.id);
   const [uniqueCompanyIdsArray, setUniqueCompanyIdsArray] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const goBack = () => {
     window.history.back(); // This will take the user back one step in the browser's history.
   };
@@ -54,8 +56,11 @@ export default function CompanyGatewayPage(props) {
       setUniqueCompanyIdsArray(results.data);
     })
     .catch((err) => {
-      return err;
-    });
+      console.error("Error fetching company data: ", err);
+    })
+    .finally;(() => {
+      setIsLoading(false);
+    })
   }, []);
 
 
@@ -80,8 +85,11 @@ export default function CompanyGatewayPage(props) {
             <h1 className='text-2xl font-bold ml-[175px]'>Point Accounts</h1>
           </div>
           <div className='absolute  left-[25%] top-[25%] min-w-[80%]'>
-      
-            <ListWithIcon company_id = {uniqueCompanyIdsArray}/>
+            {
+              isLoading ?
+              <Spinner color="teal" size="large" className='mt-20'/> :
+              <ListWithIcon company_id = {uniqueCompanyIdsArray}/>
+            }
           </div>
         </div>
       </div>
