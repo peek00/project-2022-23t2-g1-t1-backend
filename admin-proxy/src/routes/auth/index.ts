@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response, Router } from "express";
 import passport from "../../middleware/auth/passport";
 import { authController } from "../../controllers/auth";
 import authorize from "../../middleware/auth/authorize";
-import rateLimiter from "../../middleware/ratelimit/rateLimiter";
 
 const authRouter = Router();
 authRouter.use(express.json());
