@@ -1158,10 +1158,7 @@ def approve_or_reject_approval_request(
                 # make call to endpoint to change user
                 print("it goes to the correct side")
                 print(details)
-                result = requests.put(USER_MS+"/User/updateUser", 
-                headers = {
-                    "userid": userid
-                }, 
+                result = requests.put(USER_MS+"/User/updateUser?userID={userid}", 
                 json={
                     "firstName": details['firstName'],
                     "lastName": details['lastName'],
