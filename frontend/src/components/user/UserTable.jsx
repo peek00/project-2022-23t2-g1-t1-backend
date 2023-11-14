@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import { API_BASE_URL } from '@/config/config';
 import MenuDefault from '../common_utils/MenuDefault';
 
@@ -137,8 +137,16 @@ export default function UserTable() {
       
       setViewUserFinished(true); // Indicate that viewUser has finished
     } catch (error) {
-      
-      console.error('Cannot view user:', error);
+      if (error instanceof AxiosError) {
+        console.error(error)
+        if (error.response?.status === 402) {
+          alert('Your Session Expired, Please Login again');
+          // Clear the local storage
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = '/login';
+        }
+      }
     }
   };
 
