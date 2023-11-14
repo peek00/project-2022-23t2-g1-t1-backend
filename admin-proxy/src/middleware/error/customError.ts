@@ -26,8 +26,14 @@ export class BadRequestError extends CustomError {
   }
 }
 
+export class UnauthorizedError extends CustomError {
+  constructor(message: string) {
+    super("UnauthorizedError", message, 401);
+  }
+}
+
 export class InvalidSessionError extends CustomError {
   constructor(message: string) {
-    super("InvalidSessionError", message, 401);
+    super("InvalidSessionError", message, 402);
   }
 }

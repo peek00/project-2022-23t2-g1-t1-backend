@@ -3,7 +3,7 @@ import ICacheProvider from "../../modules/CacheProvider/CacherProviderInterface"
 import axios from "axios";
 import { Redis } from "../../modules/CacheProvider/Redis";
 import { config } from "../../config/config";
-import { InvalidSessionError } from "../../middleware/error/customError";
+import { InvalidSessionError, UnauthorizedError } from "../../middleware/error/customError";
 const { ProxyPaths } = config;
 
 export interface UserWithToken {
@@ -47,7 +47,7 @@ export class AuthenticationService {
       await this.cacheProvider.write(userId, JSON.stringify(userWithToken), 3 * 24 * 60 * 60 * 1); // 3 day
       return userWithToken;
     } catch (error) {
-      throw error;
+      throw new UnauthorizedError("User not found");
     }
   }
   private async findUserByEmail(email: string): Promise<any> {
