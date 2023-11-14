@@ -42,8 +42,8 @@ Our project consists of three backend applications which are the `User Storage `
 ## Getting Started
 
 1.  Navigate to our hosted website on this [Appplication Link](https://api.itsag1t1.com/)
-2.  We have created an account for our Professors Yeow Leong and Eng Lieh
-3.  Click on the `Sign in with Google button`
+2.  We have created an account for our Professors Yeow Leong and Eng Lieh with these two respective emails `yllee@smu.edu.sg` and `elouh@smu.edu.sg`
+4.  Click on the `Sign in with Google button`
 ## Listing Users
 <div align="center">
 
