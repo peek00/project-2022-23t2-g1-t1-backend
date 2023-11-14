@@ -19,9 +19,14 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#listing-users">Listing Users</a></li>
-	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
-	<li><a href="#updating-new-users">Updating User Infromation</a></li>
-	<li><a href="deleting-users">Deleting User Infromation</a></li>
+        <li><a href="#enrolling-new-users">Enrolling new Users</a></li>
+        <li><a href="#updating-new-users">Updating User Information</a></li>
+        <li><a href="deleting-users">Deleting User Information</a></li>
+        <li><a href="view-all-companies">View All Companies</a></li>
+        <li><a href="view-all-users-in-company">View all Users Under A Company</a></li>
+        <li><a href="edit-points">Edit Points</a></li>
+        <li><a href="view-all-accounts">Viewing All Accounts Under A Particular Company</a></li>
+        <li><a href="add-points-accounts">Add Points Account For A Particular User</a></li>
       </ul>
     </li>
 
@@ -32,13 +37,13 @@
 
 ## About The Project
 
-Our project consists of three backend applications which are the `User Storage ` mircoservice which allow user to list user,enroll new user and update and delete user information.It also consists of the `Point Ledger` microservice which allow user to query point balance of an user and adjust balance of their points account. Lastly we have the `Admin Proxy` application which acts as a gateway betweeen the client and the two applications stated above.
+Our project consists of three backend applications which are the `User Storage ` microservice which allow users to list a user,enroll new user and update and delete user information.It also consists of the `Point Ledger` microservice which allow user to query point balance of an user and adjust balance of their points account. Lastly we have the `Admin Proxy` application which acts as a gateway betweeen the client and the two applications stated above.
 
 
 	
 ## Getting Started
 
-1.  Navigate to our hosted website on this [Appplication Link](https://api.itsag1t1.com/)
+1.  Navigate to our hosted website on this [Application Link](https://api.itsag1t1.com/)
 2.  We have created an account for our Professors Yeow Leong and Eng Lieh
 3.  Click on the `Sign in with Google button`
 ## Listing Users
@@ -55,7 +60,7 @@ Our project consists of three backend applications which are the `User Storage `
 <ol>
 	<li>User will navigate to the <b>Enroll User<b> tab on the sidebar</li>
 	<li>After inputting the user details,the system would navigate back to the user listing page</li>
-	<li>To veify the user has been added, please enter the exact email in the search bar, and the new user will be returned</li>
+	<li>To verify the user has been added, please enter the exact email in the search bar, and the new user will be returned</li>
 </ol>
 </div>
 
@@ -81,7 +86,45 @@ Our project consists of three backend applications which are the `User Storage `
 </ol>
 </div>
 
+## Viewing All Companies
+<div align="left">
+<img src="images/companygateway.png"/>
+<ol>
+  <li>Navigate to the <b>View Company Accounts</b> tab</li>
+</ol>
 
+## Viewing All Users Under A Company
+<div align="left">
+  <img src="images/companyaccount.png"/>
+  <ol>
+    <li>After pressing on a company, the user would see all the users, along with their information and number of points in their account under the company</li>
+  </ol>
+</div>
+
+## Edit Points Of A Particular User Under A Particular Company
+<div align="left">
+  <img src="images/editPoints.png"/>
+  <ol>
+    <li>After clicking on <b>Edit Points</b> for a particular user, the user can edit the amount of points of the selected user</li>
+  </ol>
+</div>
+
+## Viewing All Accounts under A Particular Company
+<div align="left">
+  <img src="images/viewUserPoints.png"/>
+  <ol>
+    <li>User will navigate to the <b>View Users</b> tab</li>
+    <li>After clicking on <b>View User Details</b> button, user will navigate to <b>View Accounts</b></li>
+  </ol>
+</div>
+
+## Add Points Account For A Particular User
+<div align="left">
+  <img src="images/addPointsAccounts.png"/>
+  <ol>
+    <li>After clicking on <b>Edit Points</b> for a particular user, the user can edit the amount of points of the selected user</li>
+  </ol>
+</div>
 
 ## Maker Checker Update Points
 <div align="center">
