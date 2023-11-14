@@ -58,7 +58,7 @@ export default function CompanyGatewayPage(props) {
     .catch((err) => {
       console.error("Error fetching company data: ", err);
     })
-    .finally;(() => {
+    .finally(() => {
       setIsLoading(false);
     })
   }, []);
