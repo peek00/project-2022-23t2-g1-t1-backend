@@ -121,7 +121,7 @@ The deployment steps are listed below, and can be performed in any new AWS regio
 ## Create Cloud Map and Services for Service Discovery
 - Create Cloud Map Name Space
 - Create Service Discovery for ECS Services and take note of the names
-  <img src="images/cloudMap.png" alt="Logo" />
+  <img src="images/CloudMap.png" alt="Logo" />
 
 ## Create EFS and EFS Mount Point
 
@@ -135,7 +135,7 @@ The deployment steps are listed below, and can be performed in any new AWS regio
    - All Default except for:
      - Node Type: cache.t3.micro
 3) Take note of the Redis URL under Primary Endpoint:
-  <img src="images/REDIS_url.png" alt="Logo" />
+  <img src="images/Redis_URL.png" alt="Logo" />
 
 ## Elastic Cloud Service
 1) Set up of ECS Cluster and Services
