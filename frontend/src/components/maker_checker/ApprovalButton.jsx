@@ -13,16 +13,15 @@ export default function ApprovalButton({
     setAction(action);
     setLoading(true);
     try {
-      if (action == "approved") {
+      if (action === "approve") {
         handleApprove();
-      } else {
+      } else if (action === "reject") {
         handleReject();
       }
       setTimeout(() => {
         setLoading(false);
       }, 2000);
     } catch (error) {
-      console.error("Error approving request:", error);
       setLoading(false);
     }
   };
@@ -33,7 +32,7 @@ export default function ApprovalButton({
         <button
           className="px-4 py-2 mr-2 text-white bg-green-500 rounded"
           onClick={() => handleClick("approve")}
-        >
+          >
           Approve
         </button>
         <button
