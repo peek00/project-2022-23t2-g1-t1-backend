@@ -9,10 +9,29 @@ import {
 import { Link } from "react-router-dom";
 
 import { useUserContext } from "../../context/userContext";
+import { deleteUser } from "../../apis/users";
 
 export default function MenuDefault({firstName,lastName,email,id,role}) {
 
   const { userData, updateUserData } = useUserContext();
+
+
+  const handleDelete = async (e,userId) => {
+    e.preventDefault();
+     console.log("Deleting user with ID:", userId);
+
+    try {
+      // Assuming deleteUser is an asynchronous function that deletes the user
+      await deleteUser(userId);
+      window.location.href = "/users";
+      // Optionally, you can update the user context or perform other actions after deletion
+      // updateUserData(null, null, null, null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  }
+
+  
 
  
 
@@ -39,6 +58,11 @@ export default function MenuDefault({firstName,lastName,email,id,role}) {
 }}>Update User Details</Link>
           </MenuItem>
         )}
+      <MenuItem>
+  <button onClick={(e) => handleDelete(e, id)}>
+    Delete User
+  </button>
+</MenuItem>
       </MenuList>
     </Menu>
   );
