@@ -4,5 +4,6 @@ export interface IUser {
   // name: string;
   // email: string;
   role: string[];
+  fullName?: string;
   token?: string;
 }

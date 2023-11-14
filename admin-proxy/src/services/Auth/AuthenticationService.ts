@@ -10,7 +10,7 @@ export interface UserWithToken {
   id: string;
   role: string[];
   token: string;
-  companyId?: string;
+  fullName?: string;
 }
 
 export class AuthenticationService {
@@ -32,14 +32,15 @@ export class AuthenticationService {
     // Invoke User Proxy to retrieve user details
     try {
       const user = await this.findUserByEmail(email);
-      const { userId, roles = [] } = user;
+      const { userId, roles = [], fullName } = user;
       if (process.env.NODE_ENV !== 'production') console.log("UserID, role: "+ userId,roles);
       // If not, generate a new token and store it in cache
       const token = this.jwtService.generateToken(userId);
       const userWithToken = {
         id: userId,
         role: roles,
-        token: token
+        token: token,
+        fullName
       };
       // Flush old token in DB
       await this.cacheProvider.remove(userId);
@@ -72,17 +73,17 @@ export class AuthenticationService {
     const userData = await this.cacheProvider.get(id);
 
     if (userData) {
-      const { id, role, companyId, token } = JSON.parse(userData);
+      const { id, role, fullName, token } = JSON.parse(userData);
       // Check if JWT Token is the same as session
 
-      return { id, role, companyId, token };
+      return { id, role, fullName, token };
     } else {
       throw new InvalidSessionError("User Session not found");
     }
   }
   public async generateTemporaryToken(roleLs:string[]): Promise<UserWithToken> {
     const token = this.jwtService.generateToken("temporary");
-    const response = { id: "temporary", role: roleLs, companyId: 'test-company-id', token };
+    const response = { id: "temporary", role: roleLs, fullName: 'testName', token };
     if (process.env.NODE_ENV !== 'production') console.log(response);
     await this.cacheProvider.write("temporary", JSON.stringify(response), 60 * 3); // 3 minutes
     return response;
