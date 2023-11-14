@@ -155,7 +155,6 @@ export class PolicyService {
   }
 
   public async getAllPolicies(): Promise<any> {
-    // Check cache
     const cachedPolicies = await this.cacheProvider.get("policies");
     if (cachedPolicies) {
       return JSON.parse(cachedPolicies);
