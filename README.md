@@ -68,6 +68,29 @@ Our project consists of three backend applications which are the `User Storage `
 	<li>After inputting the new user details, the user would be navigated back to the users listings page</li>
 	<li>The user should see a change in the user details on the user listing page</li>
 </ol>
+
+## Maker Checker Update Points
+<div>
+  <ol>
+    <li>Go to <b>View Users<b> tab</li>
+    <li>Choose any user, take note of the user (may want to take note of email for easy search later on) and click on "View User Details" > "View Accounts"</li>
+    <li>Choose any company that they are with, take note of their point balance with that company, copy User ID</li>
+    <li>Navigate to <b>Maker Checker<b> tab </li>
+    <li>Select Company that you chose in step 3</li>
+    <li>Click "Create Request"</li>
+    <li>Click "Select an action" and select "Points Update"</li>
+    <li>Fill in "user_id" with the user ID copied in step 3</li>
+    <li>Fill in "change" with the amount that you want the point balance to change by (e.g. if you want to increase by 100 input 100, if you want to decrease by 100 input -100)</li>
+    <li>Click "Submit Request" (will throw an error if you choose a user that does not have an account with that company)</li>
+    <li>Log in to a different account (necessary because the person that created the request should not be able to approve it)</li>
+    <li>Navigate to "Maker Checker" tab</li>
+    <li>Select the same company as earlier</li>
+    <li>Approve request</li>
+    <li>Navigate to "View Users" tab</li>
+    <li>Find the same user as in step 2 (you may use the search function by typing their email into the search bar)</li>
+    <li>Click on "View User Details" > "View Accounts"</li>
+    <li>Verify if that the point total for the chosen company has changed</li>
+  </ol>
 </div>
 
 
