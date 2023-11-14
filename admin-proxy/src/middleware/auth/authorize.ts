@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { authorisationService } from "../../services/Auth";
+import { UnauthorizedError } from "../error/customError";
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 function authorize() {
@@ -27,7 +28,7 @@ function authorize() {
           next();
         }).catch((error) => {
           if (process.env.NODE_ENV !== 'production') console.log(error.message);
-          return next(error);
+          return next(new UnauthorizedError(error.message));
         });
       },
     )(req, res, next);
