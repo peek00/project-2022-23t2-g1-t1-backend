@@ -33,6 +33,13 @@ export async function addUser(requestBody){
         throw error;
       }
     }
+
+    export async function deleteUser(userId){
+      const response = await axios.delete(API_BASE_URL+`/api/user/User/deleteUser?userID=${userId}`, {
+          withCredentials: true
+        });
+        return response;
+      }
   
 
 
