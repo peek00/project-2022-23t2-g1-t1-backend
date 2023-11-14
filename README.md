@@ -21,7 +21,7 @@
         <li><a href="#listing-users">Listing Users</a></li>
         <li><a href="#enrolling-new-users">Enrolling new Users</a></li>
         <li><a href="#updating-new-users">Updating User Infromation</a></li>
-        <li><a href="deleting-users">Deleting User Infromation</a></li>
+        <li><a href="#deleting-usersdeleting-users">Deleting User Infromation</a></li>
         <li><a href="view-all-companies">View All Companies</a></li>
         <li><a href="view-all-users-in-company">View all Users Under A Company</a></li>
         <li><a href="edit-points">Edit Points</a></li>
