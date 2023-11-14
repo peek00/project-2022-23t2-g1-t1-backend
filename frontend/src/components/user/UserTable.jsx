@@ -123,7 +123,9 @@ export default function UserTable() {
             withCredentials: true,
           }
         );
-        setUsers(response.data.data.users);
+
+        
+        setUsers(response.data.data.users.filter(user=> user.userId  != JSON.parse(localStorage.getItem('id'))));
       lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
 
       if(response.data.data.next){
@@ -176,7 +178,7 @@ export default function UserTable() {
       );
 
       // You can use the prefetched data as needed, for example, update state or store it in a ref.
-      setNextPage( response.data.data.users);
+      setNextPage( response.data.data.users.filter(user=> user.userId  != JSON.parse(localStorage.getItem('id'))) );
       hasNext.current = response.data.data.next;
       //console.log(hasNext.current);
       lastEvaluatedKey.current = response.data.data.newLastEvaluatedKey;
@@ -228,7 +230,7 @@ export default function UserTable() {
         <tbody>
           {Array.isArray(users) && users.map((user) => (
             <tr
-              key={user.id}
+              key={user.userId}
               className="bg-[#F5F5F5] border-b dark:bg-gray-800 dark:border-gray-700"
             >
               <th
