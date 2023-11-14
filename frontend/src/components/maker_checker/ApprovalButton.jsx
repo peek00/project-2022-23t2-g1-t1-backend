@@ -13,16 +13,16 @@ export default function ApprovalButton({
     setAction(action);
     setLoading(true);
     try {
-      if (action == "approved") {
+      if (action === "approved") {
         handleApprove();
-      } else {
+      } else if (action === "rejected") {
         handleReject();
       }
       setTimeout(() => {
         setLoading(false);
       }, 2000);
     } catch (error) {
-      console.error("Error approving request:", error);
+      // console.error("Error approving request:", error);
       setLoading(false);
     }
   };
