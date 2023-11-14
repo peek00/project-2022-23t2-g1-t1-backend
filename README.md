@@ -16,7 +16,7 @@
       <a href="#a">About the Project</a>
     </li>
     <li>
-      <a href="#testing-the-project">Testing the Project</a>
+      <a href="#testing-the-project">Getting Started</a>
       <ul>
         <li><a href="#configuring-backend">Listing Users</a></li>
 	<li><a href="#prerequisites">Enrolling new Users</a></li>
@@ -34,15 +34,18 @@
 
 Our project consists of three backend applications which are the `User Storage ` mircoservice which allow user to list user,enroll new user and update and delete user information.It also consists of the `Point Ledger` microservice which allow user to query point balance of an user and adjust balance of their points account. Lastly we have the `Admin Proxy` application which acts as a gateway betweeen the client and the two applications stated above.
 
-<div align="center">
+
 	
-## Testing the Project
+## Getting Started
 
+1.  Navigate to our hosted website on this [Appplication Link](https://api.itsag1t1.com/)
+2.  We have created an account for our Professors Yeow Leong and Eng Lieh
+3.  Click on the Sign in with `Google button`
+## Listing Users
+<div align="center">
 
-
-## Creating a User
-
-
+<img src="images/listing_user.png"/>
+<p>Upon Signing in as an user, the user will be greeted with all the users that is in the Ascenda Loyalty Application Database</p>
 </div>
 
 
