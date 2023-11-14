@@ -126,7 +126,7 @@ Our project consists of three backend applications which are the `User Storage `
 
 ## Maker Checker Update User Details
 <div align="center">
-  <img src="images/maker_checker_points.png"/>
+  <img src="images/maker_checker_point.png"/>
   <ol>
     <li>Go to "View Users" tab</li>
     <li>Choose any user, take note of their email</li>
