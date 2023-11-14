@@ -324,7 +324,7 @@ async function getAllCompanyIds() {
         const allCompanyIds = [...new Set(items.map(item => unmarshall(item).company_id))];
 
         // Cache result in Redis for 10min
-        await CacheProvider.write(redisKey, JSON.stringify(allCompanyIds), 600);
+        await CacheProvider.write(redisKey, JSON.stringify(allCompanyIds), 6000000);
         //console.log(allCompanyIds);
 
         return allCompanyIds.length > 0 ? allCompanyIds : [];
