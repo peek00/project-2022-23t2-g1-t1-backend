@@ -16,7 +16,7 @@
       <a href="#a">About the Project</a>
     </li>
     <li>
-      <a href="#testing-the-project">Getting Started</a>
+      <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#configuring-backend">Listing Users</a></li>
 	<li><a href="#prerequisites">Enrolling new Users</a></li>
@@ -40,12 +40,23 @@ Our project consists of three backend applications which are the `User Storage `
 
 1.  Navigate to our hosted website on this [Appplication Link](https://api.itsag1t1.com/)
 2.  We have created an account for our Professors Yeow Leong and Eng Lieh
-3.  Click on the Sign in with `Google button`
+3.  Click on the `Sign in with Google button`
 ## Listing Users
 <div align="center">
 
-<img src="images/listing_user.png"/>
+<img src="images/listing_users.png"/>
 <p>Upon Signing in as an user, the user will be greeted with all the users that is in the Ascenda Loyalty Application Database</p>
+</div>
+
+## Enrolling New Users
+<div align="center">
+
+<img src="images/enroll_user.png"/>
+<ol>
+	<li>User will navigate to the <b>Enroll User<b> tab on the sidebar</li>
+	<li>After inputting the user details,the system would navigate back to the user listing page</li>
+	<li>To veify the user has been added, please enter the exact email in the search bar, and the new user will be returned</li>
+</ol>
 </div>
 
 
