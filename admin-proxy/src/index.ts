@@ -8,6 +8,7 @@ import { PolicyService } from "./services/Policy/PolicyService";
 import { Logger } from "./services/Logger/Logger";
 import cron from "node-cron";
 import compression from "compression";
+import rateLimiter from "./middleware/ratelimit/rateLimiter";
 
 //For env File
 dotenv.config();
@@ -31,7 +32,7 @@ PolicyService.initialize().then(() => {
   
 
   // Add Proxy Middleware
-  app.use("/health",(req, res) => {
+  app.use("/health", rateLimiter, (req, res) => {
     res.send('health check');
   })
   app.use("/", router);

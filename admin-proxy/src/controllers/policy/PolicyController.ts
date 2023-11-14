@@ -67,7 +67,7 @@ export class PolicyController {
       const { role } = req.user!;
       const { pageLs } = req.body;
       if (process.env.NODE_ENV !== 'production') console.log(`getUserPolicyMapping for ${pageLs} based on user role ${role}`)
-      if (pageLs === undefined) {
+      if (pageLs === undefined || role === undefined) {
         throw new Error("Invalid Request");
       }
       const userPolicy = await PolicyService.getInstance().mapRoleActions(role, pageLs);
