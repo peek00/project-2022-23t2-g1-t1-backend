@@ -22,6 +22,8 @@
 	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
 	<li><a href="#updating-new-users">Updating User Infromation</a></li>
 	<li><a href="deleting-users">Deleting User Infromation</a></li>
+	 <li><a href="maker-checker-update-points">Maker Checker Update Points</a></li>
+	      <li><a href="maker-checker-update-user-details">Maker Checker Update User Details</a></li>
       </ul>
     </li>
 
