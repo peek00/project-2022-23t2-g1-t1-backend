@@ -101,12 +101,13 @@ function PolicyTable() {
 
       try {
         const response = await axios.put(API_BASE_URL+"/policy", newPermission, { withCredentials: true });
-        console.log(response);
+       localStorage.removeItem("permissions");
       } catch (error) {
         console.error("Error making PUT request:", error);
       }
     }
     alert('The permissions has been updated');
+
   }
 
   const colStyle = {
