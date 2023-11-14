@@ -8,7 +8,7 @@
     },
     "ECSServiceName": {
       "Type": "String",
-      "Default": "admin-proxy-1"
+      "Default": "admin-proxy"
     },
     "SecurityGroupIDs": {
       "Type": "CommaDelimitedList",
