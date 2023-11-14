@@ -18,13 +18,13 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#configuring-backend">Listing Users</a></li>
-	<li><a href="#prerequisites">Enrolling new Users</a></li>
-	<li><a href="#prerequisites">Updating User Infromation</a></li>
-	<li><a href="#prerequisites">Deleting User Infromation</a></li>
+        <li><a href="#listing-users">Listing Users</a></li>
+	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
+	<li><a href="#updating-new-users">Updating User Infromation</a></li>
+	<li><a href="deleting-users">Deleting User Infromation</a></li>
       </ul>
     </li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+
   </ol>
 </details>
 
@@ -132,13 +132,6 @@ Our project consists of three backend applications which are the `User Storage `
 
 <!-- ACKNOWLEDGMENTS -->
 
-## Acknowledgments
 
-* [Calista Lee Yen Ling](https://github.com/cal-lee)
-* [Eng T-Leng](https://github.com/T-Leng)
-* [Tan Yi Peng](https://github.com/tanyipeng834)
-* [Tim Mo Seng](https://github.com/MoSengT)
-* [Wu Hao](https://github.com/wuhao212)
-* [Yong Lip Khim](https://github.com/JermYong)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
