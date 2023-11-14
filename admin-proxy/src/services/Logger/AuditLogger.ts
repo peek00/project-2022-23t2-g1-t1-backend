@@ -28,9 +28,9 @@ class AuditLogger {
     // let ip = requestIP.getClientIp(req)?.replace("::ffff:", "");
     let country = "unknown";
     if (ip.length > 0) {
-      if (process.env.NODE_ENV !== 'production') //console.log(ip);
+      if (process.env.NODE_ENV !== 'production') console.log(ip);
       const lookup = geoIp.lookup(ip);
-      if (process.env.NODE_ENV !== 'production') //console.log(lookup);
+      if (process.env.NODE_ENV !== 'production') console.log(lookup);
       if (lookup) country = lookup.country;
     }
 

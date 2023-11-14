@@ -11,7 +11,7 @@ authRouter.get(
   "/me",
   authorize(),
   (req: Request, res: Response, next: NextFunction) => {
-    if (process.env.NODE_ENV !== 'production') //console.log(req.user);
+    if (process.env.NODE_ENV !== 'production') console.log(req.user);
     res.json(req.user);
   },
 );

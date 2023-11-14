@@ -42,7 +42,7 @@ export class DynamoDB implements IDatabaseProvider {
       const existingTables = await this.client.send(new ListTablesCommand({}));
       return existingTables;
     } catch (error) {
-      if (process.env.NODE_ENV !== 'production') //console.log(error);
+      if (process.env.NODE_ENV !== 'production') console.log(error);
       throw new Error(`Error listing tables`);
     }
   }
@@ -50,7 +50,7 @@ export class DynamoDB implements IDatabaseProvider {
   public async createTable(tableName:string, config: any): Promise<any> {
     // create Table if not exists
     try {
-      if (process.env.NODE_ENV !== 'production') //console.log(`creating table ${tableName}`);
+      if (process.env.NODE_ENV !== 'production') console.log(`creating table ${tableName}`);
       const existingTables = await this.listTables();
       const tableNames = existingTables.TableNames;
       if (tableNames && tableNames.indexOf(tableName) !== -1) {
@@ -70,7 +70,7 @@ export class DynamoDB implements IDatabaseProvider {
         },
       }));
     } catch (error) {
-      if (process.env.NODE_ENV !== 'production') //console.log(error);
+      if (process.env.NODE_ENV !== 'production') console.log(error);
       throw new Error(`Error creating table: ${tableName}`);
     }
 
@@ -100,7 +100,7 @@ export class DynamoDB implements IDatabaseProvider {
       }));
       return response;
     } catch (error) {
-      if (process.env.NODE_ENV !== 'production') //console.log(error)
+      if (process.env.NODE_ENV !== 'production') console.log(error)
       throw new Error(`Error adding item ${data} to table: ${tableName}`);
     }
   }
@@ -121,7 +121,7 @@ export class DynamoDB implements IDatabaseProvider {
       }));
       return response;
     } catch (error) {
-      if (process.env.NODE_ENV !== 'production') //console.log(error)
+      if (process.env.NODE_ENV !== 'production') console.log(error)
       throw new Error(`Error update item ${Key} to table: ${tableName}`);
     }
   }
@@ -149,17 +149,17 @@ export class DynamoDB implements IDatabaseProvider {
         // FilterExpression: filter ? Object.keys(filter).map((key) => `${key} = :${key}`).join(" AND ") : undefined,
       }));
       // Convert response to json
-      if (process.env.NODE_ENV !== 'production') //console.log(response)
+      if (process.env.NODE_ENV !== 'production') console.log(response)
       // return response;
       if (response.Items === undefined || response.Items.length == 0) return [];
-      if (process.env.NODE_ENV !== 'production') //console.log(response.Items)
+      if (process.env.NODE_ENV !== 'production') console.log(response.Items)
       const formatted = response.Items.map((item) => {
         return unmarshall(item);
       });
-      if (process.env.NODE_ENV !== 'production') //console.log("Formatted",formatted)
+      if (process.env.NODE_ENV !== 'production') console.log("Formatted",formatted)
       return formatted;
     } catch (error){
-      if (process.env.NODE_ENV !== 'production') //console.log(error)
+      if (process.env.NODE_ENV !== 'production') console.log(error)
       throw new Error(`Error finding item ${filter} to table: ${tableName}`);
     }
   }

@@ -19,9 +19,9 @@ export interface IProfile {
 }
 
 const cookieExtractor = (req: any) => {
-  if (process.env.NODE_ENV !== 'production') //console.log("Retrieving from Cookie...");
-  if (process.env.NODE_ENV !== 'production') //console.log("Req.cookie", req.cookie);
-  if (process.env.NODE_ENV !== 'production') //console.log("Req.headers.cookie", req.headers.cookie);
+  if (process.env.NODE_ENV !== 'production') console.log("Retrieving from Cookie...");
+  if (process.env.NODE_ENV !== 'production') console.log("Req.cookie", req.cookie);
+  if (process.env.NODE_ENV !== 'production') console.log("Req.headers.cookie", req.headers.cookie);
   const cookies = req.headers.cookie?.split(";");
   let token = "";
   if (cookies && cookies.length) {
@@ -32,7 +32,7 @@ const cookieExtractor = (req: any) => {
       }
     });
   }
-  if (process.env.NODE_ENV !== 'production') //console.log("Token: ", token);
+  if (process.env.NODE_ENV !== 'production') console.log("Token: ", token);
   if (token === "") {
     throw new InvalidSessionError("JWT Token is required in cookie, please login again");
   }
@@ -40,7 +40,7 @@ const cookieExtractor = (req: any) => {
 };
 
 const BearerTokenFromRequest = (req: any) => {
-  if (process.env.NODE_ENV !== 'production') //console.log("Retrieving from Bearer Token...");
+  if (process.env.NODE_ENV !== 'production') console.log("Retrieving from Bearer Token...");
   const authHeader = req.headers.authorization;
   if (authHeader) {
     return authHeader.split(" ")[1];
@@ -51,7 +51,7 @@ const BearerTokenFromRequest = (req: any) => {
 const TokenExtractor = (req: any) => {
   // Check if the userAgent is Postman
   const userAgent = req.headers["user-agent"];
-  if (process.env.NODE_ENV !== 'production') //console.log("TokenExtractor Running: ")
+  if (process.env.NODE_ENV !== 'production') console.log("TokenExtractor Running: ")
   if (userAgent && userAgent.includes("Postman")) {
     return BearerTokenFromRequest(req);
   }
@@ -69,11 +69,11 @@ passport.use(
       try {
         jwtService.validateJwtPayload(jwtPayload);
         const user = await authenticationService.getUserById(jwtPayload.id);
-        if (process.env.NODE_ENV !== 'production') //console.log("User from JWT", user);
+        if (process.env.NODE_ENV !== 'production') console.log("User from JWT", user);
         jwtService.matchTokenPayload(user.token, jwtPayload);
         return done(null, user, { scope: "all" });
       } catch (error) {
-        if (process.env.NODE_ENV !== 'production') //console.log(error);
+        if (process.env.NODE_ENV !== 'production') console.log(error);
         return done(error, false);
       }
     },
@@ -97,7 +97,7 @@ passport.use(
         email: profile.emails![0].value,
         provider: "google",
       };
-      if (process.env.NODE_ENV !== 'production') //console.log(userProfile);
+      if (process.env.NODE_ENV !== 'production') console.log(userProfile);
       try {
         const user = await authenticationService.authenticate(
           userProfile.email,
@@ -111,7 +111,7 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  if (process.env.NODE_ENV !== 'production') //console.log(`Serialise: ${user}`)
+  if (process.env.NODE_ENV !== 'production') console.log(`Serialise: ${user}`)
   if (!user) {
     throw new Error("User not found");
   }
