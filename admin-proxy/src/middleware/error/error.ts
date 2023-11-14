@@ -8,10 +8,7 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   if (error instanceof InvalidSessionError) {
-    console.error(error.message);
-    // Clear cookie
     res.clearCookie("jwt");
-    res.status(401).send({ error: "Unauthorized", message: error.message });
   }
   if (error instanceof CustomError) {
     console.error(error.message);
