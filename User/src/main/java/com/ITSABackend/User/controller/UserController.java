@@ -132,14 +132,13 @@ public class UserController {
 
     @CacheEvict(value = "usersCache", allEntries = true)
     @DeleteMapping(value = "/deleteUser")
-    public ResponseEntity<Map<String, Object>> deleteUser(@PathParam("companyID") String companyID, @PathParam("userID") String userID) {
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathParam("userID") String userID) {
         Map<String, Object> response = new HashMap<>();
 
         try {
             userService.deleteUser(userID);
             response.put("logInfo", "User deleted successfully");
             Map<String, String> data = new HashMap<>();
-            data.put("companyID", companyID);
             data.put("userID", userID);
             response.put("data", data);
             return ResponseEntity.ok(response);
