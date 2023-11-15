@@ -40,8 +40,14 @@ PolicyService.initialize().then(() => {
       message: "OK",
       IP: {
         ip: req.ip,
-        'X-Forwarded-For': req.headers['x-forwarded-for'],
+        'X-Forwarded-For': req.headers['x-forwarded-for'] || "Not Found",
+        'X-Real-IP': req.headers['x-real-ip'] || "Not Found",
+        'X-Client-IP': req.headers['x-client-ip'] || "Not Found",
+        'X-Cluster-Client-IP': req.headers['x-cluster-client-ip'] || "Not Found",
       },
+      headers: {
+        ...req.headers
+      }
     });
   })
   app.use("/", router);
