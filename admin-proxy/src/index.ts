@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import http from "http";
 import passport from "./middleware/auth/passport";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -30,19 +31,38 @@ PolicyService.initialize().then(() => {
   // Adding Passport
   app.use(passport.initialize());
   
-
   // Add Proxy Middleware
   app.use("/health", rateLimiter, (req, res) => {
-    res.send('health check');
+    // Display Client IP Address
+    if (process.env.NODE_ENV !== 'production') console.log(req.ip);
+
+    res.status(200).json({
+      message: "OK",
+    });
   })
   app.use("/", router);
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(errorHandler);
 
-  app.listen(port, host, () => {
-    console.info(`Server is running on port ${port}`);
+  const server = http.createServer(app);
+  
+  // // Set Max Connections
+  server.maxConnections = 1000;
+
+  // Kill idle connections
+  server.on('connection', (socket) => {
+    socket.setTimeout(5000);
+    socket.on('timeout', () => {
+      socket.destroy(new Error('connection timeout'));
+    });
   });
+
+  // Manage Connection pool
+  server.listen(port, host, () => {
+    console.log(`Server started at http://${host}:${port}`);
+  });
+
 
   // Schedule a cron job to run at the start of every minute
   cron.schedule("*/60 * * * * *", () => {

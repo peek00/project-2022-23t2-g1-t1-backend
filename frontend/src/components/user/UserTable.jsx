@@ -146,7 +146,7 @@ export default function UserTable() {
           // Clear the local storage
           localStorage.clear();
           sessionStorage.clear();
-          window.location.href = '/login';
+          // window.location.href = '/login'; 
         }
       }
     }

@@ -22,7 +22,8 @@ The deployment steps are listed below, and can be performed in any new AWS regio
 5) Create function
   <img src="images/lambda.png" alt="Logo" />
 6) Furnish code source with the following code snippet
-  ```
+  
+```
   import json
   import boto3
   from botocore.exceptions import ClientError
@@ -84,7 +85,7 @@ The deployment steps are listed below, and can be performed in any new AWS regio
           'statusCode': 200,
           'body': json.dumps(response)
       }
-  ```
+```
 
 ## Create VPC and subnets
 1) Create Project VPC with default configuration using "VPC and More", with 2 AZ, 2 Public and Private Subnets and 1 NAT Gateway per AZ and no VPC Endpoint.
@@ -120,8 +121,9 @@ The deployment steps are listed below, and can be performed in any new AWS regio
 ## Create Cloud Map and Services for Service Discovery
 - Create Cloud Map Name Space
 - Create Service Discovery for ECS Services and take note of the names
-  <img src="images/cloudMap.png" alt="Logo" />
+  <img src="images/CloudMap.png" alt="Logo" />
 
+## Create EFS and EFS Mount Point
 
 ## ElastiCache Redis Cluster
 1) Create ElastiCache Redis Cluster with the following configuration:
@@ -133,38 +135,54 @@ The deployment steps are listed below, and can be performed in any new AWS regio
    - All Default except for:
      - Node Type: cache.t3.micro
 3) Take note of the Redis URL under Primary Endpoint:
-  <img src="images/REDIS_url.png" alt="Logo" />
+  <img src="images/Redis_URL.png" alt="Logo" />
 
 ## Elastic Cloud Service
-- Set up of ECS Cluster and Services
-  - Create IAM Roles:
-    - ECSTaskExecution
+1) Set up of ECS Cluster and Services
+  - Create IAM Roles and note their ARNs:
+
+    - (ECSTaskExecution)
       <img src="images/ecsTaskExecRole.png" alt="Logo" />
 
-    - ECSTaskRole
+    - (ECSTaskRole)
       <img src="images/ecsTaskRole.png" alt="Logo" />
-  - Take note of their ARN
   
-- Create Secrets in SSM and take note of the ARN:
+2) Create Secrets in SSM and take note of the ARN:
   <img src="images/SSM.png" alt="Logo" />
 
-- Create/ Upload ECS Task Definitions for the microservices, look at the `.infra/ecs` folder. Make sure to update the ARNs and URLS where necessary.
+1) Create/ Upload ECS Task Definitions for the microservices, look at the `.infra/ecs` folder. Make sure to update the ARNs and URLS where necessary.
 
-- Create ECS Cluster (using CloudFormation Template), look at the `.infra/cloudFormation` folder
+2) Create ECS Cluster (using CloudFormation Template), look at the `.infra/cloudFormation` folder
   
-- Create ECS Services (using CloudFormation Templates), look at the `.infra/cloudFormation` folder
+3) Create ECS Services (using CloudFormation Templates), look at the `.infra/cloudFormation` folder
+
+4) Subsequent deploys will be automated by github actions after the ECS environment has been configured.
 
 ## DynamoDB
 1) Our microservices will automatically create tables and seed data into the data on first load. However, these default configuration are not yet optimal.
 2) Here are the following tweaks required to be made:
-- Enable Global Tables for All Tables
-- Enable PITR 
-- Configure Auto Scaling Policies
-- Enable TTL Index for Logs with attribute `ttl`:
+   - Enable Global Tables for All Tables
+   - Enable PITR 
+   - Configure Auto Scaling Policies
+   - Enable TTL Index for Logs with attribute `ttl`
 
+## Deploy Frontend Application to S3 and distribute using CloudFront CDN
+1) Enable static hosting option and 
+2) Set up CloudFront CDN to distribute the Frontend Application
 
-# Setting up Github Actions
+## Route 53
+1) Create a domain or add new subdomains for the frontend and backend
+2) Add Alias record to the Load Balancer for backend
+3) Add CName record to the CloudFront CDN for FE
 
-- Create IAM Role for Github Action
+## Create SSL Certificate using ACM
+1) Add the domains for the backend and front end domain
+2) Add the CName records into Route 53 for verification
 
-- Create Identity Token for Github Action
+## Setting up Github Actions
+1) Create Identity Provider for Github Action, assume Web Identity, Select the github and audience is sts, fill up the rest accordingly
+   <img src="images/GithubActionRole.png" alt="Logo" />
+2) Create new role name for this, and update the trust policy to allow all ECR Private access and to allow the following ECS actions:
+   - RegisterTaskDefinitions
+   - UpdateService
+   - DescribeService
