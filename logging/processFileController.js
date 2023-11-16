@@ -92,3 +92,22 @@ export const parseLogFile = (log) => {
 
   return logRecords;
 }
+
+export const clearAllLogs = () => {
+  const logFiles = fs.readdirSync('/tmp');
+  //console.log("Reading FileDir: ", logFiles);
+  const curDate = new Date();
+  // Return a list of old log files
+  logFiles.forEach((logFile) => {
+    if (logFile.startsWith('logs-') && logFile.endsWith('.log')) {
+      let date = logFile.split('logs-')[1].split('.log')[0];
+      let extractDate = Date.parse(date);
+      //console.log(curDate, date);
+      // If log file is older than 1 minute
+      if ((curDate.getTime() - extractDate) > 60000) {
+        fs.unlinkSync(`/tmp/${logFile}`);
+      }
+    }
+  });
+  return
+}

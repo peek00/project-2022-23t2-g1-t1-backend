@@ -19,9 +19,17 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#listing-users">Listing Users</a></li>
-	<li><a href="#enrolling-new-users">Enrolling new Users</a></li>
-	<li><a href="#updating-new-users">Updating User Infromation</a></li>
-	<li><a href="deleting-users">Deleting User Infromation</a></li>
+        <li><a href="#enrolling-new-users">Enrolling new Users</a></li>
+        <li><a href="#updating-new-users">Updating User Infromation</a></li>
+        <li><a href="#deleting-users">Deleting User Infromation</a></li>
+        <li><a href="#view-all-companies">View All Companies</a></li>
+        <li><a href="#viewing-all-users-under-a-company">View all Users Under A Company</a></li>
+        <li><a href="#edit-points">Edit Points</a></li>
+        <li><a href="#viewing-all-accounts-under-a-particular-company">Viewing All Accounts Under A Particular Company</a></li>
+        <li><a href="#add-points-account-for-a-particular-user">Add Points Account For A Particular User</a></li>
+	      <li><a href="#update-permission-for-users">Updating Permissions for Users</a></li>
+	      <li><a href="#maker-checker-update-points">Maker Checker Update Points</a></li>
+	      <li><a href="#maker-checker-update-user-details">Maker Checker Update User Details</a></li>
       </ul>
     </li>
 
@@ -34,33 +42,40 @@
 
 Our project consists of three backend applications which are the `User Storage ` mircoservice which allow user to list user,enroll new user and update and delete user information.It also consists of the `Point Ledger` microservice which allow user to query point balance of an user and adjust balance of their points account. Lastly we have the `Admin Proxy` application which acts as a gateway betweeen the client and the two applications stated above.
 
+## Deployment
+
+Deployment of the project is done on AWS cloud. The set up of the infrastructure was done manually previously on the cloud console, but we have since extracted the cloudformation templates to enable us to set up the ECS Cluster and ECS Service Environments and developed Continuous Deployment Pipeline to automate the deployment of ECS Tasks onto the ECS Cluster.This will allow us to deploy the solution across different regions.
+
+Some of the services and resources, however, would still require manual provision through the cloud management console. There are attempts to automate the infrastructure management with IaaC using Terraform, but it is still a work in progress.
+
+Please refer to the [Deployment Guide](./aws-setup.readme.md) for more information on how to set-up and deploy the AWS Environment.
 
 	
 ## Getting Started
 
-1.  Navigate to our hosted website on this [Appplication Link](https://api.itsag1t1.com/)
-2.  We have created an account for our Professors Yeow Leong and Eng Lieh
-3.  Click on the `Sign in with Google button`
+1.  Navigate to our hosted website on this [Application Link](https://api.itsag1t1.com/)
+2.  We have created an account for our Professors Yeow Leong and Eng Lieh with these two respective emails `yllee@smu.edu.sg` and `elouh@smu.edu.sg`
+4.  Click on the `Sign in with Google button`
 ## Listing Users
-<div align="center">
+<div align="left">
 
 <img src="images/listing_users.png"/>
 <p>Upon Signing in as an user, the user will be greeted with all the users that is in the Ascenda Loyalty Application Database</p>
 </div>
 
 ## Enrolling New Users
-<div align="center">
+<div align="left">
 
 <img src="images/enroll_user.png"/>
 <ol>
 	<li>User will navigate to the <b>Enroll User<b> tab on the sidebar</li>
 	<li>After inputting the user details,the system would navigate back to the user listing page</li>
-	<li>To veify the user has been added, please enter the exact email in the search bar, and the new user will be returned</li>
+	<li>To verify the user has been added, please enter the exact email in the search bar, and the new user will be returned</li>
 </ol>
 </div>
 
 ## Updating New Users
-<div align="center">
+<div align="left">
 
 <img src="images/update_user.png"/>
 <ol>
@@ -71,7 +86,7 @@ Our project consists of three backend applications which are the `User Storage `
 
   
 ## Deleting Users
-<div align="center">
+<div align="left">
 
 <img src="images/delete_user.png"/>
 <ol>
@@ -81,10 +96,63 @@ Our project consists of three backend applications which are the `User Storage `
 </ol>
 </div>
 
+## View All Companies
+<div align="left">
+  <img src="images/companygateway.png"/>
+  <ol>
+    <li>Navigate to the <b>View Company Accounts</b> tab</li>
+  </ol>
+</div>
+
+## Viewing All Users Under A Company
+<div align="left">
+  <img src="images/companyaccount.png"/>
+  <ol>
+    <li>After pressing on a company, the user would see all the users, along with their information and number of points in their account under the company</li>
+  </ol>
+</div>
+
+## Edit Points
+<div align="left">
+  <img src="images/editPoints.png"/>
+  <ol>
+    <li>After clicking on <b>Edit Points</b> for a particular user, the user can edit the amount of points of the selected user</li>
+  </ol>
+</div>
+
+## Viewing All Accounts under A Particular Company
+<div align="left">
+  <img src="images/viewUserPoints.png"/>
+  <ol>
+    <li>User will navigate to the <b>View Users</b> tab</li>
+    <li>After clicking on <b>View User Details</b> button, user will navigate to <b>View Accounts</b></li>
+  </ol>
+</div>
+
+## Add Points Account For A Particular User
+<div align="left">
+  <img src="images/addPointsAccounts.png"/>
+  <ol>
+    <li>After clicking on <b>Edit Points</b> for a particular user, the user can edit the amount of points of the selected user</li>
+  </ol>
+</div>
+
+## Update Permission for Users
+<div align="left">
+
+<img src="images/admin_proxy.png"/>
+<ol>
+	<li>Admin will be able to update permission for the roles specified</li>
+	<li>After unchecking the <b>Add User<b> permission for Owner , and then navigating to the enroll user tab</li>
+ 	<li>The current User who has the Owner permisson, would then have an unauthoized page and not allowed to enroll users</li>
+	
+</ol>
+</div>
+
 
 
 ## Maker Checker Update Points
-<div align="center">
+<div align="left">
 
   <img src="images/maker_checker_point.png"/>
   <ol>
@@ -110,8 +178,8 @@ Our project consists of three backend applications which are the `User Storage `
 </div>
 
 ## Maker Checker Update User Details
-<div align="center">
-  <img src="images/maker_checker_points.png"/>
+<div align="left">
+  <img src="images/maker_checker_point.png"/>
   <ol>
     <li>Go to "View Users" tab</li>
     <li>Choose any user, take note of their email</li>

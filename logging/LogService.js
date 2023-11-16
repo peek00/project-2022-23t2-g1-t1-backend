@@ -208,8 +208,17 @@ export class LogService {
         ...data,
       }),
     };
-    //console.log("Uploading Logs with params: ", params);
-    return await this.db.send(new PutItemCommand(params));
+    try {
+      const logGroups = await this.getLogGroups();
+      if (!logGroups.includes(logGroup)) {
+        //console.log("Adding new log group to cache");
+        logGroups.push(logGroup);
+        this.cache.write("logGroups", JSON.stringify(logGroups), -1); 
+      } 
+      return await this.db.send(new PutItemCommand(params));
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   async getLogGroups() {
@@ -219,18 +228,35 @@ export class LogService {
       ScanIndexForward: false
     };
     try {
-      const data = await this.db.send(new ScanCommand(params));
-      if (data.Count === 0) {
-        throw new Error("No log groups found");
+      // Get all log groups from cache
+      const cachedLogGroups = await this.cache.get("logGroups");
+      if (cachedLogGroups) {
+        //console.log('cache hit')
+        return JSON.parse(cachedLogGroups);
+      } else {
+        //console.log('cache miss')
+        const logGroups = await this.scanLogGroups(params);
+        // If logGroups is not empty, write to cache
+        if (logGroups && logGroups.length > 0) {
+          this.cache.write("logGroups", JSON.stringify(logGroups), -1);
+        }
+        return logGroups;
       }
-      let output = new Set()
-      data.Items.forEach((item) => {
-        output.add(unmarshall(item).logGroup);
-      });
-      return Array.from(output);
     } catch (error) {
-      //console.log(error.message);
+      console.error(error.message);
       return [];
     }
+  }
+
+  async scanLogGroups(params) {
+    const data = await this.db.send(new ScanCommand(params));
+    if (data.Count === 0) {
+      throw new Error("No log groups found");
+    }
+    let output = new Set()
+    data.Items.forEach((item) => {
+      output.add(unmarshall(item).logGroup);
+    });
+    return Array.from(output);
   }
 }
