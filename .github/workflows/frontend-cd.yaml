@@ -2,7 +2,9 @@ name: Run Frontend CD
 
 on:
   push:
-    branches: [main]
+    branches: 
+      - 'main'
+      - 'fix/reqQueue'
     paths:
       - "frontend/**"
       - ".github/workflow/frontend-cd.yaml"
