@@ -43,7 +43,7 @@ export default function SideBar() {
   }, [location]);
 
   return (
-    <div className="bg-[#1C2434] min-h-screen overflow-y-auto w-[15%] z-50 fixed ">
+    <div className="bg-[#1c0] min-h-screen overflow-y-auto w-[15%] z-50 fixed ">
       <div className="flex flex-col ">
         <Link to="/users" className="mx-auto">
           <img src="/footerLogo.svg" className="h-[100px] w-[100px]" />
